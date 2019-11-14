@@ -1,0 +1,31 @@
+{
+  "name": "dia-electron",
+  "version": "0.1.0",
+  "description": "Cross platform clients",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js",
+    "check-dependencies": "ncu",
+    "update-dependencies": "ncu -u"
+  },
+  "repository": "https://github.com/munew/dia-electron.git",
+  "keywords": [
+    "Electron",
+    "Munew",
+    "DIA"
+  ],
+  "devDependencies": {
+    "electron": "^7.1.1",
+    "npm-check-updates": "^3.2.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
+  },
+  "author": "munewio@gmail.com",
+  "license": "Apache License 2.0",
+  "bugs": {
+    "url": "https://github.com/munew/dia-electron/issues"
+  },
+  "homepage": "https://github.com/munew/dia-electron#readme"
+}
