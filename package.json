@@ -21,21 +21,14 @@
     "DIA"
   ],
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.4",
     "debug": "^4.1.1",
     "electron": "^7.0.0",
     "electron-log": "^3.0.8",
-    "express": "^4.17.1",
     "mongodb": "^3.3.3",
-    "react": "^16.11.0",
-    "serve-favicon": "^2.5.0",
-    "server-destroy": "^1.0.1",
     "sqlite3": "^4.1.0"
   },
   "devDependencies": {
     "copyfiles": "^2.1.1",
-    "create-react-app": "^3.2.0",
     "electron-builder": "^21.2.0",
     "husky": "^3.0.9",
     "ndb": "^1.1.5",
@@ -47,6 +40,7 @@
     "build": "rimraf build && tsc && cp -rf app/engine-ui build/engine-ui",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "check-dependencies": "ncu",
-    "update-dependencies": "ncu -u"
+    "update-dependencies": "ncu -u",
+    "postinstall": "install-app-deps"
   }
 }
