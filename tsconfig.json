@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
+    "lib": ["es5", "es2015.promise", "dom", "es2015", "es6"],
+    "target": "es5",
     "module": "commonjs",
-    "noImplicitAny": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"]
-    }
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "outDir": "./build",
+    "sourceMap": true
   },
-  "include": [
-    "app/**/*"
-  ]
+  "include": ["app/**/*"],
+  "exclude": ["node_modules"]
 }

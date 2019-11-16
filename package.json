@@ -1,31 +1,51 @@
 {
   "name": "dia-electron",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Cross platform clients",
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
-    "start": "npm run build && electron ./dist/main.js",
-    "check-dependencies": "ncu",
-    "update-dependencies": "ncu -u"
+  "license": "Apache License 2.0",
+  "readmeFilename": "README.md",
+  "author": {
+    "name": "munew.io",
+    "email": "munewio@gmail.com"
   },
-  "repository": "https://github.com/munew/dia-electron.git",
-  "keywords": [
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/munew/dia-electron.git"
+  },
+  "bugs": {
+    "url": "https://github.com/munew/dia-electron.git/issues"
+  },
+  "tags": [
     "Electron",
     "Munew",
     "DIA"
   ],
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "debug": "^4.1.1",
+    "electron": "^7.0.0",
+    "electron-log": "^3.0.8",
+    "express": "^4.17.1",
+    "mongodb": "^3.3.3",
+    "react": "^16.11.0",
+    "serve-favicon": "^2.5.0",
+    "server-destroy": "^1.0.1",
+    "sqlite3": "^4.1.0"
+  },
   "devDependencies": {
-    "electron": "^7.1.1",
-    "npm-check-updates": "^3.2.1",
-    "tslint": "^5.20.1",
-    "typescript": "^3.7.2"
+    "copyfiles": "^2.1.1",
+    "create-react-app": "^3.2.0",
+    "electron-builder": "^21.2.0",
+    "ndb": "^1.1.5",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.6.4"
   },
-  "author": "munewio@gmail.com",
-  "license": "Apache License 2.0",
-  "bugs": {
-    "url": "https://github.com/munew/dia-electron/issues"
-  },
-  "homepage": "https://github.com/munew/dia-electron#readme"
+  "scripts": {
+    "start": "npm run build && electron build/main.js",
+    "build": "rimraf build && tsc && cp -rf app/engine-ui build/engine-ui",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "check-dependencies": "ncu",
+    "update-dependencies": "ncu -u"
+  }
 }

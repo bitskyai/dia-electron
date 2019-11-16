@@ -1,9 +1,10 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
+const startServer = require('./engine-ui/src/server').startServer;
 
 let mainWindow: Electron.BrowserWindow;
 
-function createWindow() {
+async function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 600,
@@ -13,8 +14,12 @@ function createWindow() {
     width: 800,
   });
 
+  await startServer();
+  console.log('Successful start server');
+  mainWindow.loadURL('http://localhost:9099');
+
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, "../index.html"));
+  // mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
