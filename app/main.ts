@@ -1,21 +1,25 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 const startServer = require('./engine-ui/src/server').startServer;
+const startSOIServer = require('./soi/src/server');
 
 let mainWindow: Electron.BrowserWindow;
 
 async function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    height: 600,
+    minWidth: 800,
+    minHeight: 400,
+    height: 768,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
-    width: 800,
+    width: 1024,
   });
 
+  // start 
   await startServer();
-  console.log('Successful start server');
+  await startSOIServer();
   mainWindow.loadURL('http://localhost:9099');
 
   // and load the index.html of the app.

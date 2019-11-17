@@ -37,7 +37,7 @@
   },
   "scripts": {
     "start": "npm run build && electron build/main.js",
-    "build": "rimraf build && tsc && cp -rf app/engine-ui build/engine-ui",
+    "build": "rimraf build && tsc && cp -rf app/engine-ui build/engine-ui && cp -rf app/soi build/soi",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "check-dependencies": "ncu",
     "update-dependencies": "ncu -u",
