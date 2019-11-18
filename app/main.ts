@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
-const startServer = require('./engine-ui/src/server').startServer;
+const log = require('electron-log');
 const startSOIServer = require('./soi/src/server');
 
 let mainWindow: Electron.BrowserWindow;
@@ -17,8 +17,19 @@ async function createWindow() {
     width: 1024,
   });
 
+  //Default configuration for dia-engine
+  let diaEngineConfig = {
+    TYPEORM_CONNECTION: "sqlite",
+    TYPEORM_DATABASE: path.join(app.getPath('userData'), 'dia-engine.sql'),
+    LOG_FILES_PATH: path.join(app.getPath('userData'), './log/dia-engine')
+  }
+
+  log.info(diaEngineConfig);
+  const {overwriteConfig} = require('./engine-ui/src/config');
+  overwriteConfig(diaEngineConfig);
   // start 
-  await startServer();
+  const startServer = require('./engine-ui/src/server').startServer;
+  await startServer(diaEngineConfig);
   await startSOIServer();
   mainWindow.loadURL('http://localhost:9099');
 

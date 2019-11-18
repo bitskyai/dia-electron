@@ -65,6 +65,7 @@ typings/
 dist
 build
 soi
+release
 
 app/engine-ui
 
