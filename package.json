@@ -135,7 +135,7 @@
   },
   "scripts": {
     "start": "npm run build && electron build/main.js",
-    "build": "rimraf build && tsc && cp -rf app/engine-ui build/engine-ui && cp -rf app/soi build/soi",
+    "build": "rimraf build && tsc && cp -rf app/engine-ui build/engine-ui && cp -rf app/soi build/soi && cp ./app/soi.html build/",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "package": "yarn build && electron-builder build --publish never",
     "package-all": "yarn build && electron-builder build -mwl",

@@ -33,6 +33,9 @@ async function createWindow() {
   await startSOIServer();
   mainWindow.loadURL('http://localhost:9099');
 
+
+  // window.open('./soi.html', '_blank', 'nodeIntegration=no')
+
   // and load the index.html of the app.
   // mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
