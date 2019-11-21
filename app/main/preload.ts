@@ -1,7 +1,7 @@
 const { BrowserWindow } = require("electron").remote;
 import * as path from "path";
 
-function waitDefaultSOIMenu(callback) {
+function waitDefaultSOIMenu(callback:any) {
   const btn = document.querySelector("#munew_default_soi_menu");
   if (btn) {
     callback(btn);
@@ -25,12 +25,12 @@ window.addEventListener("DOMContentLoaded", () => {
     replaceText(`${type}-version`, (process.versions as any)[type]);
   }
 
-  waitDefaultSOIMenu(btn => {
-    btn.addEventListener("click", event => {
+  waitDefaultSOIMenu((btn:any) => {
+    btn.addEventListener("click", (event:any) => {
       event.preventDefault();
       event.stopPropagation();
-      const modalPath = path.join("file://", __dirname, "./soi.html");
-      let win = new BrowserWindow({ width: 400, height: 320 });
+      const modalPath = path.join("file://", __dirname, "../../soi.html");
+      let win:any= new BrowserWindow({ width: 400, height: 320 });
 
       win.on("close", () => {
         win = null;

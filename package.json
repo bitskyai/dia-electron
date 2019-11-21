@@ -21,57 +21,11 @@
     "Munew",
     "DIA"
   ],
-  "build": {
-    "productName": "Munew",
-    "appId": "org.munew",
-    "files": [
-      "node_modules/",
-      "build/",
-      "package.json"
-    ],
-    "dmg": {
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
-    },
-    "win": {
-      "target": [
-        "nsis",
-        "msi"
-      ]
-    },
-    "linux": {
-      "target": [
-        "deb",
-        "rpm",
-        "snap",
-        "AppImage"
-      ],
-      "category": "Development"
-    },
-    "directories": {
-      "buildResources": "resources",
-      "output": "release"
-    },
-    "publish": {
-      "provider": "github",
-      "owner": "munew",
-      "repo": "dia",
-      "private": false
-    }
+  "config": {
+    "forge": "./forge.config.js"
   },
-  "main": "./build/main.js",
+  "main": "./build/app/main/main.js",
   "dependencies": {
-    "agendash": "^1.0.0",
     "ajv": "^6.10.1",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
@@ -108,25 +62,46 @@
     "electron-debug": "^2.1.0",
     "electron-updater": "^4.0.6",
     "history": "^4.9.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
     "react-hot-loader": "^4.8.2",
     "react-redux": "^7.1.0",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "source-map-support": "^0.5.11"
+    "source-map-support": "^0.5.11",
+    "monaco-editor": "^0.18.1",
+    "monaco-loader": "1.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@electron-forge/cli": "^6.0.0-beta.45",
+    "@electron-forge/maker-deb": "^6.0.0-beta.45",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.45",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.45",
+    "@electron-forge/maker-zip": "^6.0.0-beta.45",
+    "@electron-forge/publisher-github": "^6.0.0-beta.45",
+    "@types/vfile-message": "^2.0.0",
+    "@types/log-symbols": "^3.0.0",
+    "@types/node": "^12.11.7",
     "copyfiles": "^2.1.1",
     "electron": "^7.0.0",
-    "electron-builder": "^21.2.0",
     "electron-devtools-installer": "^2.2.4",
     "husky": "^3.0.9",
     "ndb": "^1.1.5",
+    "npm-run-all": "^4.1.5",
+    "parcel-bundler": "^1.12.4",
     "rimraf": "^3.0.0",
-    "typescript": "^3.6.4"
+    "standard": "^14.3.1",
+    "stylelint": "^11.1.1",
+    "stylelint-config-standard": "^19.0.0",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.0",
+    "tslint-microsoft-contrib": "^6.2.0",
+    "tslint-react": "^4.1.0",
+    "typescript": "^3.6.4",
+    "log-symbols": "^3.0.0"
   },
   "devEngines": {
     "node": ">=7.x",
@@ -134,16 +109,20 @@
     "yarn": ">=0.21.3"
   },
   "scripts": {
-    "start": "npm run build && electron build/main.js",
-    "build": "rimraf build && tsc && cp -rf app/engine-ui build/engine-ui && cp -rf app/soi build/soi && cp ./app/soi.html build/",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
-    "package": "yarn build && electron-builder build --publish never",
-    "package-all": "yarn build && electron-builder build -mwl",
-    "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
-    "package-linux": "yarn build && electron-builder build --linux",
-    "package-win": "yarn build && electron-builder build --win --x64",
+    "less": "node ./tools/lessc.js",
+    "lint:style": "stylelint ./app/less/*.less --fix",
+    "lint:ts": "tslint -c tslint.json -p tsconfig.json -e \"node_modules/**/*.ts\" --fix",
+    "lint:tests": "tslint ./tests/**/*.ts{,x} -c tslint.json --fix",
+    "lint": "npm-run-all lint:*",
+    "make": "electron-forge make",
+    "package": "electron-forge package",
+    "parcel:build": "node ./tools/parcel-build.js",
+    "parcel:watch": "node ./tools/parcel-watch.js",
+    "publish": "electron-forge publish",
+    "start": "rimraf ./build && npm run copy-engine-soi && npm run tsc && electron-forge start",
+    "copy-engine-soi": "mkdir -p build/app/ && cp -rf app/engine-ui build/app/engine-ui && cp -rf app/soi build/app/soi",
+    "tsc": "node ./tools/tsc.js",
     "check-dependencies": "ncu",
-    "update-dependencies": "ncu -u",
-    "postinstall": "install-app-deps"
+    "update-dependencies": "ncu -u"
   }
 }

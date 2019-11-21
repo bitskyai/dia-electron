@@ -1,9 +1,9 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 const log = require('electron-log');
-const startSOIServer = require('./soi/src/server');
+const startSOIServer = require('../soi/src/server');
 
-let mainWindow: Electron.BrowserWindow;
+let mainWindow: Electron.BrowserWindow|null;
 
 async function createWindow() {
   // Create the browser window.
@@ -25,10 +25,10 @@ async function createWindow() {
   }
 
   log.info(diaEngineConfig);
-  const {overwriteConfig} = require('./engine-ui/src/config');
+  const {overwriteConfig} = require('../engine-ui/src/config');
   overwriteConfig(diaEngineConfig);
   // start 
-  const startServer = require('./engine-ui/src/server').startServer;
+  const startServer = require('../engine-ui/src/server').startServer;
   await startServer(diaEngineConfig);
   await startSOIServer();
   mainWindow.loadURL('http://localhost:9099');

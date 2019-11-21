@@ -1,14 +1,43 @@
 {
   "compilerOptions": {
-    "lib": ["es5", "es2015.promise", "dom", "es2015", "es6"],
-    "target": "es5",
+    "outDir": "./build/app",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noImplicitThis": true,
+    "noUnusedParameters": true,
+    "importHelpers": true,
+    "noEmitHelpers": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "outDir": "./build",
-    "sourceMap": true
+    "pretty": true,
+    "target": "es2017",
+    "jsx": "react",
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "baseUrl": "."
   },
-  "include": ["app/**/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "app/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "formatCodeOptions": {
+    "indentSize": 2,
+    "tabSize": 2
+  }
 }
