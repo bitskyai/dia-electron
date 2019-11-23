@@ -86,14 +86,16 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.45",
     "@electron-forge/maker-zip": "^6.0.0-beta.45",
     "@electron-forge/publisher-github": "^6.0.0-beta.45",
-    "@types/vfile-message": "^2.0.0",
+    "@types/fs-extra": "^8.0.1",
     "@types/log-symbols": "^3.0.0",
     "@types/node": "^12.11.7",
-    "@types/fs-extra": "^8.0.1",
+    "@types/vfile-message": "^2.0.0",
+    "asar": "^2.0.1",
     "copyfiles": "^2.1.1",
     "electron": "^7.0.0",
     "electron-devtools-installer": "^2.2.4",
     "husky": "^3.0.9",
+    "log-symbols": "^3.0.0",
     "ndb": "^1.1.5",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.4",
@@ -105,8 +107,7 @@
     "tslint": "^5.20.0",
     "tslint-microsoft-contrib": "^6.2.0",
     "tslint-react": "^4.1.0",
-    "typescript": "^3.6.4",
-    "log-symbols": "^3.0.0"
+    "typescript": "^3.6.4"
   },
   "devEngines": {
     "node": ">=7.x",

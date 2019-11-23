@@ -15,7 +15,7 @@ module.exports = {
     name: 'Munew DIA',
     executableName: 'munew-dia',
     asar: true,
-    icon: path.resolve(__dirname, 'assets', 'icons', 'munew'),
+    // icon: path.resolve(__dirname, 'assets', 'icons', 'munew'),
     // TODO: FIXME?
     // ignore: [
     //   /^\/\.vscode\//,
@@ -31,9 +31,9 @@ module.exports = {
       CompanyName: 'Munew',
       OriginalFilename: 'Munew DIA',
     },
-    osxSign: {
-      identity: 'Developer ID Application: Munew (LT94ZKYDCJ)'
-    }
+    // osxSign: {
+    //   identity: 'Developer ID Application: Munew (LT94ZKYDCJ)'
+    // }
   },
   makers: [
     {

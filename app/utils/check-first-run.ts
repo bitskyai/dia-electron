@@ -1,11 +1,14 @@
 import { app } from 'electron';
 import * as fs from 'fs-extra';
-import { FIRST_TIME_RUN_FILE } from '../shared-constants';
+import * as logger from 'electron-log';
 import * as path from 'path';
+import { FIRST_TIME_RUN_FILE } from '../shared-constants';
 
 const getConfigPath = () => {
   const userDataPath = app.getPath('userData');
-  return path.join(userDataPath, 'FirstRun', FIRST_TIME_RUN_FILE);
+  const firstRunFilePath = path.join(userDataPath, 'FirstRun', FIRST_TIME_RUN_FILE);
+  logger.info("utils->check-first-run->firstRunFilePath: ", firstRunFilePath);
+  return firstRunFilePath;
 };
 
 /**
@@ -23,6 +26,7 @@ export function isFirstRun(): boolean {
     }
 
     fs.outputFileSync(configPath, '');
+    logger.info("utils->check-first-run->isFirstRun, writ file to path: ", configPath);
   } catch (error) {
     console.warn(`First run: Unable to write firstRun file`, error);
   }
