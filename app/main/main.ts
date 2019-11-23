@@ -1,77 +1,105 @@
-import { app, BrowserWindow } from "electron";
+import { app } from "electron";
 import * as path from "path";
-const log = require('electron-log');
+// const log = require('electron-log');
 const startSOIServer = require('../soi/src/server');
+import { isDevMode } from '../utils/devmode';
+import { setupAboutPanel } from '../utils/set-about-panel';
+import { setupDevTools } from './devtools';
+import { setupDialogs } from './dialogs';
+import { onFirstRunMaybe } from './first-run';
+import { listenForProtocolHandler, setupProtocolHandler } from './protocol';
+import { shouldQuit } from './squirrel';
+import { setupUpdates } from './update';
+import { getOrCreateMainWindow } from './windows';
 
-let mainWindow: Electron.BrowserWindow|null;
-
-async function createWindow() {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    minWidth: 800,
-    minHeight: 400,
-    height: 768,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-    },
-    width: 1024,
-  });
+/**
+ * Handle the app's "ready" event. This is essentially
+ * the method that takes care of booting the application.
+ */
+export async function onReady() {
+  await onFirstRunMaybe();
+  if (!isDevMode()) process.env.NODE_ENV = 'production';
 
   //Default configuration for dia-engine
-  let diaEngineConfig = {
-    TYPEORM_CONNECTION: "sqlite",
-    TYPEORM_DATABASE: path.join(app.getPath('userData'), 'dia-engine.sql'),
-    LOG_FILES_PATH: path.join(app.getPath('userData'), './log/dia-engine')
-  }
+  // let diaEngineConfig = {
+  //   TYPEORM_CONNECTION: "sqlite",
+  //   TYPEORM_DATABASE: path.join(app.getPath('userData'), 'dia-engine.sql'),
+  //   LOG_FILES_PATH: path.join(app.getPath('userData'), './log/dia-engine')
+  // }
 
-  log.info(diaEngineConfig);
-  const {overwriteConfig} = require('../engine-ui/src/config');
-  overwriteConfig(diaEngineConfig);
+  // log.info(diaEngineConfig);
+  // const {overwriteConfig} = require('../engine-ui/src/config');
+  // overwriteConfig(diaEngineConfig);
+
+  // Default configuration for **dia-engine**
+  // TODO: move to preference
+  process.env.TYPEORM_CONNECTION="sqlite";
+  process.env.TYPEORM_DATABASE=path.join(app.getPath('userData'), 'dia-engine.sql');
+  process.env.LOG_FILES_PATH=path.join(app.getPath('userData'), './log/dia-engine');
+  
   // start 
   const startServer = require('../engine-ui/src/server').startServer;
-  await startServer(diaEngineConfig);
+  await startServer();
   await startSOIServer();
+  let mainWindow = getOrCreateMainWindow();
   mainWindow.loadURL('http://localhost:9099');
+  
+  setupAboutPanel();
 
+  const { setupMenu } = await import('./menu');
 
-  // window.open('./soi.html', '_blank', 'nodeIntegration=no')
-
-  // and load the index.html of the app.
-  // mainWindow.loadFile(path.join(__dirname, "../index.html"));
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
-  // Emitted when the window is closed.
-  mainWindow.on("closed", () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
+  setupMenu();
+  setupProtocolHandler();
+  // Auto update from github release
+  setupUpdates();
+  setupDialogs();
+  setupDevTools();
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+/**
+ * Handle the "before-quit" event
+ *
+ * @export
+ */
+export function onBeforeQuit() {
+  (global as any).isQuitting = true;
+}
 
-// Quit when all windows are closed.
-app.on("window-all-closed", () => {
+/**
+ * All windows have been closed, quit on anything but
+ * macOS.
+ */
+export function onWindowsAllClosed() {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
-});
-
-app.on("activate", () => {
-  // On OS X it"s common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
-  }
-});
+}
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+export function main(){
+  // Handle creating/removing shortcuts on Windows when
+  // installing/uninstalling.
+  if (shouldQuit()) {
+    app.quit();
+    return;
+  }
+
+  // Set the app's name
+  app.name = 'Munew DIA';
+
+  // Ensure that there's only ever one Fiddle running
+  listenForProtocolHandler();
+
+  // Launch
+  app.on('ready', onReady);
+  app.on('before-quit', onBeforeQuit);
+  app.on('window-all-closed', onWindowsAllClosed);
+  app.on('activate', getOrCreateMainWindow);
+
+}
+
+main();
