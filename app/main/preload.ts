@@ -29,14 +29,27 @@ window.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (event:any) => {
       event.preventDefault();
       event.stopPropagation();
-      const modalPath = path.join("file://", __dirname, "../../soi.html");
-      let win:any= new BrowserWindow({ width: 400, height: 320 });
+      const modalPath = path.join("./build/soi.html");
+      const win = new BrowserWindow({
+        width: 1200,
+        height: 900,
+        minHeight: 600,
+        minWidth: 600,
+        // titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
+        acceptFirstMouse: true,
+        // backgroundColor: '#1d2427',
+        webPreferences: {
+          webviewTag: false,
+          nodeIntegration: true
+        }
+      });
 
       win.on("close", () => {
-        win = null;
+        // win = null;
       });
-      win.loadURL(modalPath);
+      win.loadFile(modalPath);
       win.show();
+      win.webContents.openDevTools();
     });
   });
 });

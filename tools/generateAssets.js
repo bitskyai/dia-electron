@@ -1,7 +1,4 @@
-/* tslint:disable */
-
-const { compileParcel } = require('./parcel-build')
-
+const { compileParcel } = require("./parcel");
 module.exports = async () => {
-  await Promise.all([compileParcel()])
-}
+  await Promise.all([compileParcel()]);
+};

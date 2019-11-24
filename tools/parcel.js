@@ -6,22 +6,26 @@ const path = require('path')
 async function compileParcel (options = {}) {
   const entryFiles = [
     path.join(__dirname, '../app/soi.html')
-    // path.join(__dirname, '../app/main/main.ts'),
-    // path.join(__dirname, '../app/main/preload.ts'),
-    // path.join(__dirname, '../app/main/renderer.ts')
   ]
+
+  let watch = false;
+  if (process.env.WATCH) {
+    watch = true;
+  }
+
+  console.log('watch: ', watch);
 
   const bundlerOptions = {
     outDir: './build', // The out directory to put the build files in, defaults to dist
     outFile: undefined, // The name of the outputFile
-    publicUrl: '../', // The url to server on, defaults to dist
-    watch: false, // whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
+    publicUrl: './', // The url to server on, defaults to dist
+    watch: watch, // whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
     cache: false, // Enabled or disables caching, defaults to true
     cacheDir: '.cache', // The directory cache gets put in, defaults to .cache
     contentHash: false, // Disable content hash from being included on the filename
     minify: false, // Minify files, enabled if process.env.NODE_ENV === 'production'
     scopeHoist: false, // turn on experimental scope hoisting/tree shaking flag, for smaller production bundles
-    target: 'node', // browser/node/electron, defaults to browser
+    target: 'electron', // browser/node/electron, defaults to browser
     // https: { // Define a custom {key, cert} pair, use true to generate one or false to use http
     //   cert: './ssl/c.crt', // path to custom certificate
     //   key: './ssl/k.key' // path to custom key
