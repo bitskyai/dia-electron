@@ -1,7 +1,9 @@
 const { BrowserWindow } = require("electron").remote;
 import * as path from "path";
 
-function waitDefaultSOIMenu(callback:any) {
+export let soiEditorWindow: Electron.BrowserWindow | null = null;
+
+function waitDefaultSOIMenu(callback: any) {
   const btn = document.querySelector("#munew_default_soi_menu");
   if (btn) {
     callback(btn);
@@ -25,31 +27,35 @@ window.addEventListener("DOMContentLoaded", () => {
     replaceText(`${type}-version`, (process.versions as any)[type]);
   }
 
-  waitDefaultSOIMenu((btn:any) => {
-    btn.addEventListener("click", (event:any) => {
+  waitDefaultSOIMenu((btn: any) => {
+    btn.addEventListener("click", (event: any) => {
       event.preventDefault();
       event.stopPropagation();
-      const modalPath = path.join("./build/soi.html");
-      const win = new BrowserWindow({
-        width: 1200,
-        height: 900,
-        minHeight: 600,
-        minWidth: 600,
-        // titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
-        acceptFirstMouse: true,
-        // backgroundColor: '#1d2427',
-        webPreferences: {
-          webviewTag: false,
-          nodeIntegration: true
-        }
-      });
+      if (soiEditorWindow) {
+        soiEditorWindow.focus();
+      } else {
+        const modalPath = path.join("./build/soi.html");
+        soiEditorWindow = new BrowserWindow({
+          width: 1200,
+          height: 900,
+          minHeight: 600,
+          minWidth: 600,
+          // titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
+          acceptFirstMouse: true,
+          // backgroundColor: '#1d2427',
+          webPreferences: {
+            webviewTag: false,
+            nodeIntegration: true
+          }
+        });
 
-      win.on("close", () => {
-        // win = null;
-      });
-      win.loadFile(modalPath);
-      win.show();
-      win.webContents.openDevTools();
+        soiEditorWindow.on("close", () => {
+          soiEditorWindow = null;
+        });
+        soiEditorWindow.loadFile(modalPath);
+        soiEditorWindow.show();
+        soiEditorWindow.webContents.openDevTools();
+      }
     });
   });
 });
