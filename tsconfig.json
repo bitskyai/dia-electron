@@ -7,11 +7,8 @@
     "removeComments": false,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "lib": [
-      "es2017",
-      "dom"
-    ],
-    "noImplicitAny": true,
+    "lib": ["es2017", "dom"],
+    "noImplicitAny": false,
     "noImplicitReturns": true,
     "suppressImplicitAnyIndexErrors": true,
     "strictNullChecks": true,
@@ -25,17 +22,11 @@
     "pretty": true,
     "target": "es2017",
     "jsx": "react",
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./node_modules/@types"],
     "baseUrl": "."
   },
-  "include": [
-    "app/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": ["app/**/*"],
+  "exclude": ["node_modules"],
   "formatCodeOptions": {
     "indentSize": 2,
     "tabSize": 2
