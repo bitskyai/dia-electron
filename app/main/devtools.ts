@@ -1,4 +1,4 @@
-import { isDevMode } from '../utils/devmode';
+import { isDevMode } from "../utils/devmode";
 
 /**
  * Installs developer tools if we're in dev mode.
@@ -12,8 +12,9 @@ export async function setupDevTools(): Promise<void> {
   const {
     default: installExtension,
     REACT_DEVELOPER_TOOLS,
-    REACT_PERF
-  } = require('electron-devtools-installer');
+    REACT_PERF,
+    REDUX_DEVTOOLS
+  } = require("electron-devtools-installer");
 
   try {
     const react = await installExtension(REACT_DEVELOPER_TOOLS);
@@ -21,6 +22,9 @@ export async function setupDevTools(): Promise<void> {
 
     const perf = await installExtension(REACT_PERF);
     console.log(`installDevTools: Installed ${perf}`);
+
+    const redux = await installExtension(REDUX_DEVTOOLS);
+    console.log(`installDevTools: Installed ${redux}`);
   } catch (error) {
     console.warn(`installDevTools: Error occured:`, error);
   }
