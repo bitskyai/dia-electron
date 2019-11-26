@@ -7,6 +7,7 @@ declare global {
   interface Window {
     MunewDIA: {
       app: AppType;
+      editors: Record<string, MonacoType.editor.IStandaloneCodeEditor | null>;
     };
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: Function;
   }

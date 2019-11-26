@@ -9,7 +9,7 @@
 
 import React from "react";
 import classNames from "classnames";
-import { Button, Icon } from 'antd';
+import { Button, Icon } from "antd";
 import {
   Corner,
   createBalancedTreeFromLeaves,
@@ -28,36 +28,41 @@ import {
 
 import Explorer from "../../components/Explorer";
 import TouchBarManager from "../../components/TouchBarManager";
-import FilesEditor from '../../components/FilesEditor';
+import FilesEditor from "../../components/FilesEditor";
+import { loadMonaco } from '../../utils';
 
 let windowCount = 3;
 
-// const additionalControls = React.Children.toArray([<CloseAdditionalControlsButton />]);
-
-export interface ExampleAppState {
-  currentNode: MosaicNode<number> | null;
+export interface AppState {
+  currentNode: MosaicNode<number | string> | null;
 }
 
-export default class App extends React.PureComponent<{}, ExampleAppState> {
-  state: ExampleAppState = {
+export default class App extends React.PureComponent<{}, AppState> {
+  state: AppState = {
     currentNode: {
       direction: "row",
-      first: 1,
+      first: "exporer",
       second: {
         direction: "column",
-        first: 2,
-        second: 3
+        first: "fileEditor",
+        second: "console",
+        splitPercentage: 80
       },
-      splitPercentage: 40
+      splitPercentage: 20
     }
   };
+
+  constructor(props) {
+    super(props);
+    loadMonaco();
+  }
 
   render() {
     return (
       // <React.StrictMode>
-      <div className="react-mosaic-example-app">
+      <div className="munew-soi-app">
         {this.renderNavBar()}
-        <Mosaic<number>
+        <Mosaic<number | string>
           renderTile={this.getMosaicWindow}
           zeroStateView={<MosaicZeroState createNode={this.createNode} />}
           value={this.state.currentNode}
@@ -81,13 +86,13 @@ export default class App extends React.PureComponent<{}, ExampleAppState> {
     let title: string = "",
       className: string = "",
       content: React.ReactElement<any> = <div />;
-    if (count === 1) {
+    if (count === "exporer") {
       title = "Explorer";
       content = <Explorer />;
-    } else if (count === 2) {
-      className = "no-toolbar";
-      content = <FilesEditor/>;
-    } else if (count === 3) {
+    } else if (count === "fileEditor") {
+      className = "mosaic-window-no-toolbar";
+      content = <FilesEditor />;
+    } else if (count === "console") {
       title = "Console";
       content = <div>Console</div>;
     }
@@ -99,7 +104,7 @@ export default class App extends React.PureComponent<{}, ExampleAppState> {
         title={title}
         createNode={this.createNode}
         path={path}
-        toolbarControls={()=>{
+        toolbarControls={() => {
           return <Icon type="close" />;
         }}
         // renderToolbar={() => {

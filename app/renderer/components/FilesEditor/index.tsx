@@ -1,6 +1,15 @@
 import React from "react";
-import { Tabs } from "antd";
+import { Tabs, Row, Col } from "antd";
+import * as MonacoType from "monaco-editor";
+import { Editor } from "../Editor";
 const { TabPane } = Tabs;
+
+const defaultMonacoOptions: MonacoType.editor.IEditorOptions = {
+  minimap: {
+    enabled: false
+  },
+  wordWrap: "on"
+};
 
 class FilesEditor extends React.Component {
   newTabIndex: number;
@@ -53,6 +62,20 @@ class FilesEditor extends React.Component {
   };
 
   render() {
+    const monaco = window.MunewDIA.app.monaco;
+    // return (
+    //   <div style={{ height: '100%'}}>
+    //     <div style={{ height: "20px" }}>File Names</div>
+    //     <div style={{ height: "100%" }}>
+    //       <Editor
+    //         id={"1"}
+    //         monaco={monaco}
+    //         appState={{}}
+    //         monacoOptions={defaultMonacoOptions}
+    //       />
+    //     </div>
+    //   </div>
+    // );
     return (
       <Tabs
         hideAdd
@@ -60,11 +83,23 @@ class FilesEditor extends React.Component {
         activeKey={this.state.activeKey}
         type="editable-card"
         onEdit={this.onEdit}
-        size={'small'}
+        style={{
+          height: "100%"
+        }}
       >
-        {this.state.panes.map(pane => (
-          <TabPane tab={pane.title} key={pane.key}>
-            {pane.content}
+        {this.state.panes.map((pane, index) => (
+          <TabPane style={{height:'100%'}} tab={pane.title} key={pane.key}>
+            <Editor
+                  id={index}
+                  monaco={monaco}
+                  appState={{}}
+                  monacoOptions={defaultMonacoOptions}
+                />
+            {/* <Row style={{height: '100%'}}>
+              <Col style={{ minHeight: "100vh", maxheight: "100vh" }}>
+                
+              </Col>
+            </Row> */}
           </TabPane>
         ))}
       </Tabs>
