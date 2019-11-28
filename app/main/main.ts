@@ -1,8 +1,5 @@
 import { app } from "electron";
 import * as path from "path";
-// const log = require('electron-log');
-import * as logger from "electron-log";
-const startSOIServer = require("../soi/src/server");
 import { isDevMode } from "../utils/devmode";
 import { setupAboutPanel } from "../utils/set-about-panel";
 import { setupDevTools } from "./devtools";
@@ -12,6 +9,8 @@ import { listenForProtocolHandler, setupProtocolHandler } from "./protocol";
 import { shouldQuit } from "./squirrel";
 import { setupUpdates } from "./update";
 import { getOrCreateMainWindow } from "./windows";
+import logger from "../utils/logger";
+import SOIManager from '../utils/soi-manager';
 
 /**
  * Handle the app's "ready" event. This is essentially
@@ -57,8 +56,12 @@ export async function onReady() {
     const startServer = require("../engine-ui/src/server").startServer;
     await startServer();
     logger.info("main->main.js->onReady, dia-engine successfully started.");
-    await startSOIServer();
-    logger.info("main->main.js->onReady, soi server successfully started.");
+    // process.env.NODE_PATH=path.join(__dirname, '../../../../');
+    try {
+      SOIManager.runSOI();
+    } catch (err) {
+      logger.error("start soi fail. err: ", err);
+    }
     let mainWindow = getOrCreateMainWindow();
     mainWindow.loadURL("http://localhost:9099");
 
@@ -77,7 +80,7 @@ export async function onReady() {
     setupDialogs();
     setupDevTools();
   } catch (err) {
-    logger.error('Error in onReady, error: ', err);
+    logger.error("Error in onReady, error: ", err);
   }
 }
 

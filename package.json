@@ -134,7 +134,7 @@
     "lint:tests": "tslint ./tests/**/*.ts{,x} -c tslint.json --fix",
     "lint": "npm-run-all lint:*",
     "make": "electron-forge make",
-    "package": "electron-forge package",
+    "package": "rimraf ./out && rimraf ./build && npm run copy-engine-soi && npm run tsc && electron-forge package",
     "parcel:build": "node ./tools/parcel.js",
     "parcel:watch": "cross-env WATCH=true node ./tools/parcel.js",
     "publish": "electron-forge publish",

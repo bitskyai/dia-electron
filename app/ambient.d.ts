@@ -1,7 +1,7 @@
 import * as MonacoType from 'monaco-editor';
 
 // Type-only-import
-import { Root as AppType } from './renderer/app';
+import { Root as AppType } from './soi-editor/app';
 
 declare global {
   interface Window {

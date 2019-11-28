@@ -1,8 +1,8 @@
 import { app } from 'electron';
 import * as fs from 'fs-extra';
-import * as logger from 'electron-log';
 import * as path from 'path';
 import { FIRST_TIME_RUN_FILE } from '../shared-constants';
+import logger from './logger';
 
 const getConfigPath = () => {
   const userDataPath = app.getPath('userData');

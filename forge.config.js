@@ -17,10 +17,10 @@ module.exports = {
     asar: true,
     // icon: path.resolve(__dirname, 'assets', 'icons', 'munew'),
     // TODO: FIXME?
-    // ignore: [
-    //   /^\/\.vscode\//,
-    //   /^\/tools\//
-    // ],
+    ignore: [
+      /^\/\.vscode\//,
+      /^\/tools\//
+    ],
     appBundleId: 'com.munew.dia',
     appCategoryType: 'public.app-category.developer-tools',
     protocols: [{
