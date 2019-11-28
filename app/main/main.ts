@@ -22,17 +22,6 @@ export async function onReady() {
     await onFirstRunMaybe();
     if (!isDevMode()) process.env.NODE_ENV = "production";
 
-    //Default configuration for dia-engine
-    // let diaEngineConfig = {
-    //   TYPEORM_CONNECTION: "sqlite",
-    //   TYPEORM_DATABASE: path.join(app.getPath('userData'), 'dia-engine.sql'),
-    //   LOG_FILES_PATH: path.join(app.getPath('userData'), './log/dia-engine')
-    // }
-
-    // log.info(diaEngineConfig);
-    // const {overwriteConfig} = require('../engine-ui/src/config');
-    // overwriteConfig(diaEngineConfig);
-
     // Default configuration for **dia-engine**
     // TODO: move to preference
     process.env.TYPEORM_CONNECTION = "sqlite";
