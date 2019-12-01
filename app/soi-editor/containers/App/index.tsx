@@ -16,9 +16,9 @@ import {
   MosaicZeroState
 } from "react-mosaic-component";
 
-import Explorer from "../../components/Explorer";
-import TouchBarManager from "../../components/TouchBarManager";
-import FilesEditor from "../../components/FilesEditor";
+import Explorer from "../Explorer";
+import TouchBarManager from "../TouchBarManager";
+import FilesEditor from "../FilesEditor";
 import { loadMonaco } from "../../utils";
 
 import { getSOIFolderStructue } from "./actions";
