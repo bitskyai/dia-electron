@@ -1,6 +1,7 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import logger from "./logger";
+import { DirStructure, DirType } from "../interfaces";
 
 /**
  * Sync Copy File
@@ -77,10 +78,12 @@ export function copyFolderRecursiveSync(
           copyFileSync(curSource, targetFolder);
         }
       });
-    }else{
+    } else {
       // if not a directory, then it is a file, so direct copy file
       copyFileSync(source, target);
-      logger.debug('*source* is a file, not a directory, so directly copy source file to target');
+      logger.debug(
+        "*source* is a file, not a directory, so directly copy source file to target"
+      );
     }
 
     logger.functionEnd("copyFolderRecursiveSync");
@@ -88,5 +91,71 @@ export function copyFolderRecursiveSync(
   } catch (err) {
     logger.error("copyFolderRecursiveSync error: ", err);
     return false;
+  }
+}
+
+/**
+ * Recursive read a folder and return structure like:
+ * [
+      {
+        type: 'file',
+        name: 'package.json',
+        path: 'package.json',
+      },
+      {
+        type: 'directory',
+        name: 'src',
+        path: 'src'
+        children: [
+          {
+            type: 'file',
+            name: 'app.js',
+            path: 'src/app.js'
+          }
+        ]
+      }
+    ]
+ * @param source 
+ */
+export function readFolderRecursiveSync(
+  source: string,
+  currentPath: string = "."
+) {
+  try {
+    logger.debug('source: ', source);
+    let folderData: Array<DirStructure> = [];
+    // if source is directory
+    if (fs.lstatSync(source).isDirectory()) {
+      let folderContents = fs.readdirSync(source) || [];
+      for (let i = 0; i < folderContents.length; i++) {
+        let item = folderContents[i];
+        if (fs.lstatSync(path.join(source, item)).isDirectory()) {
+          let dirInfo: DirStructure = {
+            type: DirType.directory,
+            name: item,
+            path: path.join(currentPath, item),
+            children: readFolderRecursiveSync(
+              path.join(source, item),
+              path.join(currentPath, item)
+            )
+          };
+
+          folderData.push(dirInfo);
+        } else if (fs.lstatSync(path.join(source, item)).isFile()) {
+          let fileInfo: DirStructure = {
+            type: DirType.file,
+            name: item,
+            path: path.join(currentPath, item)
+          };
+          folderData.push(fileInfo);
+        } else {
+          logger.warn(`readFolderRecursiveSync, unsupport type ${item}, skip this item`);
+        }
+      }
+    }
+    return folderData;
+  } catch (err) {
+    logger.error("readFolderRecursiveSync error: ", err);
+    throw err;
   }
 }

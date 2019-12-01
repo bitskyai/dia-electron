@@ -1,37 +1,54 @@
 import React from "react";
-import { Tree } from "antd";
-
+import { Tree, Skeleton } from "antd";
+import { useSelector } from 'react-redux';
+import { SOIFolderStructure, DirType } from "../../../interfaces";
 const { TreeNode, DirectoryTree } = Tree;
 
-class Explorer extends React.Component {
-  onSelect = (keys, event) => {
-    console.log("Trigger Select", keys, event);
+// interface Props {
+//   soiFolderStructure: SOIFolderStructure;
+//   onSelect: Function;
+// }
+
+// function Explorer(props: Props) {
+function Explorer() {
+
+  const soiFolderStructure:SOIFolderStructure = useSelector(state=> state.app.soiFolderStructure)
+
+  const onSelect = (keys, event) => {
+    // onSelect(keys);
   };
 
-  onExpand = () => {
-    console.log("Trigger Expand");
+  const onExpand = () => {
+    console.log("onExpand");
   };
-  render() {
-    return (
-      <div>
-        <DirectoryTree
-          multiple
-          defaultExpandAll
-          onSelect={this.onSelect}
-          onExpand={this.onExpand}
-        >
-          <TreeNode title="parent 0" key="0-0">
-            <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
-            <TreeNode title="leaf 0-1" key="0-0-1" isLeaf />
+
+  const generateTreeNodes = data =>
+    data.map(item => {
+      if (item.type == DirType.directory) {
+        return (
+          <TreeNode title={item.name} key={item.path}>
+            {generateTreeNodes(item.children)}
           </TreeNode>
-          <TreeNode title="parent 1" key="0-1">
-            <TreeNode title="leaf 1-0" key="0-1-0" isLeaf />
-            <TreeNode title="leaf 1-1" key="0-1-1" isLeaf />
-          </TreeNode>
-        </DirectoryTree>
-      </div>
-    );
-  }
+        );
+      }
+      return <TreeNode title={item.name} key={item.path} isLeaf />;
+    });
+
+  const generateContent = () => {
+    if (!soiFolderStructure || !soiFolderStructure.loaded) {
+      return <Skeleton active />;
+    } else {
+      return (
+        <div style={{overflow:'scroll', height:'100%'}}>
+          <DirectoryTree defaultExpandAll onSelect={onSelect} onExpand={onExpand}>
+            {generateTreeNodes(soiFolderStructure.data)}
+          </DirectoryTree>
+        </div>
+      );
+    }
+  };
+
+  return generateContent();
 }
 
 export default Explorer;
