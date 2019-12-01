@@ -21,8 +21,6 @@ import TouchBarManager from "../TouchBarManager";
 import FilesEditor from "../FilesEditor";
 import { loadMonaco } from "../../utils";
 
-import { getSOIFolderStructue } from "./actions";
-
 let windowCount = 3;
 
 export interface AppState {
@@ -47,9 +45,6 @@ class App extends React.PureComponent<{}, AppState> {
   constructor(props) {
     super(props);
     loadMonaco();
-    
-    // Initial SOI Folder Structure
-    this.props.getSOIFolderStructue();
   }
 
   render() {
@@ -75,9 +70,9 @@ class App extends React.PureComponent<{}, AppState> {
     console.log("Mosaic.onRelease():", currentNode);
   };
 
-  private onSelectFile = ()=>{
-    console.log('onselectFile ...');
-  }
+  private onSelectFile = () => {
+    console.log("onselectFile ...");
+  };
 
   private getMosaicWindow = (count, path) => {
     let title: string = "",
@@ -85,7 +80,7 @@ class App extends React.PureComponent<{}, AppState> {
       content: React.ReactElement<any> = <div />;
     if (count === "exporer") {
       title = "Explorer";
-      content = <Explorer/>;
+      content = <Explorer />;
     } else if (count === "fileEditor") {
       className = "mosaic-window-no-toolbar";
       content = <FilesEditor />;
@@ -104,18 +99,6 @@ class App extends React.PureComponent<{}, AppState> {
         toolbarControls={() => {
           return <Icon type="close" />;
         }}
-        // renderToolbar={() => {
-        //   return (
-        //     <div>
-        //       <div title={title} className="mosaic-window-title">
-        //         {title}
-        //       </div>
-        //       <div className="mosaic-window-controls">
-        //         <Icon type="close" />
-        //       </div>
-        //     </div>
-        //   );
-        // }}
       >
         {content}
       </MosaicWindow>
@@ -130,15 +113,8 @@ class App extends React.PureComponent<{}, AppState> {
 }
 
 const mapStateToProps = (state /*, ownProps*/) => {
-  console.log('state: ', state);
-  return {
-    soiFolderStructure: state.app.fololderStructure,
-    currentSelectedFileName: state.app.currentSelectedFileName,
-    openedFiles: state.app.openFiles
-  };
+  return {};
 };
 
-const mapDispatchToProps = {
-  getSOIFolderStructue
-};
+const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(App);

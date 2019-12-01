@@ -17,7 +17,7 @@ export const initialState = {
   openedFiles: []
 };
 
-const appReducer = (state = initialState, action) =>
+const explorerReducer = (state = initialState, action) =>
   produce(state, (draft: any):any => {
     console.log('action.type: ', action.type);
     switch (action.type) {
@@ -48,4 +48,4 @@ const appReducer = (state = initialState, action) =>
     }
   });
 
-export default appReducer;
+export default explorerReducer;

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Tree, Skeleton } from "antd";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { SOIFolderStructure, DirType } from "../../../interfaces";
+import { getSOIFolderStructue } from './actions';
 const { TreeNode, DirectoryTree } = Tree;
 
 // interface Props {
@@ -11,10 +12,18 @@ const { TreeNode, DirectoryTree } = Tree;
 
 // function Explorer(props: Props) {
 function Explorer() {
+  const dispatch = useDispatch();
+  
+  useEffect(()=>{
+    // second parameter is [], the effect will only run on first render
+    // Get SOI Folder Structure
+    dispatch(getSOIFolderStructue());
+  }, []);
 
-  const soiFolderStructure:SOIFolderStructure = useSelector(state=> state.app.soiFolderStructure)
+  const soiFolderStructure:SOIFolderStructure = useSelector(state=> state.explorer.soiFolderStructure)
 
   const onSelect = (keys, event) => {
+    console.log('keys: ', keys);
     // onSelect(keys);
   };
 
