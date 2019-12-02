@@ -3,16 +3,16 @@
 
 import * as MonacoType from "monaco-editor";
 import * as React from "react";
-import { getContent } from "../../utils/content";
+import * as path from "path";
+import { remote } from "electron";
+import * as fs from "fs-extra";
 import { loadMonaco } from "../../utils";
 
 export interface EditorProps {
-  appState: any;
+  path: string,
   monaco: typeof MonacoType | null;
   monacoOptions: MonacoType.editor.IEditorOptions;
-  id: string;
   options?: Partial<MonacoType.editor.IEditorConstructionOptions>;
-  editorDidMount?: (editor: MonacoType.editor.IStandaloneCodeEditor) => void;
   onChange?: (
     value: string,
     event: MonacoType.editor.IModelContentChangedEvent
@@ -28,12 +28,6 @@ export class Editor extends React.Component<EditorProps> {
 
   constructor(props: EditorProps) {
     super(props);
-
-    this.language = props.id === "html" ? "html" : "javascript";
-  }
-
-  public shouldComponentUpdate() {
-    return false;
   }
 
   public componentDidMount() {
@@ -51,18 +45,8 @@ export class Editor extends React.Component<EditorProps> {
    * @param {MonacoType.editor.IStandaloneCodeEditor} editor
    */
   public async editorDidMount(editor: MonacoType.editor.IStandaloneCodeEditor) {
-    // const { editorDidMount } = this.props;
-
     // Set the content on the editor
     await this.setContent();
-
-    // Set the editor as an available object
-    // window.MunewDIA.editors[this.props.id] = editor;
-
-    // And notify others
-    // if (editorDidMount) {
-    //   editorDidMount(editor);
-    // }
   }
 
   /**
@@ -77,9 +61,8 @@ export class Editor extends React.Component<EditorProps> {
     }
 
     if (ref) {
-      if (monaco) {
+      if (monaco&&!this.editor) {
         this.editor = monaco.editor.create(ref, {
-          readOnly: true,
           language: this.language,
           theme: "main",
           contextmenu: false,
@@ -103,7 +86,48 @@ export class Editor extends React.Component<EditorProps> {
   }
 
   public render() {
+    console.log('this.props.path: ', this.props.path);
+    if(this.editor){
+      // need to update content
+      this.setContent();
+    }
     return <div className="monaco-editor-container" ref={this.containerRef} />;
+  }
+
+  private getLanguage():string{
+    let extname = path.extname(this.props.path);
+    switch(extname.toLowerCase()){
+      case '.js':
+        return 'javascript';
+      case '.json':
+        return 'json';
+      case '.css':
+            return 'css';
+      case '.html':
+            return 'html';
+      case '.map':
+            return 'json';
+      case '.jade':
+          return 'jade';
+      default:
+        return 'text';
+    }
+      
+  }
+
+  private async getContent():Promise<string|null>{
+    try{
+      return fs.readFileSync(
+        path.join(
+          remote.app.getPath("userData"),
+          "soi",
+          this.props.path
+        ),
+        "utf8"
+      );
+    }catch(err){
+      throw err;
+    }
   }
 
   /**
@@ -113,14 +137,14 @@ export class Editor extends React.Component<EditorProps> {
    * @memberof Editor
    */
   private async setContent() {
-    let { appState, id, monaco } = this.props;
+    let { monaco } = this.props;
 
     if (!monaco) {
       monaco = await loadMonaco();
     }
 
-    const value = await getContent();
-    const model = monaco.editor.createModel(value, this.language);
+    const value = await this.getContent();
+    const model = monaco.editor.createModel(value||'', this.getLanguage());
     model.updateOptions({
       tabSize: 2
     });

@@ -2,15 +2,9 @@ import React, { useEffect } from "react";
 import { Tree, Skeleton } from "antd";
 import { useSelector, useDispatch } from 'react-redux';
 import { SOIFolderStructure, DirType } from "../../../interfaces";
-import { getSOIFolderStructue } from './actions';
+import { getSOIFolderStructue, updateCurrentSelectedFile } from './actions';
 const { TreeNode, DirectoryTree } = Tree;
 
-// interface Props {
-//   soiFolderStructure: SOIFolderStructure;
-//   onSelect: Function;
-// }
-
-// function Explorer(props: Props) {
 function Explorer() {
   const dispatch = useDispatch();
   
@@ -22,25 +16,28 @@ function Explorer() {
 
   const soiFolderStructure:SOIFolderStructure = useSelector(state=> state.explorer.soiFolderStructure)
 
-  const onSelect = (keys, event) => {
-    console.log('keys: ', keys);
-    // onSelect(keys);
+  const onSelect = (keys) => {
+    let key = keys&&keys[0];
+    let arr = key.split('::');
+    if(arr[0]=== DirType.file){
+      // only update when select a file
+      dispatch(updateCurrentSelectedFile(arr[1]));
+    }
   };
 
   const onExpand = () => {
-    console.log("onExpand");
   };
 
   const generateTreeNodes = data =>
     data.map(item => {
       if (item.type == DirType.directory) {
         return (
-          <TreeNode title={item.name} key={item.path}>
+          <TreeNode title={item.name} key={`${item.type}::${item.path}`}>
             {generateTreeNodes(item.children)}
           </TreeNode>
         );
       }
-      return <TreeNode title={item.name} key={item.path} isLeaf />;
+      return <TreeNode title={item.name} key={`${item.type}::${item.path}`} isLeaf />;
     });
 
   const generateContent = () => {

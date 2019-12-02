@@ -8,5 +8,4 @@
  * Follow this format:
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
-export const GET_SOI_FOLDER_STRUCTURE = 'soi-editor/Exporer/GET_SOI_FOLDER_STRUCTURE';
-export const UPDATE_CURRENT_SELECTED_FILE = 'soi-editor/Exporer/UPDATE_CURRENT_SELECTED_FILE';
+export const READ_FILE = 'soi-editor/Editors/READ_FILE';

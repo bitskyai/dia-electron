@@ -18,7 +18,7 @@ import {
 
 import Explorer from "../Explorer";
 import TouchBarManager from "../TouchBarManager";
-import FilesEditor from "../FilesEditor";
+import Editors from "../Editors";
 import { loadMonaco } from "../../utils";
 
 let windowCount = 3;
@@ -83,7 +83,7 @@ class App extends React.PureComponent<{}, AppState> {
       content = <Explorer />;
     } else if (count === "fileEditor") {
       className = "mosaic-window-no-toolbar";
-      content = <FilesEditor />;
+      content = <Editors />;
     } else if (count === "console") {
       title = "Console";
       content = <div>Console</div>;

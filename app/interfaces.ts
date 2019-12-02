@@ -22,3 +22,21 @@ export interface SOIFolderStructure{
   fail: Error|null,
   loaded: boolean
 }
+
+
+export interface OpenFile{
+  path: string,
+  name: string,
+  extName: string,
+  content?: string
+}
+
+export interface OpenFilesHash{
+  [key:string]: OpenFile
+}
+
+export interface FilePane{
+  key: string,
+  title: string,
+  path: string
+}
