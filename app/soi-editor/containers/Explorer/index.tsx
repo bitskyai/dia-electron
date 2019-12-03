@@ -1,32 +1,34 @@
 import React, { useEffect } from "react";
 import { Tree, Skeleton } from "antd";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
+import { MosaicWindow } from "react-mosaic-component";
 import { SOIFolderStructure, DirType } from "../../../interfaces";
-import { getSOIFolderStructue, updateCurrentSelectedFile } from './actions';
+import { getSOIFolderStructue, updateCurrentSelectedFile } from "./actions";
 const { TreeNode, DirectoryTree } = Tree;
 
-function Explorer() {
+function Explorer(props) {
   const dispatch = useDispatch();
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     // second parameter is [], the effect will only run on first render
     // Get SOI Folder Structure
     dispatch(getSOIFolderStructue());
   }, []);
 
-  const soiFolderStructure:SOIFolderStructure = useSelector(state=> state.explorer.soiFolderStructure)
+  const soiFolderStructure: SOIFolderStructure = useSelector(
+    state => state.explorer.soiFolderStructure
+  );
 
-  const onSelect = (keys) => {
-    let key = keys&&keys[0];
-    let arr = key.split('::');
-    if(arr[0]=== DirType.file){
+  const onSelect = keys => {
+    let key = keys && keys[0];
+    let arr = key.split("::");
+    if (arr[0] === DirType.file) {
       // only update when select a file
       dispatch(updateCurrentSelectedFile(arr[1]));
     }
   };
 
-  const onExpand = () => {
-  };
+  const onExpand = () => {};
 
   const generateTreeNodes = data =>
     data.map(item => {
@@ -37,7 +39,9 @@ function Explorer() {
           </TreeNode>
         );
       }
-      return <TreeNode title={item.name} key={`${item.type}::${item.path}`} isLeaf />;
+      return (
+        <TreeNode title={item.name} key={`${item.type}::${item.path}`} isLeaf />
+      );
     });
 
   const generateContent = () => {
@@ -45,11 +49,24 @@ function Explorer() {
       return <Skeleton active />;
     } else {
       return (
-        <div style={{overflow:'scroll', height:'100%'}}>
-          <DirectoryTree defaultExpandAll onSelect={onSelect} onExpand={onExpand}>
-            {generateTreeNodes(soiFolderStructure.data)}
-          </DirectoryTree>
-        </div>
+        <MosaicWindow<number>
+          draggable={false}
+          title={"Explorer"}
+          path={props.path}
+          toolbarControls={() => {
+            return <Icon type="close" />;
+          }}
+        >
+          <div style={{ overflow: "scroll", height: "100%" }}>
+            <DirectoryTree
+              defaultExpandAll
+              onSelect={onSelect}
+              onExpand={onExpand}
+            >
+              {generateTreeNodes(soiFolderStructure.data)}
+            </DirectoryTree>
+          </div>
+        </MosaicWindow>
       );
     }
   };

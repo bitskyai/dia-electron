@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Empty } from "antd";
+import { MosaicWindow } from "react-mosaic-component";
+import { Empty, Icon } from "antd";
 import * as MonacoType from "monaco-editor";
 import * as path from "path";
 import { Editor } from "../Editor";
@@ -16,7 +17,7 @@ const defaultMonacoOptions: MonacoType.editor.IEditorOptions = {
 /**
  * Current only support CRUD one file
  */
-function Editors() {
+function Editors(props) {
   const monaco = window.MunewDIA.app.monaco;
 
   const currentSelectedFilePath: string = useSelector(
@@ -43,7 +44,7 @@ function Editors() {
     return null;
   };
 
-  if (currentSelectedFilePath&&!getPaneByKey(currentSelectedFilePath)) {
+  if (currentSelectedFilePath && !getPaneByKey(currentSelectedFilePath)) {
     //Since we only support one tab, so if this file doesn't exist, instead of open new tab, will replace current tab
     let newPanes: Array<FilePane> = [];
     // if this pane doesn't exist, then open a new tab
@@ -62,15 +63,37 @@ function Editors() {
 
   // if not file is selected, then return Empty UI
   if (!currentSelectedFilePath || !panes.length) {
-    return <Empty />;
+    return (
+      <MosaicWindow<number>
+        draggable={false}
+        className="mosaic-window-no-toolbar"
+        title={currentSelectedFilePath}
+        path={props.path}
+        toolbarControls={() => {
+          return <Icon type="close" />;
+        }}
+      >
+        <Empty />
+      </MosaicWindow>
+    );
   } else {
     // current only support CRUD one file
+    let pane = panes[0];
     return (
-      <Editor
-        monaco={monaco}
-        monacoOptions={defaultMonacoOptions}
-        path={panes[0].path}
-      />
+      <MosaicWindow<number>
+        draggable={false}
+        title={currentSelectedFilePath}
+        path={props.path}
+        toolbarControls={() => {
+          return <Icon type="close" />;
+        }}
+      >
+        <Editor
+          monaco={monaco}
+          monacoOptions={defaultMonacoOptions}
+          path={pane.path}
+        />
+      </MosaicWindow>
     );
   }
 

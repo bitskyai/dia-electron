@@ -8,17 +8,16 @@
  */
 import React from "react";
 import { connect } from "react-redux";
-import { Icon } from "antd";
 import {
   Mosaic,
   MosaicNode,
-  MosaicWindow,
   MosaicZeroState
 } from "react-mosaic-component";
 
 import Explorer from "../Explorer";
 import TouchBarManager from "../TouchBarManager";
 import Editors from "../Editors";
+import Console from "../Consle";
 import { loadMonaco } from "../../utils";
 
 let windowCount = 3;
@@ -28,26 +27,26 @@ export interface AppState {
 }
 
 class App extends React.PureComponent<{}, AppState> {
-  state: AppState = {
-    currentNode: {
-      direction: "row",
-      first: "exporer",
-      second: {
-        direction: "column",
-        first: "fileEditor",
-        second: "console",
-        splitPercentage: 80
-      },
-      splitPercentage: 20
-    }
-  };
-
-  constructor(props) {
+  constructor(props: any) {
     super(props);
+    this.state = {
+      currentNode: {
+        direction: "row",
+        first: "exporer",
+        second: {
+          direction: "column",
+          first: "fileEditor",
+          second: "console",
+          splitPercentage: 80
+        },
+        splitPercentage: 20
+      }
+    };
     loadMonaco();
   }
 
   render() {
+    console.log("App->render");
     return (
       <div className="munew-soi-app">
         {this.renderNavBar()}
@@ -63,6 +62,7 @@ class App extends React.PureComponent<{}, AppState> {
   }
 
   private onChange = (currentNode: MosaicNode<number> | null) => {
+    console.log("onChange");
     this.setState({ currentNode });
   };
 
@@ -70,39 +70,17 @@ class App extends React.PureComponent<{}, AppState> {
     console.log("Mosaic.onRelease():", currentNode);
   };
 
-  private onSelectFile = () => {
-    console.log("onselectFile ...");
-  };
-
   private getMosaicWindow = (count, path) => {
-    let title: string = "",
-      className: string = "",
-      content: React.ReactElement<any> = <div />;
+    let content: React.ReactElement<any> = <div />;
     if (count === "exporer") {
-      title = "Explorer";
-      content = <Explorer />;
+      content = <Explorer path={path} />;
     } else if (count === "fileEditor") {
-      className = "mosaic-window-no-toolbar";
-      content = <Editors />;
+      content = <Editors path={path} />;
     } else if (count === "console") {
-      title = "Console";
-      content = <div>Console</div>;
+      content = <Console path={path} />;
     }
 
-    return (
-      <MosaicWindow<number>
-        className={className}
-        draggable={false}
-        title={title}
-        createNode={this.createNode}
-        path={path}
-        toolbarControls={() => {
-          return <Icon type="close" />;
-        }}
-      >
-        {content}
-      </MosaicWindow>
-    );
+    return content;
   };
 
   private createNode = () => ++windowCount;
@@ -113,7 +91,10 @@ class App extends React.PureComponent<{}, AppState> {
 }
 
 const mapStateToProps = (state /*, ownProps*/) => {
-  return {};
+  console.log("mapStateToProps, state: ", state);
+  return {
+    currentSelectedFilePath: state.explorer.currentSelectedFilePath
+  };
 };
 
 const mapDispatchToProps = {};

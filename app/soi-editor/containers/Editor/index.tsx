@@ -63,7 +63,8 @@ export class Editor extends React.Component<EditorProps> {
     if (ref) {
       if (monaco&&!this.editor) {
         this.editor = monaco.editor.create(ref, {
-          language: this.language,
+          automaticLayout: true,
+          language: this.getLanguage(),
           theme: "main",
           contextmenu: false,
           model: null,
