@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { MosaicWindow } from "react-mosaic-component";
+import { MosaicWindow, MosaicBranch } from "react-mosaic-component";
 import { Empty, Icon } from "antd";
 import * as MonacoType from "monaco-editor";
 import * as path from "path";
@@ -14,10 +14,14 @@ const defaultMonacoOptions: MonacoType.editor.IEditorOptions = {
   wordWrap: "on"
 };
 
+export interface EditorsProps {
+  path: Array<MosaicBranch>;
+}
+
 /**
  * Current only support CRUD one file
  */
-function Editors(props) {
+function Editors(props: EditorsProps) {
   const monaco = window.MunewDIA.app.monaco;
 
   const currentSelectedFilePath: string = useSelector(
@@ -69,9 +73,7 @@ function Editors(props) {
         className="mosaic-window-no-toolbar"
         title={currentSelectedFilePath}
         path={props.path}
-        toolbarControls={() => {
-          return <Icon type="close" />;
-        }}
+        toolbarControls={[]}
       >
         <Empty />
       </MosaicWindow>
@@ -84,9 +86,7 @@ function Editors(props) {
         draggable={false}
         title={currentSelectedFilePath}
         path={props.path}
-        toolbarControls={() => {
-          return <Icon type="close" />;
-        }}
+        toolbarControls={[]}
       >
         <Editor
           monaco={monaco}

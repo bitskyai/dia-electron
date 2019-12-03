@@ -40,3 +40,5 @@ export interface FilePane{
   title: string,
   path: string
 }
+
+export type mosaicId = 'exporer' | 'fileEditor' | 'console';

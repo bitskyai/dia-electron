@@ -10,6 +10,7 @@ import React from "react";
 import { connect } from "react-redux";
 import {
   Mosaic,
+  MosaicBranch,
   MosaicNode,
   MosaicZeroState
 } from "react-mosaic-component";
@@ -20,17 +21,15 @@ import Editors from "../Editors";
 import Console from "../Consle";
 import { loadMonaco } from "../../utils";
 
-let windowCount = 3;
-
 export interface AppState {
-  currentNode: MosaicNode<number | string> | null;
+  mosaicNodes: MosaicNode<number | string> | null;
 }
 
 class App extends React.PureComponent<{}, AppState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      currentNode: {
+      mosaicNodes: {
         direction: "row",
         first: "exporer",
         second: {
@@ -46,14 +45,13 @@ class App extends React.PureComponent<{}, AppState> {
   }
 
   render() {
-    console.log("App->render");
     return (
       <div className="munew-soi-app">
         {this.renderNavBar()}
         <Mosaic<number | string>
           renderTile={this.getMosaicWindow}
-          zeroStateView={<MosaicZeroState createNode={this.createNode} />}
-          value={this.state.currentNode}
+          zeroStateView={<MosaicZeroState />}
+          value={this.state.mosaicNodes}
           onChange={this.onChange}
           onRelease={this.onRelease}
         />
@@ -61,29 +59,25 @@ class App extends React.PureComponent<{}, AppState> {
     );
   }
 
-  private onChange = (currentNode: MosaicNode<number> | null) => {
-    console.log("onChange");
-    this.setState({ currentNode });
+  private onChange = (mosaicNodes: MosaicNode<number> | null) => {
+    this.setState({ mosaicNodes });
   };
 
-  private onRelease = (currentNode: MosaicNode<number> | null) => {
-    console.log("Mosaic.onRelease():", currentNode);
+  private onRelease = (mosaicNodes: MosaicNode<number> | null) => {
+    console.log("Mosaic.onRelease():", mosaicNodes);
   };
 
-  private getMosaicWindow = (count, path) => {
+  private getMosaicWindow = (mosaicId: string, path: Array<MosaicBranch>) => {
     let content: React.ReactElement<any> = <div />;
-    if (count === "exporer") {
+    if (mosaicId === "exporer") {
       content = <Explorer path={path} />;
-    } else if (count === "fileEditor") {
+    } else if (mosaicId === "fileEditor") {
       content = <Editors path={path} />;
-    } else if (count === "console") {
+    } else if (mosaicId === "console") {
       content = <Console path={path} />;
     }
-
     return content;
   };
-
-  private createNode = () => ++windowCount;
 
   private renderNavBar() {
     return <TouchBarManager />;
@@ -91,9 +85,10 @@ class App extends React.PureComponent<{}, AppState> {
 }
 
 const mapStateToProps = (state /*, ownProps*/) => {
-  console.log("mapStateToProps, state: ", state);
   return {
-    currentSelectedFilePath: state.explorer.currentSelectedFilePath
+    currentSelectedFilePath: state.explorer.currentSelectedFilePath,
+    explorerOpen: state.app.explorerOpen,
+    consoleOpen: state.app.consoleOpen
   };
 };
 

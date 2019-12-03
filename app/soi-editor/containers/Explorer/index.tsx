@@ -1,13 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { Tree, Skeleton } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { MosaicWindow } from "react-mosaic-component";
+import {
+  MosaicWindow,
+  MosaicBranch,
+  MosaicContext
+} from "react-mosaic-component";
 import { SOIFolderStructure, DirType } from "../../../interfaces";
 import { getSOIFolderStructue, updateCurrentSelectedFile } from "./actions";
 const { TreeNode, DirectoryTree } = Tree;
 
-function Explorer(props) {
+export interface ExplorerProps {
+  path: Array<MosaicBranch>;
+}
+
+function Explorer(props: ExplorerProps) {
   const dispatch = useDispatch();
+  const context = useContext(MosaicContext);
 
   useEffect(() => {
     // second parameter is [], the effect will only run on first render
@@ -16,7 +25,11 @@ function Explorer(props) {
   }, []);
 
   const soiFolderStructure: SOIFolderStructure = useSelector(
-    state => state.explorer.soiFolderStructure
+    state => state.explorer.soiFolderStructure,
+  );
+
+  const isExplorerOpen: boolean = useSelector(
+    state => state.app.isExplorerOpen
   );
 
   const onSelect = keys => {
@@ -53,9 +66,7 @@ function Explorer(props) {
           draggable={false}
           title={"Explorer"}
           path={props.path}
-          toolbarControls={() => {
-            return <Icon type="close" />;
-          }}
+          toolbarControls={[]}
         >
           <div style={{ overflow: "scroll", height: "100%" }}>
             <DirectoryTree
