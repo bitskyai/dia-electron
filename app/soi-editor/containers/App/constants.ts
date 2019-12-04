@@ -9,3 +9,7 @@
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
 export const SHOW_OR_HIDE_CONSOLE = 'soi-editor/App/SHOW_OR_HIDE_CONSOLE';
+export const RESPONSED_TO_CONSOLE = 'soi-editor/App/RESPONSED_TO_CONSOLE';
+export const SHOW_OR_HIDE_EXPLORER = 'soi-editor/App/SHOW_OR_HIDE_EXPLORER';
+export const RESPONSED_TO_EXPLORER = 'soi-editor/App/RESPONSED_TO_EXPLORER';
+export const UPDATE_MOSAIC_NODES = 'soi-editor/App/UPDATE_MOSAIC_NODES';

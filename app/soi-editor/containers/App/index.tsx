@@ -20,26 +20,24 @@ import TouchBarManager from "../TouchBarManager";
 import Editors from "../Editors";
 import Console from "../Consle";
 import { loadMonaco } from "../../utils";
+import { updateMosaicNodes } from "./actions";
+import { initialState } from "./reducer";
+
+export interface AppProps {
+  currentSelectedFilePath: string;
+  isExplorerOpen: boolean;
+  isConsoleOpen: boolean;
+}
 
 export interface AppState {
   mosaicNodes: MosaicNode<number | string> | null;
 }
 
-class App extends React.PureComponent<{}, AppState> {
+class App extends React.PureComponent<AppProps, AppState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      mosaicNodes: {
-        direction: "row",
-        first: "exporer",
-        second: {
-          direction: "column",
-          first: "fileEditor",
-          second: "console",
-          splitPercentage: 80
-        },
-        splitPercentage: 20
-      }
+      mosaicNodes: initialState.mosaicNodes
     };
     loadMonaco();
   }
@@ -59,7 +57,9 @@ class App extends React.PureComponent<{}, AppState> {
     );
   }
 
-  private onChange = (mosaicNodes: MosaicNode<number> | null) => {
+  private onChange = (mosaicNodes: MosaicNode<any> | null) => {
+    console.log("onChange ", mosaicNodes);
+    this.props.dispatch(updateMosaicNodes(mosaicNodes));
     this.setState({ mosaicNodes });
   };
 
@@ -87,10 +87,14 @@ class App extends React.PureComponent<{}, AppState> {
 const mapStateToProps = (state /*, ownProps*/) => {
   return {
     currentSelectedFilePath: state.explorer.currentSelectedFilePath,
-    explorerOpen: state.app.explorerOpen,
-    consoleOpen: state.app.consoleOpen
+    isExplorerOpen: state.app.isExplorerOpen,
+    isConsoleOpen: state.app.isConsoleOpen
   };
 };
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch
+  };
+};
 export default connect(mapStateToProps, mapDispatchToProps)(App);

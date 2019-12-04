@@ -4,10 +4,13 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   MosaicWindow,
   MosaicBranch,
-  MosaicContext
+  MosaicContext,
+  MosaicNode
 } from "react-mosaic-component";
 import { SOIFolderStructure, DirType } from "../../../interfaces";
 import { getSOIFolderStructue, updateCurrentSelectedFile } from "./actions";
+import { responsedToExplorer } from '../App/actions';
+import { initialState } from '../App/reducer';
 const { TreeNode, DirectoryTree } = Tree;
 
 export interface ExplorerProps {
@@ -17,6 +20,15 @@ export interface ExplorerProps {
 function Explorer(props: ExplorerProps) {
   const dispatch = useDispatch();
   const context = useContext(MosaicContext);
+  const isExplorerOpen: boolean = useSelector(
+    state => state.app.isExplorerOpen
+  );
+  const waitingExplorerToResponse: boolean = useSelector(
+    state => state.app.waitingExplorerToResponse
+  );
+  const mosaicNodes: MosaicNode<number | string> | null = useSelector(
+    state => state.app.mosaicNodes
+  );
 
   useEffect(() => {
     // second parameter is [], the effect will only run on first render
@@ -24,12 +36,52 @@ function Explorer(props: ExplorerProps) {
     dispatch(getSOIFolderStructue());
   }, []);
 
-  const soiFolderStructure: SOIFolderStructure = useSelector(
-    state => state.explorer.soiFolderStructure,
-  );
+  useEffect(()=>{
+    if (context && context.mosaicActions && context.mosaicActions.updateTree) {
+      if (waitingExplorerToResponse) {
+        if (isExplorerOpen) {
+          context.mosaicActions.updateTree([
+            {
+              path: [],
+              spec: {
+                splitPercentage: {
+                  $set: initialState.mosaicNodes.splitPercentage
+                },
+                second: {
+                  first: {},
+                  splitPercentage: {
+                    $set: mosaicNodes && mosaicNodes.second.splitPercentage
+                  }
+                }
+              }
+            }
+          ]);
+        } else {
+          // context.mosaicActions.hide(["second", "second"]);
+          context.mosaicActions.updateTree([
+            {
+              path: [],
+              spec: {
+                splitPercentage: {
+                  $set: 0
+                },
+                second: {
+                  first: {},
+                  splitPercentage: {
+                    $set: mosaicNodes && mosaicNodes.second.splitPercentage
+                  }
+                }
+              }
+            }
+          ]);
+        }
+        dispatch(responsedToExplorer());
+      }
+    }
+  });
 
-  const isExplorerOpen: boolean = useSelector(
-    state => state.app.isExplorerOpen
+  const soiFolderStructure: SOIFolderStructure = useSelector(
+    state => state.explorer.soiFolderStructure
   );
 
   const onSelect = keys => {
