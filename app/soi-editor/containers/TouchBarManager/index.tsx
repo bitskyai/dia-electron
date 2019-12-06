@@ -47,7 +47,7 @@ function TouchBarManager() {
           Explorer
         </Button>,
         <Button key="reset">
-          <Icon type="folder" />
+          <Icon type="hourglass" />
           Reset to Default
         </Button>
       ]}
