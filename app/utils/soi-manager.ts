@@ -2,7 +2,7 @@ import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
 import { fancyImport } from "./import";
-import { copyDefaultSOI, SOI_PATH } from "./soi-file-manager";
+import { copyDefaultSOI, getSOIPath } from "./soi-file-manager";
 import { USER_DATA_PATH } from "./constants";
 import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
@@ -162,6 +162,7 @@ class SOIManager {
   public async runSOI(): Promise<void> {
     try {
       logger.functionStart("runSOI");
+      const SOI_PATH = getSOIPath();
       await this.setup();
       const binaryPath = this.getElectronBinaryPath();
       logger.debug(`elelctron binary path: ${binaryPath}`);

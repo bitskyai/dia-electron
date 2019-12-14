@@ -61,7 +61,7 @@ export async function onReady() {
     setupAboutPanel();
 
     const { setupMenu } = await import("./menu");
-
+    // setup menus for main processes
     setupMenu();
     setupProtocolHandler();
     // Auto update from github release

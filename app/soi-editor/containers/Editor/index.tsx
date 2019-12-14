@@ -7,9 +7,10 @@ import * as path from "path";
 import { remote } from "electron";
 import * as fs from "fs-extra";
 import { loadMonaco } from "../../utils";
+import { getFileContent, updateFileContent } from '../../../utils/soi-file-manager';
 
 export interface EditorProps {
-  path: string,
+  path: string;
   monaco: typeof MonacoType | null;
   monacoOptions: MonacoType.editor.IEditorOptions;
   options?: Partial<MonacoType.editor.IEditorConstructionOptions>;
@@ -45,8 +46,18 @@ export class Editor extends React.Component<EditorProps> {
    * @param {MonacoType.editor.IStandaloneCodeEditor} editor
    */
   public async editorDidMount(editor: MonacoType.editor.IStandaloneCodeEditor) {
+    let { monaco } = this.props;
     // Set the content on the editor
     await this.setContent();
+    if (monaco && editor) {
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+        this.saveFile();
+      });
+    }
+  }
+
+  public async saveFile() {
+    updateFileContent(this.props.path, this.editor.getValue());
   }
 
   /**
@@ -61,7 +72,7 @@ export class Editor extends React.Component<EditorProps> {
     }
 
     if (ref) {
-      if (monaco&&!this.editor) {
+      if (monaco && !this.editor) {
         this.editor = monaco.editor.create(ref, {
           automaticLayout: true,
           language: this.getLanguage(),
@@ -87,46 +98,42 @@ export class Editor extends React.Component<EditorProps> {
   }
 
   public render() {
-    console.log('this.props.path: ', this.props.path);
-    if(this.editor){
+    console.log("this.props.path: ", this.props.path);
+    if (this.editor) {
       // need to update content
       this.setContent();
     }
     return <div className="monaco-editor-container" ref={this.containerRef} />;
   }
 
-  private getLanguage():string{
+  private getLanguage(): string {
     let extname = path.extname(this.props.path);
-    switch(extname.toLowerCase()){
-      case '.js':
-        return 'javascript';
-      case '.json':
-        return 'json';
-      case '.css':
-            return 'css';
-      case '.html':
-            return 'html';
-      case '.map':
-            return 'json';
-      case '.jade':
-          return 'jade';
+    switch (extname.toLowerCase()) {
+      case ".js":
+        return "javascript";
+      case ".json":
+        return "json";
+      case ".css":
+        return "css";
+      case ".html":
+        return "html";
+      case ".map":
+        return "json";
+      case ".jade":
+        return "jade";
       default:
-        return 'text';
+        return "text";
     }
-      
   }
 
-  private async getContent():Promise<string|null>{
-    try{
-      return fs.readFileSync(
-        path.join(
-          remote.app.getPath("userData"),
-          "soi",
-          this.props.path
-        ),
-        "utf8"
-      );
-    }catch(err){
+  private async getContent(): Promise<string | null> {
+    try {
+      // return fs.readFileSync(
+      //   path.join(remote.app.getPath("userData"), "soi", this.props.path),
+      //   "utf8"
+      // );
+      return getFileContent(this.props.path);
+    } catch (err) {
       throw err;
     }
   }
@@ -145,11 +152,13 @@ export class Editor extends React.Component<EditorProps> {
     }
 
     const value = await this.getContent();
-    const model = monaco.editor.createModel(value||'', this.getLanguage());
-    model.updateOptions({
-      tabSize: 2
-    });
+    if (monaco) {
+      const model = monaco.editor.createModel(value || "", this.getLanguage());
+      model.updateOptions({
+        tabSize: 2
+      });
 
-    this.editor.setModel(model);
+      this.editor.setModel(model);
+    }
   }
 }

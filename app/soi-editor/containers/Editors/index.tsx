@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { MosaicWindow, MosaicBranch } from "react-mosaic-component";
-import { Empty, Icon } from "antd";
+import { Empty } from "antd";
 import * as MonacoType from "monaco-editor";
 import * as path from "path";
 import { Editor } from "../Editor";
@@ -82,6 +82,7 @@ function Editors(props: EditorsProps) {
     // current only support CRUD one file
     let pane = panes[0];
     return (
+      
       <MosaicWindow<number>
         draggable={false}
         title={currentSelectedFilePath}

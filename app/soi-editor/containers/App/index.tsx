@@ -27,6 +27,7 @@ export interface AppProps {
   currentSelectedFilePath: string;
   isExplorerOpen: boolean;
   isConsoleOpen: boolean;
+  dispatch: Function
 }
 
 export interface AppState {
