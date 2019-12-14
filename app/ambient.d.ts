@@ -1,12 +1,11 @@
 import * as MonacoType from 'monaco-editor';
 
 // Type-only-import
-import { Root as AppType } from './soi-editor/app';
 
 declare global {
   interface Window {
     MunewDIA: {
-      app: AppType;
+      app: any;
       editors: Record<string, MonacoType.editor.IStandaloneCodeEditor | null>;
     };
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: Function;

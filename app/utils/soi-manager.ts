@@ -2,10 +2,12 @@ import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
 import { fancyImport } from "./import";
-import { copyDefaultSOI, getSOIPath } from "./soi-file-manager";
+import { copyDefaultSOI, getSOIPath, getFileContent, updateFileContent } from "./soi-file-manager";
 import { USER_DATA_PATH } from "./constants";
 import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
+import { IpcEvents } from '../ipc-events';
+import { ipcMainManager } from '../main/ipc';
 
 class SOIManager {
   public soiProcess: ChildProcess | null = null;
@@ -22,6 +24,51 @@ class SOIManager {
       force = true;
     }
     copyDefaultSOI(force);
+
+    // setup event listener
+    this.setUpEventListener();
+  }
+
+  private setUpEventListener(){
+    // listen SOI_
+    ipcMainManager.on(IpcEvents.SYNC_SOI_GET_FILE_CONTENT, (event, arg)=>{
+      try{
+        event.returnValue = {
+          status: true,
+          fileContent: getFileContent(arg.filePath)
+        }
+      }catch(err){
+        event.returnValue = {
+          status: false
+        }
+      }
+    });
+
+    ipcMainManager.on(IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT, (event, arg)=>{
+      try{
+        updateFileContent(arg.filePath, arg.fileContent);
+        event.returnValue = {
+          status: true
+        }
+      }catch(err){
+        event.returnValue = {
+          status: false
+        }
+      }
+    });
+
+    ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, (event)=>{
+      try{
+        copyDefaultSOI(true);
+        event.returnValue = {
+          status: true
+        }
+      }catch(err){
+        event.returnValue = {
+          status: false
+        }
+      }
+    });
   }
 
   /**

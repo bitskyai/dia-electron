@@ -1,13 +1,12 @@
 // Credit goes in large part to https://github.com/superRaytin/react-monaco-editor,
 // this component is a changed version of it.
-
+import { message } from "antd";
 import * as MonacoType from "monaco-editor";
 import * as React from "react";
 import * as path from "path";
-import { remote } from "electron";
-import * as fs from "fs-extra";
 import { loadMonaco } from "../../utils";
-import { getFileContent, updateFileContent } from '../../../utils/soi-file-manager';
+import { ipcRendererManager } from "../../ipc";
+import { IpcEvents } from "../../../ipc-events";
 
 export interface EditorProps {
   path: string;
@@ -57,7 +56,19 @@ export class Editor extends React.Component<EditorProps> {
   }
 
   public async saveFile() {
-    updateFileContent(this.props.path, this.editor.getValue());
+    let result = ipcRendererManager.sendSync(
+      IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT,
+      {
+        filePath: this.props.path,
+        fileContent: this.editor.getValue()
+      }
+    );
+    if (result && result.status) {
+      message.success("Successfully saved");
+    } else {
+      message.error("Failed");
+    }
+    // updateFileContent(this.props.path, this.editor.getValue());
   }
 
   /**
@@ -128,11 +139,19 @@ export class Editor extends React.Component<EditorProps> {
 
   private async getContent(): Promise<string | null> {
     try {
-      // return fs.readFileSync(
-      //   path.join(remote.app.getPath("userData"), "soi", this.props.path),
-      //   "utf8"
-      // );
-      return getFileContent(this.props.path);
+      // return getFileContent(this.props.path);
+      let result = ipcRendererManager.sendSync(
+        IpcEvents.SYNC_SOI_GET_FILE_CONTENT,
+        {
+          filePath: this.props.path
+        }
+      );
+      if (result && result.status) {
+        return result.fileContent;
+      } else {
+        message.error("Failed");
+        return '';
+      }
     } catch (err) {
       throw err;
     }

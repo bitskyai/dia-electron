@@ -1,7 +1,9 @@
 import React from "react";
-import { PageHeader, Button, Icon } from "antd";
+import { PageHeader, Button, Icon, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { showOrHideConsole, showOrHideExplorer } from "../App/actions";
+import { ipcRendererManager } from '../../ipc';
+import { IpcEvents } from '../../../ipc-events';
 
 function TouchBarManager() {
   const dispatch = useDispatch();
@@ -27,6 +29,21 @@ function TouchBarManager() {
   const clickExplorer = () => {
     dispatch(showOrHideExplorer());
   };
+
+  const clickReset = async()=>{
+    try{
+      // reset to default
+      let result = ipcRendererManager.sendSync(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT);
+      if(result&&result.status){
+        message.success('Successfully reset to default SOI, all your changes was reverted to default');
+      }else{
+        message.error('Failed reset to default SOI, please try again');
+      }
+    }catch(err){
+      message.error('Failed reset to default SOI, please try again');
+    }
+  }
+
   return (
     <PageHeader
       ghost={false}
@@ -46,7 +63,7 @@ function TouchBarManager() {
           <Icon type={explorerIconType} />
           Explorer
         </Button>,
-        <Button key="reset">
+        <Button key="reset" onClick = {clickReset}>
           <Icon type="hourglass" />
           Reset to Default
         </Button>
