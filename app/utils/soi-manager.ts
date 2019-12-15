@@ -3,12 +3,17 @@ import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
 import { fancyImport } from "./import";
-import { copyDefaultSOI, getSOIPath, getFileContent, updateFileContent } from "./soi-file-manager";
+import {
+  copyDefaultSOI,
+  getSOIPath,
+  getFileContent,
+  updateFileContent
+} from "./soi-file-manager";
 import { USER_DATA_PATH } from "./constants";
 import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
-import { IpcEvents } from '../ipc-events';
-import { ipcMainManager } from '../main/ipc';
+import { IpcEvents } from "../ipc-events";
+import { ipcMainManager } from "../main/ipc";
 
 class SOIManager {
   public soiProcess: ChildProcess | null = null;
@@ -30,23 +35,23 @@ class SOIManager {
     this.setUpEventListener();
   }
 
-  private setUpEventListener(){
+  private setUpEventListener() {
     // get SOI file content by path
     /*
      arg = {
        filePath
      }
      */
-    ipcMainManager.on(IpcEvents.SYNC_SOI_GET_FILE_CONTENT, (event, arg)=>{
-      try{
+    ipcMainManager.on(IpcEvents.SYNC_SOI_GET_FILE_CONTENT, (event, arg) => {
+      try {
         event.returnValue = {
           status: true,
           fileContent: getFileContent(arg.filePath)
-        }
-      }catch(err){
+        };
+      } catch (err) {
         event.returnValue = {
           status: false
-        }
+        };
       }
     });
 
@@ -57,30 +62,30 @@ class SOIManager {
         fileContent
       }
      */
-    ipcMainManager.on(IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT, (event, arg)=>{
-      try{
+    ipcMainManager.on(IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT, (event, arg) => {
+      try {
         updateFileContent(arg.filePath, arg.fileContent);
         event.returnValue = {
           status: true
-        }
-      }catch(err){
+        };
+      } catch (err) {
         event.returnValue = {
           status: false
-        }
+        };
       }
     });
 
     // reset SOI to default
-    ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, (event)=>{
-      try{
+    ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, event => {
+      try {
         copyDefaultSOI(true);
         event.returnValue = {
           status: true
-        }
-      }catch(err){
+        };
+      } catch (err) {
         event.returnValue = {
           status: false
-        }
+        };
       }
     });
   }
@@ -171,10 +176,10 @@ class SOIManager {
    */
   private unzip(zipPath: string, extractPath: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      logger.functionStart('SOIManager->unzip');
-      const extract = (await fancyImport<any>("extract-zip"));
-      logger.debug('zipPath: ', zipPath);
-      logger.debug('extractPath: ', extractPath);
+      logger.functionStart("SOIManager->unzip");
+      const extract = await fancyImport<any>("extract-zip");
+      logger.debug("zipPath: ", zipPath);
+      logger.debug("extractPath: ", extractPath);
       process.noAsar = true;
 
       const options = {
@@ -189,7 +194,7 @@ class SOIManager {
         logger.info(`SOIManager: Unpacked!`);
         process.noAsar = false;
         resolve();
-        logger.functionEnd('SOIManager->unzip');
+        logger.functionEnd("SOIManager->unzip");
       });
     });
   }
@@ -220,15 +225,28 @@ class SOIManager {
     }
   }
 
-  private async publishLog(data):Promise<void>{
-    console.log('pubishLog, data: ', data.toString());
-    // const soiEditorBrowserWindow = getBrowserWindow('soiEditor');
-    // console.log('pubishLog, data: ', data.toString());
-    // // console.log(soiEditorBrowserWindow);
-    // if(soiEditorBrowserWindow){
-    //   console.log('soiEditorBrowserWindow.webContents: ', soiEditorBrowserWindow.webContents);
-    //   ipcMainManager.send(IpcEvents.SOI_CONSOLE_LOG, [{data:data.toString()}], soiEditorBrowserWindow.webContents);
-    // }
+  private formatOutput(data: string | Buffer) {
+    let strData = data.toString();
+
+    if (strData.startsWith("Debugger listening on ws://")) return;
+    if (strData === "For help see https://nodejs.org/en/docs/inspector") return;
+
+    return {
+      timestamp: Date.now(),
+      text: strData.trim()
+    };
+  }
+
+  private async publishLog(data): Promise<void> {
+    console.log("pubishLog, data: ", data.toString());
+    const soiEditorBrowserWindow = global.browserWindows.soiEditor;
+    if (soiEditorBrowserWindow) {
+      ipcMainManager.send(
+        IpcEvents.SOI_CONSOLE_LOG,
+        [this.formatOutput(data)],
+        soiEditorBrowserWindow.webContents
+      );
+    }
   }
 
   public async runSOI(): Promise<void> {
@@ -245,8 +263,14 @@ class SOIManager {
         env
       });
 
-      this.soiProcess.stdout!.on("data", data => {logger.debug("======stdout: ", data.toString()); this.publishLog(data);});
-      this.soiProcess.stderr!.on("data", data => {logger.debug("******stderr: ", data.toString()); this.publishLog(data);});
+      this.soiProcess.stdout!.on("data", data => {
+        logger.debug("======stdout: ", data.toString());
+        this.publishLog(data);
+      });
+      this.soiProcess.stderr!.on("data", data => {
+        logger.debug("******stderr: ", data.toString());
+        this.publishLog(data);
+      });
       this.soiProcess.on("close", async code => {
         const withCode =
           typeof code === "number" ? ` with code ${code.toString()}.` : `.`;

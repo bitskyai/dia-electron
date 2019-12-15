@@ -19,6 +19,13 @@ import SOIManager from '../utils/soi-manager';
 export async function onReady() {
   try {
     logger.info("onReady()");
+
+    // intial global variables
+    global.browserWindows = {
+      soiEditor: null,
+      main: null
+    }
+
     await onFirstRunMaybe();
     if (!isDevMode()) process.env.NODE_ENV = "production";
 

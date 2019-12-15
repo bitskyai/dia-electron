@@ -46,12 +46,13 @@ export class IpcMainManager extends EventEmitter {
   public send(channel: IpcEvents, args?: Array<any>, target?: Electron.WebContents) {
     const _target = target || getOrCreateMainWindow().webContents;
     const _args = args || [];
-    if (!this.readyWebContents.has(_target)) {
-      const existing = this.messageQueue.get(_target) || [];
-      this.messageQueue.set(_target, [...existing, [channel, args]]);
-      return;
-    }
-
+    // if (!this.readyWebContents.has(_target)) {
+    //   const existing = this.messageQueue.get(_target) || [];
+    //   this.messageQueue.set(_target, [...existing, [channel, args]]);
+    //   return;
+    // }
+    console.log('send->channel', channel);
+    console.log('send->_args', _args);
     _target.send(channel, ..._args);
   }
 }

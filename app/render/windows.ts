@@ -1,5 +1,5 @@
 import { remote } from "electron";
-const { BrowserWindow, shell } = remote;
+const { BrowserWindow, shell, getGlobal } = remote;
 import * as path from "path";
 
 interface browserWindowHash {
@@ -33,6 +33,7 @@ export function createSOIEditorWindow(): Electron.BrowserWindow {
 
   browserWindow.on("closed", () => {
     browserWindows.soiEditor = null;
+    getGlobal('browserWindows').soiEditor = null;
   });
 
   browserWindow.webContents.on("new-window", (event, url) => {
@@ -51,6 +52,7 @@ export function createSOIEditorWindow(): Electron.BrowserWindow {
   browserWindow.show();
   browserWindow.webContents.openDevTools();
 
+  getGlobal('browserWindows').soiEditor = browserWindow;
   return browserWindow;
 }
 

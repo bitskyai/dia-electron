@@ -20,8 +20,10 @@ import TouchBarManager from "../TouchBarManager";
 import Editors from "../Editors";
 import Console from "../Consle";
 import { loadMonaco } from "../../utils";
-import { updateMosaicNodes } from "./actions";
+import { updateMosaicNodes, addConoleLog } from "./actions";
 import { initialState } from "./reducer";
+import { ipcRendererManager } from "../../ipc";
+import { IpcEvents } from "../../../ipc-events";
 
 export interface AppProps {
   currentSelectedFilePath: string;
@@ -40,6 +42,12 @@ class App extends React.PureComponent<AppProps, AppState> {
     this.state = {
       mosaicNodes: initialState.mosaicNodes
     };
+
+    ipcRendererManager.on(IpcEvents.SOI_CONSOLE_LOG, (event, log) => {
+      console.log('App->SOI_CONSOLE_LOG, log: ', log);
+      this.props.dispatch(addConoleLog(log));
+    });
+
     loadMonaco();
   }
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   MosaicWindow,
@@ -7,9 +7,7 @@ import {
   MosaicNode
 } from "react-mosaic-component";
 import { responsedToConsole } from "../App/actions";
-import { initialState } from '../App/reducer';
-import { ipcRendererManager } from '../../ipc';
-import { IpcEvents } from '../../../ipc-events';
+import { initialState } from "../App/reducer";
 
 // import { mosaicId } from '../../../interfaces';
 
@@ -28,12 +26,7 @@ function Console(props: ConsoleProps) {
     state => state.app.mosaicNodes
   );
 
-  useEffect(()=>{
-    console.log('Console start listening *SOI_CONSOLE_LOG*');
-    ipcRendererManager.on(IpcEvents.SOI_CONSOLE_LOG, (event, args)=>{
-      console.log("recieve data: ", args[0]);
-    });
-  }, []);
+  const logs: Array<any> = useSelector(state => state.app.logs||[]);
 
   useEffect(() => {
     if (context && context.mosaicActions && context.mosaicActions.updateTree) {
@@ -86,7 +79,16 @@ function Console(props: ConsoleProps) {
       path={props.path}
       toolbarControls={[]}
     >
-      <div>Console</div>
+      <div>
+        {logs.map(log => {
+          return (
+            <p key={log.timestamp+Math.random()*1000}>
+              <span>{new Date(log.timestamp).toLocaleTimeString()}</span>
+              <span>{log.text}</span>
+            </p>
+          );
+        })}
+      </div>
     </MosaicWindow>
   );
 }

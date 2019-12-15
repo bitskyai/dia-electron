@@ -53,6 +53,7 @@ export function createMainWindow(): Electron.BrowserWindow {
   browserWindow.on("closed", () => {
     // browserWindows = browserWindows.filter(bw => browserWindow !== bw);
     browserWindows.main = null;
+    global.browserWindows.main = null;
   });
 
   browserWindow.webContents.on("new-window", (event, url) => {
@@ -67,6 +68,7 @@ export function createMainWindow(): Electron.BrowserWindow {
 
   // browserWindows.push(browserWindow);
   browserWindows.main = browserWindow;
+  global.browserWindows.main = browserWindow;
 
   return browserWindow;
 }

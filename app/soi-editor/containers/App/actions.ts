@@ -3,7 +3,8 @@ import {
   RESPONSED_TO_CONSOLE,
   SHOW_OR_HIDE_EXPLORER,
   RESPONSED_TO_EXPLORER,
-  UPDATE_MOSAIC_NODES
+  UPDATE_MOSAIC_NODES,
+  ADD_CONSOLE_LOG
 } from "./constants";
 
 export const showOrHideConsole = () => {
@@ -38,3 +39,12 @@ export const updateMosaicNodes = (mosaicNodes) => {
     }
   };
 };
+
+export const addConoleLog = (log)=>{
+  return {
+    type: ADD_CONSOLE_LOG,
+    payload: {
+      log
+    }
+  }
+}
