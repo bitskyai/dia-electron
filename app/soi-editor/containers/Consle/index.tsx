@@ -8,6 +8,8 @@ import {
 } from "react-mosaic-component";
 import { responsedToConsole } from "../App/actions";
 import { initialState } from '../App/reducer';
+import { ipcRendererManager } from '../../ipc';
+import { IpcEvents } from '../../../ipc-events';
 
 // import { mosaicId } from '../../../interfaces';
 
@@ -25,6 +27,13 @@ function Console(props: ConsoleProps) {
   const mosaicNodes: MosaicNode<number | string> | null = useSelector(
     state => state.app.mosaicNodes
   );
+
+  useEffect(()=>{
+    console.log('Console start listening *SOI_CONSOLE_LOG*');
+    ipcRendererManager.on(IpcEvents.SOI_CONSOLE_LOG, (event, args)=>{
+      console.log("recieve data: ", args[0]);
+    });
+  }, []);
 
   useEffect(() => {
     if (context && context.mosaicActions && context.mosaicActions.updateTree) {

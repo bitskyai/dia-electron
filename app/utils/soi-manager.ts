@@ -1,3 +1,4 @@
+// Main Process
 import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
@@ -30,7 +31,12 @@ class SOIManager {
   }
 
   private setUpEventListener(){
-    // listen SOI_
+    // get SOI file content by path
+    /*
+     arg = {
+       filePath
+     }
+     */
     ipcMainManager.on(IpcEvents.SYNC_SOI_GET_FILE_CONTENT, (event, arg)=>{
       try{
         event.returnValue = {
@@ -44,6 +50,13 @@ class SOIManager {
       }
     });
 
+    // update SOI file content
+    /*
+      arg = {
+        filePath,
+        fileContent
+      }
+     */
     ipcMainManager.on(IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT, (event, arg)=>{
       try{
         updateFileContent(arg.filePath, arg.fileContent);
@@ -57,6 +70,7 @@ class SOIManager {
       }
     });
 
+    // reset SOI to default
     ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, (event)=>{
       try{
         copyDefaultSOI(true);
@@ -206,6 +220,17 @@ class SOIManager {
     }
   }
 
+  private async publishLog(data):Promise<void>{
+    console.log('pubishLog, data: ', data.toString());
+    // const soiEditorBrowserWindow = getBrowserWindow('soiEditor');
+    // console.log('pubishLog, data: ', data.toString());
+    // // console.log(soiEditorBrowserWindow);
+    // if(soiEditorBrowserWindow){
+    //   console.log('soiEditorBrowserWindow.webContents: ', soiEditorBrowserWindow.webContents);
+    //   ipcMainManager.send(IpcEvents.SOI_CONSOLE_LOG, [{data:data.toString()}], soiEditorBrowserWindow.webContents);
+    // }
+  }
+
   public async runSOI(): Promise<void> {
     try {
       logger.functionStart("runSOI");
@@ -220,12 +245,13 @@ class SOIManager {
         env
       });
 
-      this.soiProcess.stdout!.on("data", data => logger.debug(data.toString()));
-      this.soiProcess.stderr!.on("data", data => logger.debug(data.toString()));
+      this.soiProcess.stdout!.on("data", data => {logger.debug("======stdout: ", data.toString()); this.publishLog(data);});
+      this.soiProcess.stderr!.on("data", data => {logger.debug("******stderr: ", data.toString()); this.publishLog(data);});
       this.soiProcess.on("close", async code => {
         const withCode =
           typeof code === "number" ? ` with code ${code.toString()}.` : `.`;
         logger.debug(withCode);
+        this.publishLog(withCode);
         this.soiProcess = null;
       });
       logger.functionEnd("runSOI");

@@ -2,6 +2,7 @@ export enum IpcEvents {
   SYNC_SOI_GET_FILE_CONTENT = 'SYNC_SOI_GET_FILE_CONTENT',
   SYNC_SOI_UPDATE_FILE_CONTENT = 'SYNC_SOI_UPDATE_FILE_CONTENT',
   SYNC_SOI_RESET_TO_DEFAULT = 'SYNC_SOI_RESET_TO_DEFAULT',
+  SOI_CONSOLE_LOG = 'SOI_CONSOLE_LOG'
 }
 
 export const ipcMainEvents = [
@@ -11,6 +12,7 @@ export const ipcMainEvents = [
 ];
 
 export const ipcRendererEvents = [
+  IpcEvents.SOI_CONSOLE_LOG
 ];
 
 export const WEBCONTENTS_READY_FOR_IPC_SIGNAL = 'WEBCONTENTS_READY_FOR_IPC_SIGNAL';

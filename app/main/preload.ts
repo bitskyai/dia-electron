@@ -1,5 +1,4 @@
-const { BrowserWindow } = require("electron").remote;
-import * as path from "path";
+import { getOrCreateSOIEditorWindow } from "../render/windows";
 
 export let soiEditorWindow: Electron.BrowserWindow | null = null;
 
@@ -31,31 +30,8 @@ window.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (event: any) => {
       event.preventDefault();
       event.stopPropagation();
-      if (soiEditorWindow) {
-        soiEditorWindow.focus();
-      } else {
-        const modalPath = path.join("./build/soi.html");
-        soiEditorWindow = new BrowserWindow({
-          width: 1200,
-          height: 900,
-          minHeight: 600,
-          minWidth: 600,
-          // titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
-          acceptFirstMouse: true,
-          // backgroundColor: '#1d2427',
-          webPreferences: {
-            webviewTag: false,
-            nodeIntegration: true
-          }
-        });
-
-        soiEditorWindow.on("close", () => {
-          soiEditorWindow = null;
-        });
-        soiEditorWindow.loadFile(modalPath);
-        soiEditorWindow.show();
-        soiEditorWindow.webContents.openDevTools();
-      }
+      soiEditorWindow = getOrCreateSOIEditorWindow();
+      soiEditorWindow.focus();
     });
   });
 });

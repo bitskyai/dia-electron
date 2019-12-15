@@ -1,10 +1,14 @@
-import { BrowserWindow, shell } from 'electron';
-import * as path from 'path';
-import { createContextMenu } from './context-menu';
+import { BrowserWindow, shell } from "electron";
+import * as path from "path";
+import { createContextMenu } from "./context-menu";
+
+interface browserWindowHash {
+  [key: string]: BrowserWindow | null;
+}
 
 // Keep a global reference of the window objects, if we don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-export let browserWindows: Array<BrowserWindow> = [];
+const browserWindows: browserWindowHash = {};
 
 /**
  * Gets default options for the main window
@@ -19,7 +23,7 @@ export function getMainWindowOptions(): Electron.BrowserWindowConstructorOptions
     minWidth: 600,
     // titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
     acceptFirstMouse: true,
-    backgroundColor: '#1d2427',
+    backgroundColor: "#1d2427",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       webviewTag: false,
@@ -28,7 +32,6 @@ export function getMainWindowOptions(): Electron.BrowserWindowConstructorOptions
   };
 }
 
-
 /**
  * Creates a new main window.
  *
@@ -36,11 +39,10 @@ export function getMainWindowOptions(): Electron.BrowserWindowConstructorOptions
  * @returns {Electron.BrowserWindow}
  */
 export function createMainWindow(): Electron.BrowserWindow {
-  console.log(`Creating main window`);
   const browserWindow = new BrowserWindow(getMainWindowOptions());
   // browserWindow.loadFile('./dist/static/index.html');
 
-  browserWindow.webContents.once('dom-ready', () => {
+  browserWindow.webContents.once("dom-ready", () => {
     browserWindow.show();
 
     if (browserWindow) {
@@ -48,22 +50,23 @@ export function createMainWindow(): Electron.BrowserWindow {
     }
   });
 
-  browserWindow.on('closed', () => {
-    browserWindows = browserWindows
-      .filter((bw) => browserWindow !== bw);
+  browserWindow.on("closed", () => {
+    // browserWindows = browserWindows.filter(bw => browserWindow !== bw);
+    browserWindows.main = null;
   });
 
-  browserWindow.webContents.on('new-window', (event, url) => {
+  browserWindow.webContents.on("new-window", (event, url) => {
     event.preventDefault();
     shell.openExternal(url);
   });
 
-  browserWindow.webContents.on('will-navigate', (event, url) => {
+  browserWindow.webContents.on("will-navigate", (event, url) => {
     event.preventDefault();
     shell.openExternal(url);
   });
 
-  browserWindows.push(browserWindow);
+  // browserWindows.push(browserWindow);
+  browserWindows.main = browserWindow;
 
   return browserWindow;
 }
@@ -74,5 +77,16 @@ export function createMainWindow(): Electron.BrowserWindow {
  * @returns {Electron.BrowserWindow}
  */
 export function getOrCreateMainWindow(): Electron.BrowserWindow {
-  return BrowserWindow.getFocusedWindow() || browserWindows[0] || createMainWindow();
+  // return (
+  //   BrowserWindow.getFocusedWindow() || browserWindows[0] || createMainWindow()
+  // );
+  return browserWindows.main || createMainWindow();
+}
+
+export function getBrowserWindow(key: string) {
+  return browserWindows[key];
+}
+
+export function setBrowserWindow(key: string, value: Electron.BrowserWindow) {
+  browserWindows[key] = value;
 }
