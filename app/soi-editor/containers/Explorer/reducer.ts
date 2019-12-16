@@ -19,7 +19,6 @@ export const initialState = {
 
 const explorerReducer = (state = initialState, action) =>
   produce(state, (draft: any): any => {
-    console.log("action.type: ", action.type);
     switch (action.type) {
       case GET_SOI_FOLDER_STRUCTURE:
         try {
@@ -27,7 +26,6 @@ const explorerReducer = (state = initialState, action) =>
             path.join(remote.app.getPath("userData"), "soi"),
             "."
           );
-          console.log("soiFolderStructure: ", soiFolderStructure);
           draft.soiFolderStructure = {
             data: soiFolderStructure,
             lastGetTime: Date.now(),

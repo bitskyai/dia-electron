@@ -84,6 +84,6 @@ export function setupMenu() {
     }
   });
   // menus.splice(process.platform === "darwin" ? 1 : 0, 0, getFileMenu());
-  logger.debug("setupMenu->menu: ", JSON.stringify(menus, null, 2));
+  // logger.debug("setupMenu->menu: ", JSON.stringify(menus, null, 2));
   Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
 }

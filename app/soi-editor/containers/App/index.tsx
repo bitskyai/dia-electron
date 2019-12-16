@@ -29,7 +29,7 @@ export interface AppProps {
   currentSelectedFilePath: string;
   isExplorerOpen: boolean;
   isConsoleOpen: boolean;
-  dispatch: Function
+  dispatch: Function;
 }
 
 export interface AppState {
@@ -44,7 +44,6 @@ class App extends React.PureComponent<AppProps, AppState> {
     };
 
     ipcRendererManager.on(IpcEvents.SOI_CONSOLE_LOG, (event, log) => {
-      console.log('App->SOI_CONSOLE_LOG, log: ', log);
       this.props.dispatch(addConoleLog(log));
     });
 
@@ -67,14 +66,11 @@ class App extends React.PureComponent<AppProps, AppState> {
   }
 
   private onChange = (mosaicNodes: MosaicNode<any> | null) => {
-    console.log("onChange ", mosaicNodes);
     this.props.dispatch(updateMosaicNodes(mosaicNodes));
     this.setState({ mosaicNodes });
   };
 
-  private onRelease = (mosaicNodes: MosaicNode<number> | null) => {
-    console.log("Mosaic.onRelease():", mosaicNodes);
-  };
+  private onRelease = (mosaicNodes: MosaicNode<number> | null) => {};
 
   private getMosaicWindow = (mosaicId: string, path: Array<MosaicBranch>) => {
     let content: React.ReactElement<any> = <div />;

@@ -16,29 +16,32 @@ export interface DirStructure {
   children?: Array<DirStructure>;
 }
 
-export interface SOIFolderStructure{
-  data: Array<DirStructure>|null,
-  lastGetTime: number,
-  fail: Error|null,
-  loaded: boolean
+export interface SOIFolderStructure {
+  data: Array<DirStructure> | null;
+  lastGetTime: number;
+  fail: Error | null;
+  loaded: boolean;
 }
 
-
-export interface OpenFile{
-  path: string,
-  name: string,
-  extName: string,
-  content?: string
+export interface OpenFile {
+  path: string;
+  name: string;
+  extName: string;
+  content?: string;
 }
 
-export interface OpenFilesHash{
-  [key:string]: OpenFile
+export interface OpenFilesHash {
+  [key: string]: OpenFile;
 }
 
-export interface FilePane{
-  key: string,
-  title: string,
-  path: string
+export interface FilePane {
+  key: string;
+  title: string;
+  path: string;
 }
 
-export type mosaicId = 'exporer' | 'fileEditor' | 'console';
+export interface LogItem {
+  timestamp: number;
+  text: string;
+}
+export type mosaicId = "exporer" | "fileEditor" | "console";

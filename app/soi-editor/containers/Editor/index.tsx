@@ -103,13 +103,11 @@ export class Editor extends React.Component<EditorProps> {
    */
   public destroyMonaco() {
     if (typeof this.editor !== "undefined") {
-      console.log("Editor: Disposing");
       this.editor.dispose();
     }
   }
 
   public render() {
-    console.log("this.props.path: ", this.props.path);
     if (this.editor) {
       // need to update content
       this.setContent();

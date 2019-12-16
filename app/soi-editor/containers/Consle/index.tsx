@@ -8,6 +8,7 @@ import {
 } from "react-mosaic-component";
 import { responsedToConsole } from "../App/actions";
 import { initialState } from "../App/reducer";
+import { LogItem } from "../../../interfaces";
 
 // import { mosaicId } from '../../../interfaces';
 
@@ -26,7 +27,23 @@ function Console(props: ConsoleProps) {
     state => state.app.mosaicNodes
   );
 
-  const logs: Array<any> = useSelector(state => state.app.logs||[]);
+  const logs: Array<LogItem> = useSelector(state => state.app.logs || []);
+
+  const renderTimestamp = (timestamp: number): string => {
+    return new Date(timestamp).toLocaleTimeString();
+  };
+
+  const renderLog = (log: LogItem, index: number) => {
+    const ts = renderTimestamp(log.timestamp);
+    const timestamp = <span className="timestamp">{ts}</span>;
+    const lines = log.text.split(/\r?\n/);
+    return lines.map((text, lineIndex) => (
+      <p key={`${log.timestamp}--${index}--${lineIndex}`}>
+        {timestamp}
+        {text}
+      </p>
+    ));
+  };
 
   useEffect(() => {
     if (context && context.mosaicActions && context.mosaicActions.updateTree) {
@@ -72,6 +89,10 @@ function Console(props: ConsoleProps) {
     }
   });
 
+  const lines = logs
+      .slice(Math.max(logs.length - 1000, 1))
+      .map(renderLog);
+
   return (
     <MosaicWindow<number>
       draggable={false}
@@ -79,15 +100,8 @@ function Console(props: ConsoleProps) {
       path={props.path}
       toolbarControls={[]}
     >
-      <div>
-        {logs.map(log => {
-          return (
-            <p key={log.timestamp+Math.random()*1000}>
-              <span>{new Date(log.timestamp).toLocaleTimeString()}</span>
-              <span>{log.text}</span>
-            </p>
-          );
-        })}
+      <div className="output">
+        {lines}
       </div>
     </MosaicWindow>
   );

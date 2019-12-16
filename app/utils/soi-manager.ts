@@ -14,6 +14,7 @@ import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
 import { IpcEvents } from "../ipc-events";
 import { ipcMainManager } from "../main/ipc";
+import { LogItem } from "../interfaces";
 
 class SOIManager {
   public soiProcess: ChildProcess | null = null;
@@ -225,11 +226,16 @@ class SOIManager {
     }
   }
 
-  private formatOutput(data: string | Buffer) {
-    let strData = data.toString();
-
-    if (strData.startsWith("Debugger listening on ws://")) return;
-    if (strData === "For help see https://nodejs.org/en/docs/inspector") return;
+  private formatOutput(data: string | Buffer): LogItem | null {
+    let strData = data.toString("utf8");
+    // remove  ANSI colors/styles from string, since currently console doesn't support to show **ANSI colors/styles**
+    strData = strData.replace(
+      /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+      ""
+    );
+    if (strData.startsWith("Debugger listening on ws://")) return null;
+    if (strData === "For help see https://nodejs.org/en/docs/inspector")
+      return null;
 
     return {
       timestamp: Date.now(),
@@ -238,14 +244,16 @@ class SOIManager {
   }
 
   private async publishLog(data): Promise<void> {
-    console.log("pubishLog, data: ", data.toString());
     const soiEditorBrowserWindow = global.browserWindows.soiEditor;
     if (soiEditorBrowserWindow) {
-      ipcMainManager.send(
-        IpcEvents.SOI_CONSOLE_LOG,
-        [this.formatOutput(data)],
-        soiEditorBrowserWindow.webContents
-      );
+      const logItem: LogItem | null = this.formatOutput(data);
+      if (logItem) {
+        ipcMainManager.send(
+          IpcEvents.SOI_CONSOLE_LOG,
+          [logItem],
+          soiEditorBrowserWindow.webContents
+        );
+      }
     }
   }
 
@@ -264,11 +272,11 @@ class SOIManager {
       });
 
       this.soiProcess.stdout!.on("data", data => {
-        logger.debug("======stdout: ", data.toString());
+        // logger.debug("======stdout: ", data.toString());
         this.publishLog(data);
       });
       this.soiProcess.stderr!.on("data", data => {
-        logger.debug("******stderr: ", data.toString());
+        // logger.debug("******stderr: ", data.toString());
         this.publishLog(data);
       });
       this.soiProcess.on("close", async code => {
