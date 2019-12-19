@@ -20,7 +20,7 @@ import TouchBarManager from "../TouchBarManager";
 import Editors from "../Editors";
 import Console from "../Consle";
 import { loadMonaco } from "../../utils";
-import { updateMosaicNodes, addConoleLog } from "./actions";
+import { updateMosaicNodes, addConoleLog, updateSOIStatus } from "./actions";
 import { initialState } from "./reducer";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
@@ -47,7 +47,30 @@ class App extends React.PureComponent<AppProps, AppState> {
       this.props.dispatch(addConoleLog(log));
     });
 
+    ipcRendererManager.on(IpcEvents.STARTING_SOI_SERVER_SUCCESS, ()=>{
+      this.updateSOIStatus();
+    });
+    ipcRendererManager.on(IpcEvents.STARTING_SOI_SERVER_FAIL, ()=>{
+      this.updateSOIStatus();
+    });
+    ipcRendererManager.on(IpcEvents.STOPPING_SOI_SERVER_SUCCESS, ()=>{
+      this.updateSOIStatus();
+    });
+    ipcRendererManager.on(IpcEvents.STOPPING_SOI_SERVER_FAIL, ()=>{
+      this.updateSOIStatus();
+    });
+
+    this.updateSOIStatus();
     loadMonaco();
+  }
+
+  private updateSOIStatus(){
+    let result = ipcRendererManager.sendSync(
+      IpcEvents.SYNC_SOI_STATUS
+    );
+    
+    // Need to handle error 
+    this.props.dispatch(updateSOIStatus(result.status));
   }
 
   render() {

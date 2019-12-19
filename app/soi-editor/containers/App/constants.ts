@@ -14,3 +14,4 @@ export const SHOW_OR_HIDE_EXPLORER = 'soi-editor/App/SHOW_OR_HIDE_EXPLORER';
 export const RESPONSED_TO_EXPLORER = 'soi-editor/App/RESPONSED_TO_EXPLORER';
 export const UPDATE_MOSAIC_NODES = 'soi-editor/App/UPDATE_MOSAIC_NODES';
 export const ADD_CONSOLE_LOG = 'soi-editor/App/ADD_CONSOLE_LOG';
+export const UPDATE_SOI_STATUS = 'soi-editor/App/UPDATE_SOI_STATUS';

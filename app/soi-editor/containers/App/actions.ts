@@ -4,7 +4,8 @@ import {
   SHOW_OR_HIDE_EXPLORER,
   RESPONSED_TO_EXPLORER,
   UPDATE_MOSAIC_NODES,
-  ADD_CONSOLE_LOG
+  ADD_CONSOLE_LOG,
+  UPDATE_SOI_STATUS
 } from "./constants";
 
 export const showOrHideConsole = () => {
@@ -45,6 +46,15 @@ export const addConoleLog = (log)=>{
     type: ADD_CONSOLE_LOG,
     payload: {
       log
+    }
+  }
+}
+
+export const updateSOIStatus = (status)=>{
+  return {
+    type: UPDATE_SOI_STATUS,
+    payload: {
+      status
     }
   }
 }

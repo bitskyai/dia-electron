@@ -1,8 +1,12 @@
-import { ipcMain } from 'electron';
-import { EventEmitter } from 'events';
+import { ipcMain } from "electron";
+import { EventEmitter } from "events";
 
-import { IpcEvents, ipcMainEvents, WEBCONTENTS_READY_FOR_IPC_SIGNAL } from '../ipc-events';
-import { getOrCreateMainWindow } from './windows';
+import {
+  IpcEvents,
+  ipcMainEvents,
+  WEBCONTENTS_READY_FOR_IPC_SIGNAL
+} from "../ipc-events";
+import { getOrCreateMainWindow } from "./windows";
 
 /**
  * The main purpose of this class is to be the central
@@ -14,25 +18,31 @@ import { getOrCreateMainWindow } from './windows';
  */
 export class IpcMainManager extends EventEmitter {
   public readyWebContents = new WeakSet<Electron.WebContents>();
-  private messageQueue = new WeakMap<Electron.WebContents, Array<[IpcEvents, Array<any> | undefined]>>();
+  private messageQueue = new WeakMap<
+    Electron.WebContents,
+    Array<[IpcEvents, Array<any> | undefined]>
+  >();
 
   constructor() {
     super();
 
-    ipcMainEvents.forEach((name) => {
+    ipcMainEvents.forEach(name => {
       ipcMain.on(name, (...args: Array<any>) => this.emit(name, ...args));
     });
 
-    ipcMain.on(WEBCONTENTS_READY_FOR_IPC_SIGNAL, (event: Electron.IpcMainEvent) => {
-      this.readyWebContents.add(event.sender);
+    ipcMain.on(
+      WEBCONTENTS_READY_FOR_IPC_SIGNAL,
+      (event: Electron.IpcMainEvent) => {
+        this.readyWebContents.add(event.sender);
 
-      const queue = this.messageQueue.get(event.sender);
-      this.messageQueue.delete(event.sender);
-      if (!queue) return;
-      for (const item of queue) {
-        this.send(item[0], item[1], event.sender);
+        const queue = this.messageQueue.get(event.sender);
+        this.messageQueue.delete(event.sender);
+        if (!queue) return;
+        for (const item of queue) {
+          this.send(item[0], item[1], event.sender);
+        }
       }
-    });
+    );
   }
 
   /**
@@ -43,7 +53,11 @@ export class IpcMainManager extends EventEmitter {
    * @param {Array<any>} args
    * @param {Electron.WebContents} [target]
    */
-  public send(channel: IpcEvents, args?: Array<any>, target?: Electron.WebContents) {
+  public send(
+    channel: IpcEvents,
+    args?: Array<any>,
+    target?: Electron.WebContents
+  ) {
     const _target = target || getOrCreateMainWindow().webContents;
     const _args = args || [];
     // if (!this.readyWebContents.has(_target)) {
@@ -52,6 +66,14 @@ export class IpcMainManager extends EventEmitter {
     //   return;
     // }
     _target.send(channel, ..._args);
+  }
+
+  public sendToSOIEditor(channel: IpcEvents, args?: Array<any>) {
+    const _args = args || [];
+    const soiEditorBrowserWindow = global.browserWindows.soiEditor;
+    if (soiEditorBrowserWindow && soiEditorBrowserWindow.webContents) {
+      soiEditorBrowserWindow.send(channel, ..._args);
+    }
   }
 }
 

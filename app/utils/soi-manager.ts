@@ -2,6 +2,7 @@
 import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
+import * as detect from "detect-port";
 import { fancyImport } from "./import";
 import {
   copyDefaultSOI,
@@ -19,8 +20,15 @@ import { LogItem } from "../interfaces";
 class SOIManager {
   public soiProcess: ChildProcess | null = null;
   public version: string = "7.1.2";
+  private isElectronDownloaded: boolean = false;
   // whether electron is downloading
   private isDownloading: boolean = false;
+  // whether SOI is running
+  private isRunning: boolean = false;
+  // whether during the middle of start server
+  private isStartingServer: boolean = false;
+  // Port number will be changed if port isn't available
+  private SOIPort: number = 8081;
 
   constructor() {
     this.runSOI = this.runSOI.bind(this);
@@ -76,6 +84,22 @@ class SOIManager {
       }
     });
 
+     // reset SOI to default
+     ipcMainManager.on(IpcEvents.SYNC_SOI_STATUS, event => {
+      try {
+        let status = this.status();
+        event.returnValue = {
+          status
+        }
+      } catch (err) {
+        logger.error(`${IpcEvents.SYNC_SOI_STATUS} error: `, err);
+        event.returnValue = {
+          status:undefined,
+          error: err
+        };
+      }
+    });
+
     // reset SOI to default
     ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, event => {
       try {
@@ -89,6 +113,24 @@ class SOIManager {
         };
       }
     });
+
+    // reset stop SOI server
+    ipcMainManager.on(IpcEvents.STOP_SOI_SERVER, event => {
+      try {
+        this.stopSOI();
+      } catch (err) {
+        logger.error(`${IpcEvents.STOP_SOI_SERVER} error: `, err);
+      }
+    });
+
+    // reset start SOI server
+    ipcMainManager.on(IpcEvents.START_SOI_SERVER, event => {
+      try {
+        this.runSOI();
+      } catch (err) {
+        logger.error(`${IpcEvents.START_SOI_SERVER} error: `, err);
+      }
+    });
   }
 
   /**
@@ -97,48 +139,59 @@ class SOIManager {
    *
    * @returns {Promise<void>}
    */
-  public async setup(): Promise<void> {
+  public async setup(): Promise<boolean> {
     const version = this.version;
     const fs = await fancyImport<typeof fsType>("fs-extra");
     const { promisify } = await import("util");
     const eDownload = promisify(require("electron-download"));
 
-    await fs.mkdirp(this.getDownloadPath(version));
+    await fs.mkdirp(this.getDownloadPath());
 
     if (this.isDownloading) {
       logger.info(
         `SOIManager: Electron ${version} already downloading. please wait...`
       );
-      return;
+      return true;
     }
 
-    if (await this.getIsDownloaded(version)) {
+    if (await this.getIsDownloaded()) {
       logger.info(`SOIManager: Electron ${version} already downloaded.`);
       this.isDownloading = false;
-      return;
+      return true;
     }
 
     logger.info(`SOIManager: Electron ${version} not present, downloading`);
     this.isDownloading = true;
 
+    // publish message to let SOI Editor know it is downloading electron
+    ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOADING_ELECTRON, [
+      { version, status: "downloading" }
+    ]);
     const zipPath = await eDownload({ version });
-    const extractPath = this.getDownloadPath(version);
+    const extractPath = this.getDownloadPath();
     logger.info(
       `SOIManager: Electron ${version} downloaded, now unpacking to ${extractPath}`
     );
-
+    this.isDownloading = false;
     try {
       // Ensure the target path is empty
       await fs.emptyDir(extractPath);
-
       const electronFiles = await this.unzip(zipPath, extractPath);
       logger.info(`Unzipped ${version}`, electronFiles);
+      // update `isElectronDownloaded`
+      await this.getIsDownloaded();
+      ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOAD_ELECTRON_SUCCESS, [
+        { version, status: "success" }
+      ]);
+      return true;
     } catch (error) {
       logger.error(`Failure while unzipping ${version}`, error);
-
+      ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOAD_ELECTRON_FAIL, [
+        { version, status: "fail", error }
+      ]);
+      return false;
       // TODO: Handle this case
     }
-    this.isDownloading = false;
   }
 
   /**
@@ -148,14 +201,12 @@ class SOIManager {
    * @param {string} dir
    * @returns {boolean}
    */
-  public async getIsDownloaded(
-    version: string,
-    dir?: string
-  ): Promise<boolean> {
-    const expectedPath = this.getElectronBinaryPath(version, dir);
+  public async getIsDownloaded(): Promise<boolean> {
+    const expectedPath = this.getElectronBinaryPath();
     const fs = await fancyImport<typeof fsType>("fs-extra");
-
-    return fs.existsSync(expectedPath);
+    // Update `isElectronDownloaded` property
+    this.isElectronDownloaded = !!fs.existsSync(expectedPath);
+    return this.isElectronDownloaded;
   }
 
   /**
@@ -164,8 +215,8 @@ class SOIManager {
    * @param {string} version
    * @returns {string}
    */
-  private getDownloadPath(version: string = this.version): string {
-    return path.join(USER_DATA_PATH, "electron-bin", version);
+  private getDownloadPath(): string {
+    return path.join(USER_DATA_PATH, "electron-bin", this.version);
   }
 
   /**
@@ -207,10 +258,8 @@ class SOIManager {
    * @param {string} dir
    * @returns {string}
    */
-  public getElectronBinaryPath(
-    version: string = this.version,
-    dir: string = this.getDownloadPath(version)
-  ): string {
+  public getElectronBinaryPath(): string {
+    let dir: string = this.getDownloadPath();
     switch (process.platform) {
       case "darwin":
         return path.join(dir, "Electron.app/Contents/MacOS/Electron");
@@ -244,28 +293,54 @@ class SOIManager {
   }
 
   private async publishLog(data): Promise<void> {
-    const soiEditorBrowserWindow = global.browserWindows.soiEditor;
-    if (soiEditorBrowserWindow) {
-      const logItem: LogItem | null = this.formatOutput(data);
-      if (logItem) {
-        ipcMainManager.send(
-          IpcEvents.SOI_CONSOLE_LOG,
-          [logItem],
-          soiEditorBrowserWindow.webContents
-        );
-      }
+    const logItem: LogItem | null = this.formatOutput(data);
+    if (logItem) {
+      ipcMainManager.sendToSOIEditor(IpcEvents.SOI_CONSOLE_LOG, [logItem]);
     }
+  }
+
+  private async getAvailablePort(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      detect(this.SOIPort, (err, port) => {
+        if (err) {
+          logger.error("getAvailablePort, error: ", err);
+        }
+        this.SOIPort = port;
+        logger.debug(`${port} is avaialbe`);
+        resolve(port);
+      });
+    });
   }
 
   public async runSOI(): Promise<void> {
     try {
       logger.functionStart("runSOI");
+      if(this.isRunning){
+        ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER_SUCCESS, [
+          {
+            port: this.SOIPort,
+            status: "success"
+          }
+        ]);
+        return;
+      }
       const SOI_PATH = getSOIPath();
       await this.setup();
       const binaryPath = this.getElectronBinaryPath();
       logger.debug(`elelctron binary path: ${binaryPath}`);
       logger.debug(`SOI_Path: ${SOI_PATH}`);
+      // get an available port
+      this.SOIPort = await this.getAvailablePort();
+      ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER, [
+        {
+          port: this.SOIPort,
+          status: "star"
+        }
+      ]);
       const env = { ...process.env };
+      env.PORT = this.SOIPort.toString();
+      this.isStartingServer = true;
+
       this.soiProcess = spawn(binaryPath, [SOI_PATH, "--inspect"], {
         cwd: SOI_PATH,
         env
@@ -285,16 +360,76 @@ class SOIManager {
         logger.debug(withCode);
         this.publishLog(withCode);
         this.soiProcess = null;
+        ipcMainManager.sendToSOIEditor(IpcEvents.STOPPING_SOI_SERVER_SUCCESS, [
+          {
+            port: this.SOIPort,
+            status: "success"
+          }
+        ]);
       });
+      this.isStartingServer = false;
+      this.isRunning = true;
+      ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER_SUCCESS, [
+        {
+          port: this.SOIPort,
+          status: "success"
+        }
+      ]);
       logger.functionEnd("runSOI");
     } catch (err) {
+      this.isStartingServer = false;
+      this.isRunning = false;
       logger.error("runSOI error: ", err);
+      ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER_FAIL, [
+        {
+          port: this.SOIPort,
+          status: "fail",
+          error: err
+        }
+      ]);
+      throw err;
     }
   }
 
   public async stopSOI() {
-    if (this.soiProcess) {
-      this.soiProcess.kill();
+    try {
+      ipcMainManager.sendToSOIEditor(IpcEvents.STOPPING_SOI_SERVER, [
+        {
+          port: this.SOIPort,
+          status: "stopping"
+        }
+      ]);
+      if (this.soiProcess) {
+        this.soiProcess.kill();
+        ipcMainManager.sendToSOIEditor(IpcEvents.STOPPING_SOI_SERVER_SUCCESS, [
+          {
+            port: this.SOIPort,
+            status: "success"
+          }
+        ]);
+      }
+      this.isRunning = false;
+    } catch (err) {
+      ipcMainManager.sendToSOIEditor(IpcEvents.STOPPING_SOI_SERVER_FAIL, [
+        {
+          port: this.SOIPort,
+          status: "fail",
+          error: err
+        }
+      ]);
+    }
+  }
+
+  /**
+   * Get default SOI status
+   */
+  public status() {
+    return {
+      isElectronDownloaded: this.isElectronDownloaded,
+      isDownloading: this.isDownloading,
+      isRunning: this.isRunning,
+      isStartingServer: this.isStartingServer,
+      SOIPort: this.SOIPort
     }
   }
 }

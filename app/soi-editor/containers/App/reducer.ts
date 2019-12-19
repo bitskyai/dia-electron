@@ -7,7 +7,8 @@ import {
   SHOW_OR_HIDE_EXPLORER,
   RESPONSED_TO_EXPLORER,
   UPDATE_MOSAIC_NODES,
-  ADD_CONSOLE_LOG
+  ADD_CONSOLE_LOG,
+  UPDATE_SOI_STATUS
 } from "./constants";
 
 const mosaicNodes: MosaicNode<number | string> | null = {
@@ -28,7 +29,8 @@ export const initialState = {
   isConsoleOpen: true,
   waitingConsoleToResponse: false,
   mosaicNodes,
-  logs:[]
+  logs:[],
+  status:{}
 };
 
 const appReducer = (state = initialState, action) =>
@@ -53,6 +55,9 @@ const appReducer = (state = initialState, action) =>
         break;
       case ADD_CONSOLE_LOG:
         draft.logs = [action.payload.log, ...state.logs]
+        break;
+      case UPDATE_SOI_STATUS:
+        draft.status = { ...state.status, ...action.payload.status}
         break;
       default:
         break;
