@@ -1,7 +1,7 @@
 import React from "react";
-import { PageHeader, Button, Icon, message } from "antd";
+import { PageHeader, Button, Icon, message, Tag } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { showOrHideConsole, showOrHideExplorer, updateSOIStatus } from "../App/actions";
+import { showOrHideConsole, showOrHideExplorer } from "../App/actions";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
 
@@ -49,13 +49,13 @@ function TouchBarManager() {
     }
   };
 
-  const stopSOI = ()=>{
+  const stopSOI = () => {
     ipcRendererManager.send(IpcEvents.STOP_SOI_SERVER);
-  }
+  };
 
-  const startSOI = ()=>{
+  const startSOI = () => {
     ipcRendererManager.send(IpcEvents.START_SOI_SERVER);
-  }
+  };
 
   const getActionBtns = () => {
     let actionBtns = [
@@ -74,14 +74,14 @@ function TouchBarManager() {
     ];
     if (status.isRunning) {
       actionBtns = [
-        <Button key="stop" onClick={stopSOI}>
-          <Icon type="border" style={{ background: "#555" }} />
+        <Button key="stop" type="primary" onClick={stopSOI}>
+          <Icon type="pause-circle" />
           Stop
         </Button>
       ].concat(actionBtns);
     } else {
       actionBtns = [
-        <Button key="run"  onClick={startSOI}>
+        <Button key="run" onClick={startSOI}>
           <Icon type="caret-right" />
           Run
         </Button>
@@ -91,14 +91,26 @@ function TouchBarManager() {
     return actionBtns;
   };
 
+  let SOIURL = `http://localhost:${status.SOIPort}`;
+  const content = (
+    <div className="content">
+      <a target="_blank" href={SOIURL}>
+        {SOIURL}
+      </a>
+      {status.isRunning ? <Tag color="#87d068">Running</Tag>: <Tag color="#f50">Stop</Tag>}
+    </div>
+  );
+
   return (
     <PageHeader
       ghost={false}
       onBack={() => window.history.back()}
       title="Default SOI"
-      subTitle="A default SOI you can add your logic to intelligences.js"
+      subTitle="A default SOI help you to get start data crawling"
       extra={getActionBtns()}
-    ></PageHeader>
+    >
+      {content}
+    </PageHeader>
   );
 }
 
