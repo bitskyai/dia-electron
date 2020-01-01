@@ -1,4 +1,4 @@
-import { dialog, IpcMainEvent } from 'electron';
+import { BrowserView } from 'electron';
 import { IpcEvents } from '../ipc-events';
 import { ipcMainManager } from './ipc';
 import { getOrCreateMainWindow } from './windows';
@@ -9,18 +9,10 @@ import { getOrCreateMainWindow } from './windows';
  * @export
  */
 export function setupDialogs() {
-  ipcMainManager.on(IpcEvents.SHOW_WARNING_DIALOG, (_event, args) => {
-    showWarningDialog(args);
+  ipcMainManager.on(IpcEvents.OPEN_SETTINGS, (_event, args) => {
+    console.log("setupDialogs -> receiven message: ", IpcEvents.OPEN_SETTINGS);
+    showSettings(args);
   });
-
-  ipcMainManager.on(IpcEvents.SHOW_CONFIRMATION_DIALOG, (_event, args) => {
-    showConfirmationDialog(args);
-  });
-
-  ipcMainManager.on(IpcEvents.SHOW_LOCAL_VERSION_FOLDER_DIALOG, async (event) => {
-    await showOpenDialog(event);
-  });
-
 }
 
 /**
@@ -28,34 +20,25 @@ export function setupDialogs() {
  *
  * @param {Electron.MessageBoxOptions} args
  */
-function showWarningDialog(args: Electron.MessageBoxOptions) {
-  dialog.showMessageBox(getOrCreateMainWindow(), {
-    type: 'warning',
-    ...args
-  });
-}
+function showSettings(args: Electron.MessageBoxOptions) {
+  console.log('showSettings');
+  let win = getOrCreateMainWindow();
+  const view = new BrowserView({
+    webPreferences: {
+      nodeIntegration: false
+    }
+  })
 
-/**
- * Shows a confirmation dialog
- *
- * @param {Electron.MessageBoxOptions} args
- */
-function showConfirmationDialog(args: Electron.MessageBoxOptions) {
-  dialog.showMessageBox(getOrCreateMainWindow(), {
-    type: 'warning',
-    ...args
-  });
-}
+  win.setBrowserView(view)
+  view.setBounds({ x: 0, y: 0, width: 800, height: 600 })
+  view.setAutoResize({
+    width:true,
+    height:true
+  })
 
-async function showOpenDialog(event: IpcMainEvent) {
-  const { filePaths } = await dialog.showOpenDialog({
-    title: 'Open Folder',
-    properties: ['openDirectory']
-  });
-
-  if (!filePaths || filePaths.length < 1) {
-    return;
-  }
-
-  event.reply(IpcEvents.LOAD_LOCAL_VERSION_FOLDER, [filePaths[0]]);
+  setTimeout(()=>{
+    // view.destory();
+    win.setBrowserView(null);
+  }, 10*1000);
+  view.webContents.loadURL('https://electronjs.org')
 }

@@ -5,7 +5,8 @@ const path = require('path')
 
 async function compileParcel (options = {}) {
   const entryFiles = [
-    path.join(__dirname, '../app/soi.html')
+    path.join(__dirname, '../app/soi.html'),
+    path.join(__dirname, '../app/settings.html')
   ]
 
   let watch = false;

@@ -1,7 +1,15 @@
-import { Menu, shell, MenuItemConstructorOptions, app } from "electron";
-import logger from "../utils/logger";
-import { IpcEvents } from "../ipc-events";
+import {
+  Menu,
+  shell,
+  MenuItemConstructorOptions,
+  app,
+  BrowserView
+} from "electron";
+import * as path from "path";
 import { ipcMainManager } from "./ipc";
+import { IpcEvents } from "../ipc-events";
+// import logger from "../utils/logger";
+import { getOrCreateMainWindow } from "../main/windows";
 // const isMac = process.platform === "darwin";
 
 /**
@@ -22,7 +30,13 @@ function isSubmenu(
  * @returns {Array<Electron.MenuItemConstructorOptions>}
  */
 function getHelpItems(): Array<MenuItemConstructorOptions> {
-  return [
+  let preferencesMenu = [] as Array<MenuItemConstructorOptions>;
+  if (process.platform !== "darwin") {
+    preferencesMenu = getPreferencesItems();
+  }
+  // remove unsed `separator`
+  preferencesMenu.shift();
+  return preferencesMenu.concat([
     {
       label: "Open Munew Repository...",
       click() {
@@ -41,27 +55,74 @@ function getHelpItems(): Array<MenuItemConstructorOptions> {
         shell.openExternal("https://github.com/munew/dia/issues");
       }
     }
-  ];
+  ]);
+}
+
+function showSettings() {
+  let win = getOrCreateMainWindow();
+  const view = new BrowserView({
+    webPreferences: {
+      webviewTag: false,
+      nodeIntegration: true
+    }
+  });
+
+  let currentWinBounds = win.getBounds();
+
+  win.setBrowserView(view);
+  view.setBounds({
+    x: 0,
+    y: 0,
+    width: currentWinBounds.width,
+    height: currentWinBounds.height
+  });
+  view.setAutoResize({
+    width: true,
+    height: true
+  });
+  const modalPath = path.join("./build/settings.html");
+  view.webContents.loadFile(modalPath);
+}
+
+function hideSettings(){
+  let win = getOrCreateMainWindow();
+  win.setBrowserView(null);
 }
 
 /**
- * Returns the top-level "File" menu
+ * Depending on the OS, the `Preferences` either go into the `Fiddle`
+ * menu (macOS) or under `File` (Linux, Windows)
  *
  * @returns {Array<Electron.MenuItemConstructorOptions>}
  */
-function getFileMenu(): MenuItemConstructorOptions {
-  const fileMenu: Array<MenuItemConstructorOptions> = [
+function getPreferencesItems(): Array<MenuItemConstructorOptions> {
+  return [
     {
-      label: "Save",
-      click: () => ipcMainManager.send(IpcEvents.FS_SAVE_FIDDLE),
-      accelerator: "CmdOrCtrl+S"
+      type: "separator"
+    },
+    {
+      label: "Preferences",
+      accelerator: "CmdOrCtrl+,",
+      click() {
+        // console.log('send message: ', IpcEvents.OPEN_SETTINGS);
+        // ipcMainManager.send(IpcEvents.OPEN_SETTINGS);
+        showSettings();
+      }
+    },
+    {
+      type: "separator"
     }
   ];
+}
 
-  return {
-    label: "File",
-    submenu: fileMenu
-  };
+function setupEventsListeners() {
+  ipcMainManager.on(IpcEvents.CLOSE_SETTINGS, (event, arg) => {
+    try {
+      hideSettings();
+    } catch (err) {
+      console.error(err);
+    }
+  });
 }
 
 /**
@@ -69,10 +130,19 @@ function getFileMenu(): MenuItemConstructorOptions {
  */
 export function setupMenu() {
   const defaultMenu = require("electron-default-menu");
-  const fullmenu = defaultMenu(app, shell);
+  const fullmenu = defaultMenu(app, shell) as Array<MenuItemConstructorOptions>;
   const menus: Array<MenuItemConstructorOptions> = [];
   fullmenu.forEach((menu: MenuItemConstructorOptions) => {
     const { label } = menu;
+
+    // Append the "Settings" item
+    if (
+      process.platform === "darwin" &&
+      label === app.getName() &&
+      isSubmenu(menu.submenu)
+    ) {
+      menu.submenu.splice(2, 0, ...getPreferencesItems());
+    }
 
     // Append items to "Help"
     if (label === "Help" && isSubmenu(menu.submenu)) {
@@ -86,4 +156,6 @@ export function setupMenu() {
   // menus.splice(process.platform === "darwin" ? 1 : 0, 0, getFileMenu());
   // logger.debug("setupMenu->menu: ", JSON.stringify(menus, null, 2));
   Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
+
+  setupEventsListeners();
 }
