@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { showOrHideConsole, showOrHideExplorer } from "../App/actions";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
+import { getOrCreateSOIEditorWindow } from '../../../render/windows';
 
 function TouchBarManager() {
   const dispatch = useDispatch();
@@ -48,6 +49,11 @@ function TouchBarManager() {
       message.error("Failed reset to default SOI, please try again");
     }
   };
+
+  const clickBackBtn = ()=>{
+    let win = getOrCreateSOIEditorWindow();
+    win.close();
+  }
 
   const stopSOI = () => {
     ipcRendererManager.send(IpcEvents.STOP_SOI_SERVER);
@@ -104,7 +110,7 @@ function TouchBarManager() {
   return (
     <PageHeader
       ghost={false}
-      onBack={() => window.history.back()}
+      onBack={() => clickBackBtn()}
       title="Default SOI"
       subTitle="A default SOI help you to get start data crawling"
       extra={getActionBtns()}

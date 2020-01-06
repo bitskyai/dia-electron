@@ -50,12 +50,12 @@ export function createSOIEditorWindow(): Electron.BrowserWindow {
   const modalPath = path.join("./build/soi.html");
   browserWindow.loadFile(modalPath);
   browserWindow.show();
-  browserWindow.webContents.openDevTools();
+  // browserWindow.webContents.openDevTools();
 
   getGlobal('browserWindows').soiEditor = browserWindow;
   return browserWindow;
 }
 
 export function getOrCreateSOIEditorWindow(): Electron.BrowserWindow {
-  return browserWindows.soiEditor || createSOIEditorWindow();
+  return getGlobal('browserWindows').soiEditor || createSOIEditorWindow();
 }
