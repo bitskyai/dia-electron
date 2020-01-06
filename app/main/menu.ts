@@ -106,7 +106,7 @@ export function showSettings() {
   });
   const modalPath = path.join("./build/settings.html");
   view.webContents.loadFile(modalPath);
-  view.webContents.openDevTools();
+  // view.webContents.openDevTools();
 }
 
 export function hideSettings(){

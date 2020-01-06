@@ -7,34 +7,31 @@
  *
  */
 import React from "react";
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from "react-intl";
-import { Tabs, PageHeader, Button, Form, Input, Divider } from "antd";
-import { ipcRenderer } from "electron";
-
+import { FormattedMessage, injectIntl } from "react-intl";
+import { Tabs, PageHeader, Button, Typography } from "antd";
 const { TabPane } = Tabs;
+const { Title, Paragraph, Text } = Typography;
+const packageJSON = require("../../../../package.json");
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
 
-import GeneralForm from './GeneralForm';
+import GeneralForm from "./GeneralForm";
 
 class App extends React.PureComponent {
   constructor(props: any) {
     super(props);
-    let result = ipcRendererManager.sendSync(
-      IpcEvents.SYNC_GET_PREFERENCES_JSON
-    );
   }
 
   onSave() {
-    ipcRenderer.send(IpcEvents.CLOSE_SETTINGS);
+    ipcRendererManager.send(IpcEvents.CLOSE_SETTINGS);
   }
 
   onClose() {
-    ipcRenderer.send(IpcEvents.CLOSE_SETTINGS);
+    ipcRendererManager.send(IpcEvents.CLOSE_SETTINGS);
   }
 
   render() {
-    const { formatMessage, formatHTMLMessage } = this.props.intl;
+    const { formatMessage } = this.props.intl;
     return (
       <div className="munew-settings">
         <PageHeader
@@ -57,7 +54,55 @@ class App extends React.PureComponent {
             <GeneralForm />
           </TabPane>
           <TabPane tab={formatMessage({ id: "munew.settings.about" })} key="2">
-            Content of About
+            <Typography className="tab-panel-content">
+              <Title level={2}>
+                <FormattedMessage id="munew.settings.about" />
+              </Title>
+              <Title level={3}>Munew {packageJSON.version}</Title>
+              <Paragraph>
+                <FormattedMessage id="munew.settings.productDescription" />
+              </Paragraph>
+              <Paragraph>
+                <ul>
+                  <li>
+                    <a href="https://munew.io" target="_blank">
+                      <FormattedMessage id="munew.settings.website" />
+                    </a>
+                  </li>
+                  <li>
+                    <FormattedMessage id="munew.settings.copyright" />
+                  </li>
+                  <li>
+                    <a
+                      href="https://github.com/munew/dia/blob/master/LICENSE"
+                      target="_blank"
+                    >
+                      <FormattedMessage id="munew.settings.license" />
+                    </a>
+                  </li>
+                </ul>
+              </Paragraph>
+              <Title level={2}>
+                <FormattedMessage id="munew.settings.community" />
+              </Title>
+              <Paragraph>
+                <ul>
+                  <li>
+                    <a href="https://github.com/munew/dia/issues/new" target="_blank">
+                      <FormattedMessage id="munew.settings.reportBug" />
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://github.com/munew"
+                      target="_blank"
+                    >
+                      <FormattedMessage id="munew.settings.github" />
+                    </a>
+                  </li>
+                </ul>
+              </Paragraph>
+            </Typography>
           </TabPane>
         </Tabs>
       </div>

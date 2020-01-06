@@ -3,7 +3,7 @@ import { remote } from "electron";
 import * as path from "path";
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from "react-intl";
 import { Form, Input, Skeleton, Typography, Select, Button, Icon } from "antd";
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 const formItemStyle = { marginBottom: 0, paddingBottom: 0 };
 
@@ -110,7 +110,6 @@ class GeneralForm extends React.Component {
       ...preferences,
       ...values
     };
-    console.log("updatePreferences->preferences", preferences);
     this.setState({
       preferences
     });
@@ -189,7 +188,7 @@ class GeneralForm extends React.Component {
       })
       .then(result => {
         if (result.canceled) {
-          console.log("Dialog was canceled");
+          
         } else {
           const dir = result.filePaths && result.filePaths[0];
           let { preferences } = this.state;
@@ -197,7 +196,6 @@ class GeneralForm extends React.Component {
             dir,
             DEAULT_SQLITE_DATABASE
           );
-          console.log("preferences: ", preferences);
           this.setState({
             preferences
           });
@@ -275,10 +273,10 @@ class GeneralForm extends React.Component {
                   ]
                 })(
                   <div>
-                    <span>{preferences.TYPEORM_DATABASE}</span>
-                    <Button onClick={this.openDirectoryPicker.bind(this)}>
+                    <Text code>{preferences.TYPEORM_DATABASE}</Text>
+                    <Button size="small" onClick={this.openDirectoryPicker.bind(this)} title={formatMessage({id:'munew.settings.selectFolderTooltip'})}>
                       <Icon type="folder-open" />
-                      <FormattedMessage id="munew.settings.selectFolder" />
+                      {/* <FormattedMessage id="munew.settings.selectFolder" /> */}
                     </Button>
                   </div>
                 )}
