@@ -1,5 +1,6 @@
 import * as fs from "fs-extra";
 import * as path from "path";
+import * as detect from "detect-port";
 import logger from "./logger";
 import { DirStructure, DirType } from "../interfaces";
 
@@ -122,7 +123,7 @@ export function readFolderRecursiveSync(
   currentPath: string = "."
 ) {
   try {
-    logger.debug('source: ', source);
+    logger.debug("source: ", source);
     let folderData: Array<DirStructure> = [];
     // if source is directory
     if (fs.lstatSync(source).isDirectory()) {
@@ -149,7 +150,9 @@ export function readFolderRecursiveSync(
           };
           folderData.push(fileInfo);
         } else {
-          logger.warn(`readFolderRecursiveSync, unsupport type ${item}, skip this item`);
+          logger.warn(
+            `readFolderRecursiveSync, unsupport type ${item}, skip this item`
+          );
         }
       }
     }
@@ -158,4 +161,23 @@ export function readFolderRecursiveSync(
     logger.error("readFolderRecursiveSync error: ", err);
     throw err;
   }
+}
+
+/**
+ * Get an available port
+ * @param port - specific port want to check whether it is available
+ */
+export async function getAvailablePort(port?:number): Promise<number> {
+  return new Promise(resolve => {
+    if(!port){
+      port = 9090;
+    }
+    detect(port, (err:Error, port:number) => {
+      if (err) {
+        logger.error("getAvailablePort, error: ", err);
+      }
+      logger.debug(`${port} is avaialbe`);
+      resolve(port);
+    });
+  });
 }

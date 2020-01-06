@@ -1,15 +1,17 @@
 import { app } from "electron";
-import * as path from "path";
 import { isDevMode } from "../utils/devmode";
 import { setupAboutPanel } from "../utils/set-about-panel";
 import { setupDevTools } from "./devtools";
 import { setupDialogs } from "./dialogs";
+import { setUpEventListeners } from './events';
 import { onFirstRunMaybe } from "./first-run";
+import { setupMenu } from './menu';
 import { listenForProtocolHandler, setupProtocolHandler } from "./protocol";
 import { shouldQuit } from "./squirrel";
 import { setupUpdates } from "./update";
 import { getOrCreateMainWindow } from "./windows";
 import logger from "../utils/logger";
+import engine from '../utils/engine';
 import SOIManager from '../utils/soi-manager';
 
 /**
@@ -28,53 +30,27 @@ export async function onReady() {
 
     await onFirstRunMaybe();
     if (!isDevMode()) process.env.NODE_ENV = "production";
+    try{
+      await engine.startEngine();
+    }catch(err){
+      logger.error("start engine file. error: ", err);
+    }
 
-    // Default configuration for **dia-engine**
-    // TODO: move to preference
-    process.env.TYPEORM_CONNECTION = "sqlite";
-    process.env.TYPEORM_DATABASE = path.join(
-      app.getPath("userData"),
-      "dia-engine.sql"
-    );
-    process.env.LOG_FILES_PATH = path.join(
-      app.getPath("userData"),
-      "./log/dia-engine"
-    );
-    logger.info(
-      "main->main.js->onReady, TYPEORM_DATABASE: ",
-      process.env.TYPEORM_DATABASE
-    );
-    logger.info(
-      "main->main.js->onReady, LOG_FILES_PATH: ",
-      process.env.LOG_FILES_PATH
-    );
-    // start
-    const startServer = require("../engine-ui/src/server").startServer;
-    await startServer();
-    logger.info("main->main.js->onReady, dia-engine successfully started.");
-    // process.env.NODE_PATH=path.join(__dirname, '../../../../');
     try {
       SOIManager.runSOI();
     } catch (err) {
-      logger.error("start soi fail. err: ", err);
+      logger.error("start soi fail. error: ", err);
     }
-    let mainWindow = getOrCreateMainWindow();
-    mainWindow.loadURL("http://localhost:9099");
 
-    logger.info(
-      "main->main.js->onReady, load http://localhost:9099 in main browser"
-    );
-
-    setupAboutPanel();
-
-    const { setupMenu } = await import("./menu");
     // setup menus for main processes
     setupMenu();
+    setupAboutPanel();
     setupProtocolHandler();
     // Auto update from github release
     setupUpdates();
     setupDialogs();
     setupDevTools();
+    setUpEventListeners();
   } catch (err) {
     logger.error("Error in onReady, error: ", err);
   }
@@ -87,6 +63,7 @@ export async function onReady() {
  */
 export function onBeforeQuit() {
   (global as any).isQuitting = true;
+  SOIManager.stopSOI();
 }
 
 /**

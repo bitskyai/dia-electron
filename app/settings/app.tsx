@@ -6,7 +6,7 @@ import App from "./containers/App";
 // Import Language Provider
 import LanguageProvider from "./containers/LanguageProvider";
 // Import i18n messages
-import { translationMessages } from "./i18n";
+import { translationMessages, DEFAULT_LOCALE } from "./i18n";
 
 /**
  * The top-level class controlling the whole app. This is *not* a React component,
@@ -27,7 +27,7 @@ export class Root {
     ): void | Element | React.Component => {
       return ReactDOM.render(
         // tslint:disable-next-line:jsx-wrap-multiline
-        <LanguageProvider messages={messages}>
+        <LanguageProvider locale={DEFAULT_LOCALE} messages={messages}>
           <Component />
         </LanguageProvider>,
         MOUNT_NODE

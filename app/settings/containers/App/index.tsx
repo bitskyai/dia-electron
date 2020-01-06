@@ -7,43 +7,56 @@
  *
  */
 import React from "react";
-import { Tabs, PageHeader, Button } from "antd";
-import { ipcRenderer } from 'electron';
+import { FormattedMessage, FormattedHTMLMessage, injectIntl } from "react-intl";
+import { Tabs, PageHeader, Button, Form, Input, Divider } from "antd";
+import { ipcRenderer } from "electron";
 
 const { TabPane } = Tabs;
+import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
 
-export default class App extends React.PureComponent {
+import GeneralForm from './GeneralForm';
+
+class App extends React.PureComponent {
   constructor(props: any) {
     super(props);
+    let result = ipcRendererManager.sendSync(
+      IpcEvents.SYNC_GET_PREFERENCES_JSON
+    );
   }
 
-  onSave(){
-    console.log("on click save button...");
+  onSave() {
+    ipcRenderer.send(IpcEvents.CLOSE_SETTINGS);
+  }
+
+  onClose() {
     ipcRenderer.send(IpcEvents.CLOSE_SETTINGS);
   }
 
   render() {
+    const { formatMessage, formatHTMLMessage } = this.props.intl;
     return (
       <div className="munew-settings">
         <PageHeader
-          title="Title"
+          title={formatMessage({ id: "munew.settings.title" })}
           style={{
             border: "1px solid rgb(235, 237, 240)"
           }}
-          subTitle="This is a subtitle"
+          // subTitle="This is a subtitle"
           extra={[
-            <Button key="1" type="primary" onClick={this.onSave}>
-              Save
-            </Button>,
-            <Button key="2">Reset to Default</Button>
+            <Button key="closeBtn" type="link" onClick={this.onClose}>
+              X{/* <FormattedMessage id="munew.settings.close" /> */}
+            </Button>
           ]}
         ></PageHeader>
         <Tabs tabPosition="left">
-          <TabPane tab="General" key="1">
-            Content of General
+          <TabPane
+            tab={formatMessage({ id: "munew.settings.general" })}
+            key="1"
+          >
+            <GeneralForm />
           </TabPane>
-          <TabPane tab="About" key="2">
+          <TabPane tab={formatMessage({ id: "munew.settings.about" })} key="2">
             Content of About
           </TabPane>
         </Tabs>
@@ -51,3 +64,5 @@ export default class App extends React.PureComponent {
     );
   }
 }
+
+export default injectIntl(App);

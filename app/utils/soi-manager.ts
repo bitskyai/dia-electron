@@ -2,7 +2,6 @@
 import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
-import * as detect from "detect-port";
 import { fancyImport } from "./import";
 import {
   copyDefaultSOI,
@@ -10,12 +9,13 @@ import {
   getFileContent,
   updateFileContent
 } from "./soi-file-manager";
-import { USER_DATA_PATH } from "./constants";
+import { CONFIG_PATH } from "./constants";
 import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
 import { IpcEvents } from "../ipc-events";
 import { ipcMainManager } from "../main/ipc";
 import { LogItem } from "../interfaces";
+import { getAvailablePort } from './index';
 
 class SOIManager {
   public soiProcess: ChildProcess | null = null;
@@ -216,7 +216,7 @@ class SOIManager {
    * @returns {string}
    */
   private getDownloadPath(): string {
-    return path.join(USER_DATA_PATH, "electron-bin", this.version);
+    return path.join(CONFIG_PATH, "electron-bin", this.version);
   }
 
   /**
@@ -300,16 +300,8 @@ class SOIManager {
   }
 
   private async getAvailablePort(): Promise<number> {
-    return new Promise((resolve, reject) => {
-      detect(this.SOIPort, (err, port) => {
-        if (err) {
-          logger.error("getAvailablePort, error: ", err);
-        }
-        this.SOIPort = port;
-        logger.debug(`${port} is avaialbe`);
-        resolve(port);
-      });
-    });
+    this.SOIPort = await getAvailablePort(this.SOIPort);
+    return this.SOIPort;
   }
 
   public async runSOI(): Promise<void> {

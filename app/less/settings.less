@@ -7,4 +7,32 @@ body,
   height: 100%;
   width: 100%;
   overflow: hidden;
+  .tab-panel-content {
+    padding: 6px 24px 24px 0;
+  }
+  .general-form {
+    max-width: 800px;
+    .ant-form-item-label {
+      font-weight: bold;
+    }
+    .form-item-container {
+      padding: 5px 0;
+      margin-bottom: 0 !important;
+
+      .form-item-description {
+        margin-top: 5px;
+      }
+    }
+    .action-btn-container {
+      margin-top: 10px;
+      .action-btn {
+        margin: 0 5px;
+
+        &:first-child {
+          margin-left: 0;
+          margin-right: 5px;
+        }
+      }
+    }
+  }
 }

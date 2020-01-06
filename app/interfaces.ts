@@ -45,3 +45,16 @@ export interface LogItem {
   text: string;
 }
 export type mosaicId = "exporer" | "fileEditor" | "console";
+
+export const enum TypeormConnection{
+  "sqlite" = "sqlite",
+  "mongodb" = "mongodb"
+}
+
+export interface Preferences{
+  version: string,
+  LOG_FILES_PATH: string,
+  TYPEORM_CONNECTION: TypeormConnection,
+  TYPEORM_DATABASE?: string,
+  TYPEORM_URL?: string
+}
