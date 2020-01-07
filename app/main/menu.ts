@@ -86,6 +86,7 @@ export function showSettings() {
   let win = getOrCreateMainWindow();
   const view = new BrowserView({
     webPreferences: {
+      preload: path.join(__dirname, "../render/preload.js"),
       webviewTag: false,
       nodeIntegration: true
     }
@@ -106,7 +107,7 @@ export function showSettings() {
   });
   const modalPath = path.join("./build/settings.html");
   view.webContents.loadFile(modalPath);
-  // view.webContents.openDevTools();
+  view.webContents.openDevTools();
 }
 
 export function hideSettings(){

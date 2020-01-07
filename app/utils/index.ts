@@ -1,6 +1,7 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as detect from "detect-port";
+import { shell } from "electron";
 import logger from "./logger";
 import { DirStructure, DirType } from "../interfaces";
 
@@ -167,12 +168,12 @@ export function readFolderRecursiveSync(
  * Get an available port
  * @param port - specific port want to check whether it is available
  */
-export async function getAvailablePort(port?:number): Promise<number> {
+export async function getAvailablePort(port?: number): Promise<number> {
   return new Promise(resolve => {
-    if(!port){
+    if (!port) {
       port = 9090;
     }
-    detect(port, (err:Error, port:number) => {
+    detect(port, (err: Error, port: number) => {
       if (err) {
         logger.error("getAvailablePort, error: ", err);
       }
@@ -180,4 +181,40 @@ export async function getAvailablePort(port?:number): Promise<number> {
       resolve(port);
     });
   });
+}
+
+export function openLinkExternal() {
+  const hasATag = (node: any) => {
+    if (!node) {
+      return {};
+    }
+    let tagName = node.tagName || "";
+    if (tagName.toLowerCase() === "a") {
+      let href = node.href;
+      let target = node.target || "";
+      target = target.toLowerCase();
+      return {
+        tagName,
+        href,
+        target
+      };
+    } else {
+      if (node.parentNode) {
+        return hasATag(node.parentNode);
+      } else {
+        return {};
+      }
+    }
+  };
+
+  let body = document.querySelector("body");
+  if (body) {
+    body.addEventListener("click", event => {
+      let aTag = hasATag(event && event.target);
+      if (aTag.target === "_blank") {
+        event.preventDefault();
+        shell.openExternal(aTag.href);
+      }
+    });
+  }
 }

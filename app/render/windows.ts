@@ -18,6 +18,7 @@ export function getSOIEditorWindowOptions(): Electron.BrowserWindowConstructorOp
     minWidth: 600,
     acceptFirstMouse: true,
     webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
       webviewTag: false,
       nodeIntegration: true
     }

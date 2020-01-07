@@ -1,4 +1,5 @@
 import { getOrCreateSOIEditorWindow } from "../render/windows";
+import { openLinkExternal } from "../utils";
 
 export let soiEditorWindow: Electron.BrowserWindow | null = null;
 
@@ -15,6 +16,9 @@ function waitDefaultSOIMenu(callback: any) {
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 window.addEventListener("DOMContentLoaded", () => {
+
+  openLinkExternal();
+  
   const replaceText = (selector: string, text: string) => {
     const element = document.getElementById(selector);
     if (element) {
