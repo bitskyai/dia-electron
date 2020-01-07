@@ -66,18 +66,6 @@ export function onBeforeQuit() {
   SOIManager.stopSOI();
 }
 
-/**
- * All windows have been closed, quit on anything but
- * macOS.
- */
-export function onWindowsAllClosed() {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-}
-
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 
@@ -99,7 +87,7 @@ export function main() {
   // Launch
   app.on("ready", onReady);
   app.on("before-quit", onBeforeQuit);
-  app.on("window-all-closed", onWindowsAllClosed);
+  // app.on("window-all-closed", onWindowsAllClosed);
   app.on("activate", getOrCreateMainWindow);
 }
 
