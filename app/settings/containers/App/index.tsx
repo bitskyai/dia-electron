@@ -55,10 +55,10 @@ class App extends React.PureComponent {
           </TabPane>
           <TabPane tab={formatMessage({ id: "munew.settings.about" })} key="2">
             <Typography className="tab-panel-content">
-              <Title level={2}>
+              <Title level={3}>
                 <FormattedMessage id="munew.settings.about" />
               </Title>
-              <Title level={3}>Munew {packageJSON.version}</Title>
+              <Title level={4}>Munew {packageJSON.version}</Title>
               <Paragraph>
                 <FormattedMessage id="munew.settings.productDescription" />
               </Paragraph>
@@ -82,7 +82,7 @@ class App extends React.PureComponent {
                   </li>
                 </ul>
               </Paragraph>
-              <Title level={2}>
+              <Title level={3}>
                 <FormattedMessage id="munew.settings.community" />
               </Title>
               <Paragraph>

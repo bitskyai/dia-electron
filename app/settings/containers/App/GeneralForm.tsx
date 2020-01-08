@@ -1,8 +1,9 @@
+import _ from "lodash";
 import React from "react";
 import { remote } from "electron";
 import * as path from "path";
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from "react-intl";
-import { Form, Input, Skeleton, Typography, Select, Button, Icon } from "antd";
+import { Form, Input, Typography, Select, Button, Icon } from "antd";
 const { Title, Text } = Typography;
 const { Option } = Select;
 const formItemStyle = { marginBottom: 0, paddingBottom: 0 };
@@ -13,6 +14,7 @@ import {
 } from "../../notification";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
+import { clear } from "winston";
 
 const DEAULT_SQLITE_DATABASE = "munew_dia.sql";
 
@@ -58,6 +60,22 @@ class GeneralForm extends React.Component {
     });
   }
 
+  setOriginalPreferences(preferences) {
+    if (!preferences) {
+      preferences = this.originalPrefences || {};
+    }
+    // remove *LOG_FILES_PATH*, 'version'
+    delete preferences.LOG_FILES_PATH;
+    delete preferences.version;
+    if (preferences.TYPEORM_CONNECTION === "mongodb") {
+      delete preferences.TYPEORM_DATABASE;
+    } else if (preferences.TYPEORM_CONNECTION === "sqlite") {
+      delete preferences.TYPEORM_URL;
+    }
+    this.originalPrefences = preferences;
+    return preferences;
+  }
+
   dynamicValidateForm() {
     // clear previous validation
     clearTimeout(this.validateFormHandler);
@@ -87,8 +105,11 @@ class GeneralForm extends React.Component {
       } else {
         // get preferences successfully
         // return result.payload;
+        this.setOriginalPreferences(
+          result.payload && result.payload.preferences
+        );
         this.setState({
-          preferences: result.payload && result.payload.preferences
+          preferences: this.originalPrefences
         });
       }
     } catch (err) {
@@ -103,17 +124,31 @@ class GeneralForm extends React.Component {
   }
 
   onFormChange() {
-    let values = this.props.form.getFieldsValue();
-    let { preferences } = this.state;
-    preferences = {
-      ...this.defaultDBsConfig[preferences["TYPEORM_CONNECTION"]],
-      ...preferences,
-      ...values
-    };
-    this.setState({
-      preferences
-    });
-    this.dynamicValidateForm();
+    clearTimeout(this.onFormChangeHandler);
+    this.onFormChangeHandler = setTimeout(() => {
+      // console.log(arguments);
+      let values = this.props.form.getFieldsValue();
+      let { preferences } = this.state;
+      if(!preferences.TYPEORM_CONNECTION){
+        delete preferences.TYPEORM_CONNECTION;
+      }
+      if(!preferences.TYPEORM_DATABASE){
+        delete preferences.TYPEORM_DATABASE;
+      }
+      if(!preferences.TYPEORM_URL){
+        delete preferences.TYPEORM_URL;
+      }
+      preferences = {
+        ...this.defaultDBsConfig[values["TYPEORM_CONNECTION"]],
+        ...preferences,
+        ...values
+      };
+      this.setState({
+        preferences
+      });
+      console.log("preferences: ", preferences);
+      this.dynamicValidateForm();
+    }, 200);
   }
 
   onSavePreferences() {
@@ -129,13 +164,14 @@ class GeneralForm extends React.Component {
           preferences: this.state.preferences
         }
       );
-      if(result.status){
+      if (result.status) {
+        this.setOriginalPreferences(this.state.preferences);
         showSuccessNotification(
           formatMessage({
             id: "munew.settings.savePreferencesSuccessful"
           })
         );
-      }else{
+      } else {
         showErrorNotification(
           formatMessage({ id: "munew.settings.error.savePreferencesFailed" })
         );
@@ -188,7 +224,6 @@ class GeneralForm extends React.Component {
       })
       .then(result => {
         if (result.canceled) {
-          
         } else {
           const dir = result.filePaths && result.filePaths[0];
           let { preferences } = this.state;
@@ -208,13 +243,29 @@ class GeneralForm extends React.Component {
 
   render() {
     const { formatMessage, formatHTMLMessage } = this.props.intl;
-    const { getFieldDecorator } = this.props.form;
+    const {
+      getFieldDecorator,
+      isFieldsTouched,
+      getFieldsValue
+    } = this.props.form;
     const {
       preferences,
       testingDBConnection,
       isValid,
       savingPreferences
     } = this.state;
+    let disableSaveBtn = true;
+    if (isFieldsTouched()) {
+      // console.log('isFieldsTouched: ', isFieldsTouched());
+      let currentFormValue = getFieldsValue();
+      // console.log("currentFormValue: ", currentFormValue);
+      // console.log("this.originalPrefences: ", this.originalPrefences);
+      if (_.isEqual(currentFormValue, this.originalPrefences)) {
+        disableSaveBtn = true;
+      } else {
+        disableSaveBtn = false;
+      }
+    }
     return (
       <div className="tab-panel-content general-form">
         <Title level={4}>
@@ -274,7 +325,13 @@ class GeneralForm extends React.Component {
                 })(
                   <div>
                     <Text code>{preferences.TYPEORM_DATABASE}</Text>
-                    <Button size="small" onClick={this.openDirectoryPicker.bind(this)} title={formatMessage({id:'munew.settings.selectFolderTooltip'})}>
+                    <Button
+                      size="small"
+                      onClick={this.openDirectoryPicker.bind(this)}
+                      title={formatMessage({
+                        id: "munew.settings.selectFolderTooltip"
+                      })}
+                    >
                       <Icon type="folder-open" />
                       {/* <FormattedMessage id="munew.settings.selectFolder" /> */}
                     </Button>
@@ -305,7 +362,7 @@ class GeneralForm extends React.Component {
                       })
                     }
                   ]
-                })(<Input onChange={this.onFormChange.bind(this)} />)}
+                })(<Input onKeyDown={this.onFormChange.bind(this)} />)}
               </Form.Item>
               <div className="form-item-description">
                 <FormattedHTMLMessage id="munew.settings.dbURLDescription" />
@@ -330,7 +387,7 @@ class GeneralForm extends React.Component {
           <Button
             className="action-btn"
             type="primary"
-            disabled={!isValid}
+            disabled={!isValid || disableSaveBtn}
             loading={savingPreferences}
             title={formatHTMLMessage({
               id: "munew.settings.testAndSaveDescription"
