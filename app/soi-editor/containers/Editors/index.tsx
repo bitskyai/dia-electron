@@ -75,14 +75,20 @@ function Editors(props: EditorsProps) {
         path={props.path}
         toolbarControls={[]}
       >
-        <Empty />
+        <Empty
+          style={{ marginTop: "100px" }}
+          description={
+            <span>
+              Please select a file from <b>Explorer</b>
+            </span>
+          }
+        />
       </MosaicWindow>
     );
   } else {
     // current only support CRUD one file
     let pane = panes[0];
     return (
-      
       <MosaicWindow<number>
         draggable={false}
         title={currentSelectedFilePath}
