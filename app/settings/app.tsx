@@ -25,6 +25,11 @@ export class Root {
       messages: any,
       Component = App
     ): void | Element | React.Component => {
+      // hide loading page
+      MOUNT_NODE.style.display = 'block';
+      const loadingPage = document.getElementById("munew-loading") as HTMLElement;
+      loadingPage.style.display = 'none';
+
       return ReactDOM.render(
         // tslint:disable-next-line:jsx-wrap-multiline
         <LanguageProvider locale={DEFAULT_LOCALE} messages={messages}>
@@ -35,33 +40,6 @@ export class Root {
     };
 
     render(translationMessages);
-
-    // if (module.hot) {
-    //   module.hot.accept(["./i18n", "./containers/App"], () => {
-    //     ReactDOM.unmountComponentAtNode(MOUNT_NODE);
-    //     // tslint:disable-next-line:max-line-length
-    //     const App = require("./containers/App").default; // https://github.com/webpack/webpack-dev-server/issues/100
-    //     render(translationMessages, App);
-    //   });
-    // }
-    // Chunked polyfill for browsers without Intl support
-    // if (!(window as any).Intl) {
-    //   new Promise(resolve => {
-    //     resolve(import("intl"));
-    //   })
-    //     .then(() =>
-    //       Promise.all([
-    //         import("intl/locale-data/jsonp/en.js"),
-    //         import("intl/locale-data/jsonp/de.js")
-    //       ])
-    //     )
-    //     .then(() => render(translationMessages))
-    //     .catch(err => {
-    //       throw err;
-    //     });
-    // } else {
-    //   render(translationMessages);
-    // }
   }
 }
 

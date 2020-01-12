@@ -38,6 +38,10 @@ export class Root {
       messages: any,
       Component = App
     ): void | Element | React.Component => {
+      // hide loading page
+      MOUNT_NODE.style.display = 'block';
+      const loadingPage = document.getElementById("munew-loading") as HTMLElement;
+      loadingPage.style.display = 'none';
       return ReactDOM.render(
         // tslint:disable-next-line:jsx-wrap-multiline
         <Provider store={store}>
