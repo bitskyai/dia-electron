@@ -72,7 +72,7 @@ class GeneralForm extends React.Component {
     } else if (preferences.TYPEORM_CONNECTION === "sqlite") {
       delete preferences.TYPEORM_URL;
     }
-    this.originalPrefences = preferences;
+    this.originalPrefences = {...preferences};
     return preferences;
   }
 
@@ -105,11 +105,12 @@ class GeneralForm extends React.Component {
       } else {
         // get preferences successfully
         // return result.payload;
+        let preferences = result.payload && result.payload.preferences;
         this.setOriginalPreferences(
-          result.payload && result.payload.preferences
+          preferences
         );
         this.setState({
-          preferences: this.originalPrefences
+          preferences
         });
       }
     } catch (err) {
@@ -245,7 +246,7 @@ class GeneralForm extends React.Component {
     const { formatMessage, formatHTMLMessage } = this.props.intl;
     const {
       getFieldDecorator,
-      isFieldsTouched,
+      // isFieldsTouched,
       getFieldsValue
     } = this.props.form;
     const {
@@ -255,17 +256,15 @@ class GeneralForm extends React.Component {
       savingPreferences
     } = this.state;
     let disableSaveBtn = true;
-    if (isFieldsTouched()) {
+    // if (isFieldsTouched()) {
       // console.log('isFieldsTouched: ', isFieldsTouched());
-      let currentFormValue = getFieldsValue();
-      // console.log("currentFormValue: ", currentFormValue);
-      // console.log("this.originalPrefences: ", this.originalPrefences);
-      if (_.isEqual(currentFormValue, this.originalPrefences)) {
+      // let currentFormValue = getFieldsValue();
+      if (_.isEqual(preferences, this.originalPrefences)) {
         disableSaveBtn = true;
       } else {
         disableSaveBtn = false;
       }
-    }
+    // }
     return (
       <div className="tab-panel-content general-form">
         <Title level={4}>
