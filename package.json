@@ -145,7 +145,7 @@
     "publish": "electron-forge publish",
     "start": "rimraf ./build && npm run copy-engine-soi && npm run tsc && electron-forge start",
     "watch": "cross-env WATCH=true && rimraf ./build && npm run copy-engine-soi && npm run tsc && electron-forge start",
-    "copy-engine-soi": "mkdir -p build/app/ && cp -rf app/engine-ui build/app/engine-ui && cp -rf app/soi build/app/soi",
+    "copy-engine-soi": "sh ./scripts/copy-engine-soi.sh",
     "tsc": "node ./tools/tsc.js",
     "tsc-watch": "cross-env WATCH=true node ./tools/tsc.js",
     "check-dependencies": "ncu",
