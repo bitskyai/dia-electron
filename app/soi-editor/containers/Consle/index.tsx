@@ -27,7 +27,9 @@ function Console(props: ConsoleProps) {
     state => state.app.mosaicNodes
   );
 
-  const logs: Array<LogItem> = useSelector(state => state.app.logs || []);
+  const logs: Array<LogItem> = useSelector(state => {
+    return state.app.logs || [];
+  });
 
   const renderTimestamp = (timestamp: number): string => {
     return new Date(timestamp).toLocaleTimeString();
@@ -59,7 +61,8 @@ function Console(props: ConsoleProps) {
                 second: {
                   first: {},
                   splitPercentage: {
-                    $set: initialState.mosaicNodes.second.splitPercentage
+                    // $set: initialState.mosaicNodes.second.splitPercentage
+                    $set: 70
                   }
                 }
               }
@@ -89,9 +92,7 @@ function Console(props: ConsoleProps) {
     }
   });
 
-  const lines = logs
-      .slice(Math.max(logs.length - 1000, 1))
-      .map(renderLog);
+  const lines = logs.slice(0, 1000).map(renderLog);
 
   return (
     <MosaicWindow<number>
@@ -101,7 +102,7 @@ function Console(props: ConsoleProps) {
       toolbarControls={[]}
     >
       <div className="output">
-        {lines}
+        <div className="log-container">{lines}</div>
       </div>
     </MosaicWindow>
   );

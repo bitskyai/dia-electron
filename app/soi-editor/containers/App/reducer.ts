@@ -18,7 +18,7 @@ const mosaicNodes: MosaicNode<number | string> | null = {
     direction: "column",
     first: "fileEditor",
     second: "console",
-    splitPercentage: 70
+    splitPercentage: 100
   },
   splitPercentage: 20
 };
@@ -26,7 +26,7 @@ const mosaicNodes: MosaicNode<number | string> | null = {
 export const initialState = {
   isExplorerOpen: true,
   waitingExplorerToResponse: false,
-  isConsoleOpen: true,
+  isConsoleOpen: false,
   waitingConsoleToResponse: false,
   mosaicNodes,
   logs:[],

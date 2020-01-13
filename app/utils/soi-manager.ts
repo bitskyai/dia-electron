@@ -3,19 +3,14 @@ import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
 import { fancyImport } from "./import";
-import {
-  copyDefaultSOI,
-  getSOIPath,
-  getFileContent,
-  updateFileContent
-} from "./soi-file-manager";
+import { copyDefaultSOI, getSOIPath } from "./soi-file-manager";
 import { CONFIG_PATH } from "./constants";
 import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
 import { IpcEvents } from "../ipc-events";
 import { ipcMainManager } from "../main/ipc";
 import { LogItem } from "../interfaces";
-import { getAvailablePort } from './index';
+import { getAvailablePort } from "./index";
 
 class SOIManager {
   public soiProcess: ChildProcess | null = null;
@@ -39,98 +34,6 @@ class SOIManager {
       force = true;
     }
     copyDefaultSOI(force);
-
-    // setup event listener
-    this.setUpEventListener();
-  }
-
-  private setUpEventListener() {
-    // get SOI file content by path
-    /*
-     arg = {
-       filePath
-     }
-     */
-    ipcMainManager.on(IpcEvents.SYNC_SOI_GET_FILE_CONTENT, (event, arg) => {
-      try {
-        event.returnValue = {
-          status: true,
-          fileContent: getFileContent(arg.filePath)
-        };
-      } catch (err) {
-        event.returnValue = {
-          status: false
-        };
-      }
-    });
-
-    // update SOI file content
-    /*
-      arg = {
-        filePath,
-        fileContent
-      }
-     */
-    ipcMainManager.on(IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT, (event, arg) => {
-      try {
-        updateFileContent(arg.filePath, arg.fileContent);
-        event.returnValue = {
-          status: true
-        };
-      } catch (err) {
-        event.returnValue = {
-          status: false
-        };
-      }
-    });
-
-     // reset SOI to default
-     ipcMainManager.on(IpcEvents.SYNC_SOI_STATUS, event => {
-      try {
-        let status = this.status();
-        event.returnValue = {
-          status
-        }
-      } catch (err) {
-        logger.error(`${IpcEvents.SYNC_SOI_STATUS} error: `, err);
-        event.returnValue = {
-          status:undefined,
-          error: err
-        };
-      }
-    });
-
-    // reset SOI to default
-    ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, event => {
-      try {
-        copyDefaultSOI(true);
-        event.returnValue = {
-          status: true
-        };
-      } catch (err) {
-        event.returnValue = {
-          status: false
-        };
-      }
-    });
-
-    // reset stop SOI server
-    ipcMainManager.on(IpcEvents.STOP_SOI_SERVER, event => {
-      try {
-        this.stopSOI();
-      } catch (err) {
-        logger.error(`${IpcEvents.STOP_SOI_SERVER} error: `, err);
-      }
-    });
-
-    // reset start SOI server
-    ipcMainManager.on(IpcEvents.START_SOI_SERVER, event => {
-      try {
-        this.runSOI();
-      } catch (err) {
-        logger.error(`${IpcEvents.START_SOI_SERVER} error: `, err);
-      }
-    });
   }
 
   /**
@@ -307,7 +210,7 @@ class SOIManager {
   public async runSOI(): Promise<void> {
     try {
       logger.functionStart("runSOI");
-      if(this.isRunning){
+      if (this.isRunning) {
         ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER_SUCCESS, [
           {
             port: this.SOIPort,
@@ -326,7 +229,7 @@ class SOIManager {
       ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER, [
         {
           port: this.SOIPort,
-          status: "star"
+          status: "starting"
         }
       ]);
       const env = { ...process.env };
@@ -422,7 +325,7 @@ class SOIManager {
       isRunning: this.isRunning,
       isStartingServer: this.isStartingServer,
       SOIPort: this.SOIPort
-    }
+    };
   }
 }
 
