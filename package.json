@@ -64,6 +64,7 @@
     "monaco-loader": "1.0.0",
     "mongodb": "^3.1.13",
     "morgan": "^1.9.1",
+    "pubsub-js": "^1.8.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-hot-loader": "^4.8.2",

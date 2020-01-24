@@ -1,12 +1,14 @@
 // Credit goes in large part to https://github.com/superRaytin/react-monaco-editor,
 // this component is a changed version of it.
 import { message } from "antd";
+import PubSub from 'pubsub-js';
 import * as MonacoType from "monaco-editor";
 import * as React from "react";
 import * as path from "path";
 import { loadMonaco } from "../../utils";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
+import { PUBSUB_TOPICS } from '../../utils/constants';
 
 export interface EditorProps {
   path: string;
@@ -31,10 +33,15 @@ export class Editor extends React.Component<EditorProps> {
   }
 
   public componentDidMount() {
+    PubSub.unsubscribe(PUBSUB_TOPICS.RE_GET_FILE_CONTENT);
+    PubSub.subscribe(PUBSUB_TOPICS.RE_GET_FILE_CONTENT, ()=>{
+      this.setContent();
+    });
     this.initMonaco();
   }
 
   public componentWillUnmount() {
+    PubSub.unsubscribe(PUBSUB_TOPICS.RE_GET_FILE_CONTENT);
     this.destroyMonaco();
   }
 

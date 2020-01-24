@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { PageHeader, Button, Icon, message, Tag } from "antd";
 import { useSelector, useDispatch } from "react-redux";
+import PubSub from 'pubsub-js';
 import { showOrHideConsole, showOrHideExplorer, updateSOIStatus } from "../App/actions";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
 import { getOrCreateSOIEditorWindow } from "../../../render/windows";
+import { PUBSUB_TOPICS } from '../../utils/constants';
 
 function TouchBarManager() {
   // action buttons status
@@ -50,6 +52,7 @@ function TouchBarManager() {
         message.success(
           "Successfully reset to default SOI, all your changes was reverted to default"
         );
+        PubSub.publish(PUBSUB_TOPICS.RE_GET_FILE_CONTENT);
       } else {
         message.error("Failed reset to default SOI, please try again");
       }
