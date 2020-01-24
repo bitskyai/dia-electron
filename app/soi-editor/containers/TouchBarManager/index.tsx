@@ -1,18 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { PageHeader, Button, Icon, message, Tag } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { showOrHideConsole, showOrHideExplorer } from "../App/actions";
+import { showOrHideConsole, showOrHideExplorer, updateSOIStatus } from "../App/actions";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
-import { getOrCreateSOIEditorWindow } from '../../../render/windows';
+import { getOrCreateSOIEditorWindow } from "../../../render/windows";
 
 function TouchBarManager() {
+  // action buttons status
   const dispatch = useDispatch();
   const isConsoleOpen: boolean = useSelector(state => state.app.isConsoleOpen);
   const isExplorerOpen: boolean = useSelector(
     state => state.app.isExplorerOpen
   );
-  const status: any = useSelector(state => state.app.status);
+
+  function dispatchUpdateSOIStatus(curStatus, newStatus){
+    dispatch(updateSOIStatus({...curStatus, ...newStatus}));
+  }
+
+  const status: any = useSelector(state => {
+    return state.app.status;
+  });
   let consoleBtnType = "default";
   let explorerBtnType = "default";
   let explorerIconType = "folder";
@@ -50,16 +58,23 @@ function TouchBarManager() {
     }
   };
 
-  const clickBackBtn = ()=>{
+  const clickBackBtn = () => {
     let win = getOrCreateSOIEditorWindow();
     win.close();
-  }
+  };
+
+  const downloadElectron = () => {
+    dispatchUpdateSOIStatus(status, {isDownloading: true})
+    ipcRendererManager.send(IpcEvents.DOWNLOAD_ELECTRON);
+  };
 
   const stopSOI = () => {
+    dispatchUpdateSOIStatus(status, {isStoppingServer: true})
     ipcRendererManager.send(IpcEvents.STOP_SOI_SERVER);
   };
 
   const startSOI = () => {
+    dispatchUpdateSOIStatus(status, {isStartingServer: true})
     ipcRendererManager.send(IpcEvents.START_SOI_SERVER);
   };
 
@@ -78,20 +93,46 @@ function TouchBarManager() {
         Reset to Default
       </Button>
     ];
-    if (status.isRunning) {
+
+    if (!status.isElectronDownloaded) {
+      // if didn't download electron, then show Download
       actionBtns = [
-        <Button key="stop" type="primary" onClick={stopSOI}>
-          <Icon type="pause-circle" />
-          Stop
+        <Button
+          key="download"
+          type="primary"
+          onClick={downloadElectron}
+          loading={status.isDownloading}
+        >
+          {!status.isDownloading ? <Icon type="download" /> : ""}
+          Download Electron
         </Button>
       ].concat(actionBtns);
     } else {
-      actionBtns = [
-        <Button key="run" onClick={startSOI}>
-          <Icon type="caret-right" />
-          Run
-        </Button>
-      ].concat(actionBtns);
+      // electron already download
+      if (status.isRunning) {
+        actionBtns = [
+          <Button
+            key="stop"
+            type="primary"
+            onClick={stopSOI}
+            loading={status.isStoppingServer}
+          >
+            {!status.isStoppingServer ? <Icon type="pause-circle" /> : ""}
+            Stop
+          </Button>
+        ].concat(actionBtns);
+      } else {
+        actionBtns = [
+          <Button
+            key="run"
+            onClick={startSOI}
+            loading={status.isStartingServer}
+          >
+            {!status.isStartingServer ? <Icon type="caret-right" /> : ""}
+            Start
+          </Button>
+        ].concat(actionBtns);
+      }
     }
 
     return actionBtns;
@@ -103,7 +144,11 @@ function TouchBarManager() {
       <a target="_blank" href={SOIURL}>
         {SOIURL}
       </a>
-      {status.isRunning ? <Tag color="#87d068">Running</Tag>: <Tag color="#f50">Stop</Tag>}
+      {status.isRunning ? (
+        <Tag color="#87d068">Running</Tag>
+      ) : (
+        <Tag color="#f50">Stop</Tag>
+      )}
     </div>
   );
 

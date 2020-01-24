@@ -47,30 +47,67 @@ class App extends React.PureComponent<AppProps, AppState> {
       this.props.dispatch(addConoleLog(log));
     });
 
-    ipcRendererManager.on(IpcEvents.STARTING_SOI_SERVER_SUCCESS, ()=>{
-      this.updateSOIStatus();
-    });
-    ipcRendererManager.on(IpcEvents.STARTING_SOI_SERVER_FAIL, ()=>{
-      this.updateSOIStatus();
-    });
-    ipcRendererManager.on(IpcEvents.STOPPING_SOI_SERVER_SUCCESS, ()=>{
-      this.updateSOIStatus();
-    });
-    ipcRendererManager.on(IpcEvents.STOPPING_SOI_SERVER_FAIL, ()=>{
-      this.updateSOIStatus();
-    });
-
+    this.setUpEventListeners();
     this.updateSOIStatus();
     loadMonaco();
   }
 
-  private updateSOIStatus(){
-    let result = ipcRendererManager.sendSync(
-      IpcEvents.SYNC_SOI_STATUS
+  private setUpEventListeners() {
+    ipcRendererManager.on(IpcEvents.STARTING_SOI_SERVER, (event, args) => {
+      console.log("IpcEvents.STARTING_SOI_SERVER");
+      this.updateSOIStatus(args.payload.status);
+    });
+    ipcRendererManager.on(
+      IpcEvents.STARTING_SOI_SERVER_SUCCESS,
+      (event, args) => {
+        console.log("IpcEvents.STARTING_SOI_SERVER_SUCCESS");
+        this.updateSOIStatus(args.payload.status);
+      }
     );
-    
-    // Need to handle error 
-    this.props.dispatch(updateSOIStatus(result.status));
+    ipcRendererManager.on(IpcEvents.STARTING_SOI_SERVER_FAIL, (event, args) => {
+      console.log("IpcEvents.STARTING_SOI_SERVER_FAIL");
+      this.updateSOIStatus(args.payload.status);
+    });
+    ipcRendererManager.on(
+      IpcEvents.STOPPING_SOI_SERVER_SUCCESS,
+      (event, args) => {
+        console.log("IpcEvents.STOPPING_SOI_SERVER_SUCCESS");
+        this.updateSOIStatus(args.payload.status);
+      }
+    );
+    ipcRendererManager.on(IpcEvents.STOPPING_SOI_SERVER, (event, args) => {
+      console.log("IpcEvents.STOPPING_SOI_SERVER");
+      this.updateSOIStatus(args.payload.status);
+    });
+    ipcRendererManager.on(IpcEvents.STOPPING_SOI_SERVER_FAIL, (event, args) => {
+      console.log("IpcEvents.STOPPING_SOI_SERVER_FAIL");
+      this.updateSOIStatus(args.payload.status);
+    });
+    ipcRendererManager.on(IpcEvents.DOWNLOADING_ELECTRON, (event, args) => {
+      console.log("IpcEvents.DOWNLOADING_ELECTRON");
+      this.updateSOIStatus(args.payload.status);
+    });
+    ipcRendererManager.on(IpcEvents.DOWNLOAD_ELECTRON_FAIL, (event, args) => {
+      console.log("IpcEvents.DOWNLOAD_ELECTRON_FAIL");
+      this.updateSOIStatus(args.payload.status);
+    });
+    ipcRendererManager.on(
+      IpcEvents.DOWNLOAD_ELECTRON_SUCCESS,
+      (event, args) => {
+        console.log("IpcEvents.DOWNLOAD_ELECTRON_SUCCESS");
+        this.updateSOIStatus(args.payload.status);
+      }
+    );
+  }
+
+  private updateSOIStatus(status?) {
+    if (!status) {
+      let result = ipcRendererManager.sendSync(IpcEvents.SYNC_SOI_STATUS);
+      status = result.status;
+    }
+    console.log('updateSOIStatus->status: ', status);
+    // Need to handle error
+    this.props.dispatch(updateSOIStatus(status));
   }
 
   render() {

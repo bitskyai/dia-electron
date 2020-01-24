@@ -152,9 +152,9 @@ export function setUpEventListeners() {
   });
 
   // reset SOI to default
-  ipcMainManager.on(IpcEvents.SYNC_SOI_STATUS, event => {
+  ipcMainManager.on(IpcEvents.SYNC_SOI_STATUS, async (event) => {
     try {
-      let status = SOIManager.status();
+      let status = await SOIManager.status();
       event.returnValue = {
         status
       };
@@ -196,6 +196,14 @@ export function setUpEventListeners() {
       SOIManager.runSOI();
     } catch (err) {
       logger.error(`${IpcEvents.START_SOI_SERVER} error: `, err);
+    }
+  });
+
+  ipcMainManager.on(IpcEvents.DOWNLOAD_ELECTRON, () => {
+    try {
+      SOIManager.downloadElectron();
+    } catch (err) {
+      logger.error(`${IpcEvents.DOWNLOAD_ELECTRON} error: `, err);
     }
   });
 }

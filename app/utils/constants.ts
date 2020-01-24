@@ -19,3 +19,6 @@ export const DEFAULT_MONGODB_CONFIG = {
 export const LOG_FILES_PATH = path.join(CONFIG_PATH, "./log");
 
 export const PREFERENCES_JSON_PATH = path.join(CONFIG_PATH, 'preferences.json');
+
+// Timeout value for check whether a SOI start successfully
+export const SOI_CHECK_TIMEOUT = 15*1000;

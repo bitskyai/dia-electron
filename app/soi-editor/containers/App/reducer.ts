@@ -30,7 +30,13 @@ export const initialState = {
   waitingConsoleToResponse: false,
   mosaicNodes,
   logs:[],
-  status:{}
+  status:{
+    isElectronDownloaded: false,
+    isDownloading: false,
+    isRunning: false,
+    isStartingServer: false,
+    isStoppingServer: false
+  }
 };
 
 const appReducer = (state = initialState, action) =>
