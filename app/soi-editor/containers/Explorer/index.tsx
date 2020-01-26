@@ -1,5 +1,5 @@
-import React, { useEffect, useContext } from "react";
-import { Tree, Skeleton } from "antd";
+import React, { useEffect, useContext, useState } from "react";
+import { Tree, Skeleton, Icon } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
   MosaicWindow,
@@ -9,8 +9,8 @@ import {
 } from "react-mosaic-component";
 import { SOIFolderStructure, DirType } from "../../../interfaces";
 import { getSOIFolderStructue, updateCurrentSelectedFile } from "./actions";
-import { responsedToExplorer } from '../App/actions';
-import { initialState } from '../App/reducer';
+import { responsedToExplorer } from "../App/actions";
+import { initialState } from "../App/reducer";
 const { TreeNode, DirectoryTree } = Tree;
 
 export interface ExplorerProps {
@@ -30,13 +30,16 @@ function Explorer(props: ExplorerProps) {
     state => state.app.mosaicNodes
   );
 
+  // whether show all files. This is a feedback from a user that only show necessary files at beginning
+  const [showAllFiles, setShowAllFiles] = useState(false);
+
   useEffect(() => {
     // second parameter is [], the effect will only run on first render
     // Get SOI Folder Structure
     dispatch(getSOIFolderStructue());
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (context && context.mosaicActions && context.mosaicActions.updateTree) {
       if (waitingExplorerToResponse) {
         if (isExplorerOpen) {
@@ -80,9 +83,57 @@ function Explorer(props: ExplorerProps) {
     }
   });
 
-  const soiFolderStructure: SOIFolderStructure = useSelector(
-    state => state.explorer.soiFolderStructure
-  );
+  const soiFolderStructure: SOIFolderStructure = useSelector(state => {
+    return state.explorer.soiFolderStructure;
+  });
+
+  const generateFolderStructure = folderStructure => {
+    // TODO: use function to filter this tree
+    // only show frequently used files
+    let arr = [
+      {
+        type: DirType.directory,
+        name: "src",
+        path: "src",
+        children: [
+          {
+            type: DirType.file,
+            name: "config.js",
+            path: "src/config.js"
+          },
+          {
+            type: DirType.directory,
+            name: "routes",
+            path: "src/routes",
+            children: [
+              {
+                type: DirType.file,
+                name: "intelligences.js",
+                path: "src/routes/intelligences.js"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        type: "button",
+        name: "Show Hiding Files",
+        path: "show_hiding_files",
+        icon: "down-square"
+      }
+    ];
+    if (showAllFiles) {
+      arr = [].concat(folderStructure).concat([
+        {
+          type: "button",
+          name: "Collapse Hiding Files",
+          path: "collapse_hiding_files",
+          icon: "up-square"
+        }
+      ]);
+    }
+    return arr;
+  };
 
   const onSelect = keys => {
     let key = keys && keys[0];
@@ -90,6 +141,8 @@ function Explorer(props: ExplorerProps) {
     if (arr[0] === DirType.file) {
       // only update when select a file
       dispatch(updateCurrentSelectedFile(arr[1]));
+    }else if(arr[0] === 'button'){
+      setShowAllFiles(!showAllFiles);
     }
   };
 
@@ -103,10 +156,15 @@ function Explorer(props: ExplorerProps) {
             {generateTreeNodes(item.children)}
           </TreeNode>
         );
+      }else if(item.type == DirType.file){
+        return (
+          <TreeNode title={item.name} key={`${item.type}::${item.path}`} isLeaf />
+        );
+      }else{
+        return (
+          <TreeNode icon={()=><Icon type={item.icon}/>} title={item.name} key={`${item.type}::${item.path}`} isLeaf />
+        );
       }
-      return (
-        <TreeNode title={item.name} key={`${item.type}::${item.path}`} isLeaf />
-      );
     });
 
   const generateContent = () => {
@@ -126,7 +184,7 @@ function Explorer(props: ExplorerProps) {
               onSelect={onSelect}
               onExpand={onExpand}
             >
-              {generateTreeNodes(soiFolderStructure.data)}
+              {generateTreeNodes(generateFolderStructure(soiFolderStructure.data))}
             </DirectoryTree>
           </div>
         </MosaicWindow>
