@@ -2,6 +2,7 @@
 // this component is a changed version of it.
 import { message } from "antd";
 import PubSub from 'pubsub-js';
+import _ from 'lodash';
 import * as MonacoType from "monaco-editor";
 import * as React from "react";
 import * as path from "path";
@@ -94,6 +95,7 @@ export class Editor extends React.Component<EditorProps> {
         this.editor = monaco.editor.create(ref, {
           automaticLayout: true,
           language: this.getLanguage(),
+          readOnly: this.getReadOnly(),
           theme: "main",
           contextmenu: false,
           model: null,
@@ -142,6 +144,18 @@ export class Editor extends React.Component<EditorProps> {
     }
   }
 
+  private getReadOnly(): boolean {
+    let readOnlyFiles = ['package.json'];
+    let readonly = false;
+    for(let i=0; i< readOnlyFiles.length; i++){
+      if(_.isEqual(readOnlyFiles[i], this.props.path)){
+        readonly = true;
+        break;
+      }
+    }
+    return readonly;
+  }
+
   private async getContent(): Promise<string | null> {
     try {
       // return getFileContent(this.props.path);
@@ -183,6 +197,9 @@ export class Editor extends React.Component<EditorProps> {
       });
 
       this.editor.setModel(model);
+      this.editor.updateOptions({
+        readOnly: this.getReadOnly()
+      })
     }
   }
 }
