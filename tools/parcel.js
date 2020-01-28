@@ -14,8 +14,6 @@ async function compileParcel (options = {}) {
     watch = true;
   }
 
-  console.log('watch: ', watch);
-
   const bundlerOptions = {
     outDir: './build', // The out directory to put the build files in, defaults to dist
     outFile: undefined, // The name of the outputFile

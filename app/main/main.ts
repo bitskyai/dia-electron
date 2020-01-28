@@ -47,7 +47,7 @@ export async function onReady() {
     setupAboutPanel();
     setupProtocolHandler();
     // Auto update from github release
-    setupUpdates();
+    // setupUpdates();
     setupDialogs();
     setupDevTools();
     setUpEventListeners();
