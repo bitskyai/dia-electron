@@ -3,16 +3,16 @@ import { isDevMode } from "../utils/devmode";
 import { setupAboutPanel } from "../utils/set-about-panel";
 import { setupDevTools } from "./devtools";
 import { setupDialogs } from "./dialogs";
-import { setUpEventListeners } from './events';
+import { setUpEventListeners } from "./events";
 import { onFirstRunMaybe } from "./first-run";
-import { setupMenu } from './menu';
+import { setupMenu } from "./menu";
 import { listenForProtocolHandler, setupProtocolHandler } from "./protocol";
 import { shouldQuit } from "./squirrel";
-import { setupUpdates } from "./update";
+// import { setupUpdates } from "./update";
 import { getOrCreateMainWindow } from "./windows";
 import logger from "../utils/logger";
-import engine from '../utils/engine';
-import SOIManager from '../utils/soi-manager';
+import engine from "../utils/engine";
+import SOIManager from "../utils/soi-manager";
 
 /**
  * Handle the app's "ready" event. This is essentially
@@ -26,27 +26,31 @@ export async function onReady() {
     global.browserWindows = {
       soiEditor: null,
       main: null
-    }
+    };
 
     await onFirstRunMaybe();
     if (!isDevMode()) process.env.NODE_ENV = "production";
-    try{
+    try {
       await engine.startEngine();
-    }catch(err){
+    } catch (err) {
       logger.error("start engine file. error: ", err);
     }
 
-    try {
-      SOIManager.runSOI();
-    } catch (err) {
-      logger.error("start soi fail. error: ", err);
-    }
+    // Temp comment to fix https://github.com/munew/dia/issues/41
+    // if run this, then cannot load browser, seems it was caused by single thread
+    // try {
+    //   SOIManager.runSOI();
+    // } catch (err) {
+    //   logger.error("start soi fail. error: ", err);
+    // }
 
     // setup menus for main processes
     setupMenu();
     setupAboutPanel();
     setupProtocolHandler();
     // Auto update from github release
+    // since currently don't have apple developer account, and auto update require developer account
+    // so disable it for now
     // setupUpdates();
     setupDialogs();
     setupDevTools();
