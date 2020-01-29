@@ -30,6 +30,10 @@ export const getSOIPath = () => {
 export function copyDefaultSOI(force?: boolean): Boolean | Error {
   try {
     logger.functionStart("copyDefaultSOI");
+    // always update config.json, so when user change application path, still works fine
+    writeConfigJson({
+      additionalNodePath: [path.join(__dirname, "../../../node_modules")]
+    });
     const SOI_PARENT_FOLDER_PATH = getSOIParentFolderPath();
     const SOI_PATH = getSOIPath();
     // Path to
@@ -45,9 +49,6 @@ export function copyDefaultSOI(force?: boolean): Boolean | Error {
       }
     }
     copyFolderRecursiveSync(defaultSOIPath, SOI_PARENT_FOLDER_PATH, force);
-    writeConfigJson({
-      additionalNodePath: [path.join(__dirname, "../../../node_modules")]
-    });
     logger.functionEnd("copyDefaultSOI");
     return true;
   } catch (err) {
