@@ -13,7 +13,7 @@ const config = {
   },
   packagerConfig: {
     name: "Munew",
-    executableName: "munew",
+    executableName: "Munew",
     asar: true,
     icon: path.resolve(__dirname, 'assets', 'icons', 'munew'),
     ignore: [
@@ -64,14 +64,14 @@ const config = {
         }
 
         return {
-          name: "munew",
+          name: "Munew",
           authors: "Munew",
-          exe: "munew.exe",
+          exe: "Munew.exe",
           // iconUrl: 'https://raw.githubusercontent.com/electron/fiddle/0119f0ce697f5ff7dec4fe51f17620c78cfd488b/assets/icons/fiddle.ico',
           // loadingGif: './assets/loading.gif',
           noMsi: true,
           remoteReleases: "",
-          setupExe: `munew-${version}-${arch}-setup.exe`,
+          setupExe: `Munew-${version}-${arch}-setup.exe`,
           setupIcon: path.resolve(iconDir, "munew.ico"),
           certificatePassword: process.env.WINDOWS_CERTIFICATE_PASSWORD,
           certificateFile
@@ -87,7 +87,7 @@ const config = {
       platforms: ["linux"],
       config: {
         icon: {
-          scalable: path.resolve(iconDir, "munew.png")
+          scalable: path.resolve(iconDir, "munew.svg")
         }
       }
     },
