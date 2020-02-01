@@ -159,8 +159,8 @@ function TouchBarManager() {
     <PageHeader
       ghost={false}
       onBack={() => clickBackBtn()}
-      title="Default SOI"
-      subTitle="A default SOI help you to get start data crawling"
+      title="Default Analyst Service"
+      subTitle="A default Analyst Service help you to get start data crawling"
       extra={getActionBtns()}
     >
       {content}
