@@ -3,8 +3,8 @@ import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
 import { fancyImport } from "./import";
-import { copyDefaultSOI, getSOIPath } from "./soi-file-manager";
-import { CONFIG_PATH } from "./constants";
+import { copyDefaultSOI, getSOIPath, writeConfigJson } from "./soi-file-manager";
+import { MUNEW_HOME_FOLDER } from "./constants";
 import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
 import { IpcEvents } from "../ipc-events";
@@ -37,6 +37,7 @@ class SOIManager {
       force = true;
     }
     copyDefaultSOI(force);
+    writeConfigJson();
   }
 
   /**
@@ -177,7 +178,7 @@ class SOIManager {
    * @returns {string}
    */
   private getDownloadPath(): string {
-    return path.join(CONFIG_PATH, "electron-bin", this.version);
+    return path.join(MUNEW_HOME_FOLDER, "electron-bin", this.version);
   }
 
   /**

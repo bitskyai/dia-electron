@@ -98,8 +98,8 @@ function Explorer(props: ExplorerProps) {
         children: [
           {
             type: DirType.file,
-            name: "config.js",
-            path: "src/config.js"
+            name: "customConfig.js",
+            path: "src/customConfig.js"
           },
           {
             type: DirType.directory,

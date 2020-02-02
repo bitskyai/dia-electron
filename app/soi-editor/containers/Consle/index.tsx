@@ -7,7 +7,6 @@ import {
   MosaicNode
 } from "react-mosaic-component";
 import { responsedToConsole } from "../App/actions";
-import { initialState } from "../App/reducer";
 import { LogItem } from "../../../interfaces";
 
 // import { mosaicId } from '../../../interfaces';

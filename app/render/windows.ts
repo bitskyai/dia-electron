@@ -58,5 +58,9 @@ export function createSOIEditorWindow(): Electron.BrowserWindow {
 }
 
 export function getOrCreateSOIEditorWindow(): Electron.BrowserWindow {
-  return getGlobal('browserWindows').soiEditor || createSOIEditorWindow();
+  if(getGlobal('browserWindows').soiEditor&&getGlobal('browserWindows').soiEditor.focus){
+    return getGlobal('browserWindows').soiEditor;
+  }
+  return  createSOIEditorWindow();
+  // return getGlobal('browserWindows').soiEditor || createSOIEditorWindow();
 }

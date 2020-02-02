@@ -1,54 +1,39 @@
 /**
  * Default SOI File Manager, it provides following features:
- * 1. Copy default SOI to app.getPath('userData')
+ * 1. Copy default SOI to app.getPath('home')
  * 2. Reset SOI to default SOI
  * 3. Get file structures
  * 4. CRUD file content
  */
 import * as fs from "fs-extra";
-import { app, remote } from "electron";
 import * as path from "path";
 import logger from "./logger";
 import { copyFolderRecursiveSync } from "./index";
+import { MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER } from './constants';
 
-const getSOIParentFolderPath = () => {
-  try {
-    return path.join(app.getPath("userData"));
-  } catch (err) {
-    return path.join(remote.app.getPath("userData"));
-  }
-};
-// const SOI_PARENT_FOLDER_PATH = path.join(app.getPath("userData"));
-export const SOI_CONFIG_JSON_NAME = "config.json";
-// Default SOI Folder Name
-export const SOI_FOLDER_NAME = "soi";
-// export const SOI_PATH = path.join(getSOIParentFolderPath(), SOI_FOLDER_NAME);
+export const SOI_CONFIG_JSON_NAME = "utils/additionalNodeModules.json";
 export const getSOIPath = () => {
-  return path.join(getSOIParentFolderPath(), SOI_FOLDER_NAME);
+  return path.join(MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER);
 };
 
 export function copyDefaultSOI(force?: boolean): Boolean | Error {
   try {
     logger.functionStart("copyDefaultSOI");
-    // always update config.json, so when user change application path, still works fine
-    writeConfigJson({
-      additionalNodePath: [path.join(__dirname, "../../../node_modules")]
-    });
-    const SOI_PARENT_FOLDER_PATH = getSOIParentFolderPath();
     const SOI_PATH = getSOIPath();
     // Path to
-    const defaultSOIPath = path.join(__dirname, "..", SOI_FOLDER_NAME);
+    const defaultSOIPath = path.join(__dirname, "..", DEFAULT_ANALYST_SERVICE_FOLDER);
     logger.debug("defaultSOIPath: ", defaultSOIPath);
     logger.debug("SOI_PATH: ", SOI_PATH);
     if (fs.existsSync(SOI_PATH)) {
       if (!force) {
         logger.debug(
-          `All ready has ${SOI_FOLDER_NAME} in ${SOI_PARENT_FOLDER_PATH}, and don't force clean folder, so return`
+          `All ready has ${DEFAULT_ANALYST_SERVICE_FOLDER} in ${MUNEW_HOME_FOLDER}, and don't force clean folder, so return`
         );
         return true;
       }
     }
-    copyFolderRecursiveSync(defaultSOIPath, SOI_PARENT_FOLDER_PATH, force);
+    copyFolderRecursiveSync(defaultSOIPath, MUNEW_HOME_FOLDER, force);
+    writeConfigJson();
     logger.functionEnd("copyDefaultSOI");
     return true;
   } catch (err) {
@@ -57,13 +42,19 @@ export function copyDefaultSOI(force?: boolean): Boolean | Error {
   }
 }
 
-export function writeConfigJson(data: object) {
+export function writeConfigJson(data?: object) {
   try {
     logger.functionStart("writeConfigJson");
     const SOI_PATH = getSOIPath();
     const configJSONPath = path.join(SOI_PATH, "./src", SOI_CONFIG_JSON_NAME);
     logger.debug("SOI Config JSON Path: ", configJSONPath);
     logger.debug("Config JSON: ", data);
+    if(!data){
+      data = {
+        additionalNodePath: [path.join(__dirname, "../../../node_modules")]
+      };
+    }
+    fs.ensureFileSync(configJSONPath);
     fs.writeJsonSync(configJSONPath, data || {});
     logger.functionEnd("writeConfigJson");
     return true;

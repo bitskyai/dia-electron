@@ -1,9 +1,9 @@
 import produce from "immer";
 import * as path from "path";
-import { remote } from "electron";
 import * as fs from "fs-extra";
 import { READ_FILE } from "./constants";
 import { OpenFilesHash, OpenFile } from "../../../interfaces";
+import { MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER } from '../../../utils/constants';
 
 const openFiles: OpenFilesHash = {};
 export const initialState = {
@@ -16,8 +16,8 @@ const editorsReducer = (state = initialState, action) =>
       case READ_FILE:
         const content = fs.readFileSync(
           path.join(
-            remote.app.getPath("userData"),
-            "soi",
+            MUNEW_HOME_FOLDER, 
+            DEFAULT_ANALYST_SERVICE_FOLDER,
             action.payload.filepath
           ),
           "utf8"

@@ -60,7 +60,9 @@ const appReducer = (state = initialState, action) =>
         draft.mosaicNodes = action.payload.mosaicNodes;
         break;
       case ADD_CONSOLE_LOG:
-        draft.logs = [action.payload.log, ...state.logs]
+        // control log order
+        // draft.logs = [action.payload.log, ...state.logs]
+        draft.logs = [...state.logs, action.payload.log];
         break;
       case UPDATE_SOI_STATUS:
         draft.status = { ...state.status, ...action.payload.status}

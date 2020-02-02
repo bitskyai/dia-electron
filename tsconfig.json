@@ -26,7 +26,7 @@
     "baseUrl": "."
   },
   "include": ["app/**/*"],
-  "exclude": ["node_modules", "app/soi", "app/engine-ui", "app/soi-editor"],
+  "exclude": ["node_modules", "app/analystservice", "app/engine-ui", "app/soi-editor"],
   "formatCodeOptions": {
     "indentSize": 2,
     "tabSize": 2

@@ -4,6 +4,7 @@ import { startServer, stopServer } from "../engine-ui/src/server.js";
 import logger from "./logger";
 import { getAvailablePort } from "./index";
 import { getOrCreateMainWindow } from "../main/windows";
+import { MUNEW_HOME_FOLDER } from './constants'
 
 class Engine {
   public enginePort: number = 9099;
@@ -34,7 +35,7 @@ class Engine {
     } catch (err) {
       dialog.showErrorBox(
         "Open Munew Failed",
-        `You can try to close Munew and reopen it again, if still doesn't work, try to delete .munew-dia folder in your home folder. Error:${JSON.stringify(
+        `You can try to close Munew and reopen it again, if still doesn't work, try to delete ${MUNEW_HOME_FOLDER} folder in your home folder. Error:${JSON.stringify(
           err
         )}`
       );
@@ -49,7 +50,7 @@ class Engine {
     } catch (err) {
       dialog.showErrorBox(
         "Restart Munew Failed",
-        `You can try to close Munew and reopen it again, if still doesn't work, try to delete .munew-dia folder in your home folder. Error:${JSON.stringify(
+        `You can try to close Munew and reopen it again, if still doesn't work, try to delete ${MUNEW_HOME_FOLDER} folder in your home folder. Error:${JSON.stringify(
           err
         )}`
       );

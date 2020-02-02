@@ -1,11 +1,11 @@
 import produce from "immer";
 import * as path from "path";
-import { remote } from "electron";
 import {
   GET_SOI_FOLDER_STRUCTURE,
   UPDATE_CURRENT_SELECTED_FILE
 } from "./constants";
 import { readFolderRecursiveSync } from "../../../utils";
+import { MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER } from '../../../utils/constants';
 
 export const initialState = {
   soiFolderStructure: {
@@ -23,7 +23,7 @@ const explorerReducer = (state = initialState, action) =>
       case GET_SOI_FOLDER_STRUCTURE:
         try {
           const soiFolderStructure = readFolderRecursiveSync(
-            path.join(remote.app.getPath("userData"), "soi"),
+            path.join(MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER),
             "."
           );
           draft.soiFolderStructure = {

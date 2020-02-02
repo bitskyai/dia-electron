@@ -145,9 +145,11 @@ export class Editor extends React.Component<EditorProps> {
   }
 
   private getReadOnly(): boolean {
-    let readOnlyFiles = ['package.json'];
+    let readOnlyFiles = ['package.json', 'src/utils/additionalNodeModules.json'];
     let readonly = false;
     for(let i=0; i< readOnlyFiles.length; i++){
+      console.log('readOnlyFiles[i]: ', readOnlyFiles[i]);
+      console.log('this.props.path: ', this.props.path);
       if(_.isEqual(readOnlyFiles[i], this.props.path)){
         readonly = true;
         break;
