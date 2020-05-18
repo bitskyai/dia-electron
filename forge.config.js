@@ -96,19 +96,19 @@ const config = {
       platforms: ["linux"]
     }
   ],
-  publishers: [
-    {
-      name: "@electron-forge/publisher-github",
-      config: {
-        repository: {
-          owner: "munew",
-          name: "dia"
-        },
-        draft: true,
-        prerelease: false
-      }
-    }
-  ]
+  // publishers: [
+  //   {
+  //     name: "@electron-forge/publisher-github",
+  //     config: {
+  //       repository: {
+  //         owner: "munew",
+  //         name: "dia"
+  //       },
+  //       draft: true,
+  //       prerelease: false
+  //     }
+  //   }
+  // ]
 };
 
 function notarizeMaybe() {
