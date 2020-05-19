@@ -10,10 +10,10 @@ if(!files.length){
   files = files.concat(glob.sync(path.join(__dirname, "../out/make/**/*.nupkg")) || []);
   files = files.concat(glob.sync(path.join(__dirname, "../out/make/**/*.rpm")) || []);
   files.forEach((file) => {
-    fs.copySync(file, path.join(__dirname, "../out/tmp", path.basename(file)));
+    fs.copySync(file, path.join(__dirname, "../out/installer", path.basename(file)));
   });
   // then make the whole make folder as a zip
-  zip.zipSync(path.join(__dirname, "../out/tmp"), path.join(__dirname, "../out/munew.zip"));
+  zip.zipSync(path.join(__dirname, "../out/installer"), path.join(__dirname, "../out/munew.zip"));
 }else{
   files.forEach((file) => {
     fs.copySync(file, path.join(__dirname, "../out/munew.zip"));
