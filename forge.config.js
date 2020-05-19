@@ -12,8 +12,8 @@ const config = {
     generateAssets: require("./tools/generateAssets")
   },
   packagerConfig: {
-    name: "Munew",
-    executableName: "Munew",
+    name: "munew",
+    executableName: "munew",
     asar: true,
     icon: path.resolve(__dirname, 'assets', 'icons', 'munew'),
     ignore: [
@@ -96,19 +96,19 @@ const config = {
     //   platforms: ["linux"]
     // }
   ],
-  // publishers: [
-  //   {
-  //     name: "@electron-forge/publisher-github",
-  //     config: {
-  //       repository: {
-  //         owner: "munew",
-  //         name: "dia"
-  //       },
-  //       draft: true,
-  //       prerelease: false
-  //     }
-  //   }
-  // ]
+  publishers: [
+    {
+      name: "@electron-forge/publisher-github",
+      config: {
+        repository: {
+          owner: "munew",
+          name: "dia"
+        },
+        draft: true,
+        prerelease: false
+      }
+    }
+  ]
 };
 
 function notarizeMaybe() {
