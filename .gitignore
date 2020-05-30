@@ -67,6 +67,8 @@ build
 analystservice
 release
 out
+agents-headless
+agents-service
 
 app/engine-ui
 

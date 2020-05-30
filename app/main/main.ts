@@ -12,6 +12,8 @@ import { shouldQuit } from "./squirrel";
 import { getOrCreateMainWindow } from "./windows";
 import logger from "../utils/logger";
 import engine from "../utils/engine";
+import headlessAgent from "../utils/headlessAgent";
+import serviceAgent from "../utils/serviceAgent";
 import SOIManager from "../utils/soi-manager";
 
 /**
@@ -25,13 +27,15 @@ export async function onReady() {
     // intial global variables
     global.browserWindows = {
       soiEditor: null,
-      main: null
+      main: null,
     };
 
     await onFirstRunMaybe();
     if (!isDevMode()) process.env.NODE_ENV = "production";
     try {
       await engine.startEngine();
+      await headlessAgent.start('http://localhost:9099', 'YWdlbnQ6OjE1ODk4NzY4MzA5NDI6OjNhYWExMzVhLTM0ZDUtNGRkNC05ZmU1LTk5NDkxODVjM2M3Nw==');
+      // await serviceAgent.start();
     } catch (err) {
       logger.error("start engine file. error: ", err);
     }

@@ -21,7 +21,7 @@ export function setupDialogs() {
  * @param {Electron.MessageBoxOptions} args
  */
 function showSettings(args: Electron.MessageBoxOptions) {
-  console.log('showSettings');
+  console.log('showSettings: ', args);
   let win = getOrCreateMainWindow();
   const view = new BrowserView({
     webPreferences: {
