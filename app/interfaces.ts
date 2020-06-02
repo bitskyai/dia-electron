@@ -6,7 +6,7 @@ export interface NpmVersion {
 
 export const enum DirType {
   "file" = "file",
-  "directory" = "directory"
+  "directory" = "directory",
 }
 
 export interface DirStructure {
@@ -46,15 +46,39 @@ export interface LogItem {
 }
 export type mosaicId = "exporer" | "fileEditor" | "console";
 
-export const enum TypeormConnection{
+export const enum TypeormConnection {
   "sqlite" = "sqlite",
-  "mongodb" = "mongodb"
+  "mongodb" = "mongodb",
 }
 
-export interface Preferences{
-  version: string,
-  LOG_FILES_PATH: string,
-  TYPEORM_CONNECTION: TypeormConnection,
-  TYPEORM_DATABASE?: string,
-  TYPEORM_URL?: string
+export const enum LogLevel {
+  "error" = "error",
+  "warn" = "warn",
+  "info" = "info",
+  "debug" = "debug",
+}
+
+export interface BaseAgentPreference {
+  PORT: number;
+  MUNEW_BASE_URL?: string; // format is URL
+  GLOBAL_ID?: string; // format is uuid
+  MUNEW_SECURITY_KEY?: string;
+  AGENT_HOME: string; // format is path string
+  LOG_LEVEL: LogLevel; // enum
+}
+
+export interface HeadlessAgentPreference extends BaseAgentPreference {
+  CUSTOM_FUNCTION_TIMEOUT: number; // unit: ms
+  HEADLESS: boolean; // whether headless or not
+  SCREENSHOT: boolean; // whether take screenshot
+}
+
+export interface Preferences {
+  version: string;
+  LOG_FILES_PATH: string;
+  TYPEORM_CONNECTION: TypeormConnection;
+  TYPEORM_DATABASE?: string;
+  TYPEORM_URL?: string;
+  HEADLESS_AGENT: HeadlessAgentPreference;
+  SERVICE_AGENT: BaseAgentPreference;
 }

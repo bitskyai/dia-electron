@@ -21,10 +21,15 @@ export enum IpcEvents {
   DOWNLOAD_ELECTRON = "DOWNLOAD_ELECTRON",
   STOP_SOI_SERVER = "STOP_SOI_SERVER",
   START_SOI_SERVER = "START_SOI_SERVER",
-  SYNC_SOI_STATUS = "SYNC_SOI_STATUS"
+  SYNC_SOI_STATUS = "SYNC_SOI_STATUS",
+  SYNC_ENGINE_UI_TO_MAIN = "SYNC_ENGINE_UI_TO_MAIN",
+  MESSAGE_TO_ENGINE_UI = "MESSAGE_TO_ENGINE_UI"
 }
 
+// message send to main
 export const ipcMainEvents = [
+  IpcEvents.SYNC_ENGINE_UI_TO_MAIN,
+  IpcEvents.OPEN_SETTINGS,
   IpcEvents.CLOSE_SETTINGS,
   IpcEvents.SYNC_GET_DEFAULT_DB_CONFIGURATIONS,
   IpcEvents.SYNC_TEST_DB_CONNECTION,
@@ -39,6 +44,7 @@ export const ipcMainEvents = [
   IpcEvents.SYNC_SOI_STATUS
 ];
 
+// message send to soi editor
 export const ipcRendererEvents = [
   IpcEvents.SOI_CONSOLE_LOG,
   IpcEvents.DOWNLOADING_ELECTRON,
@@ -51,6 +57,11 @@ export const ipcRendererEvents = [
   IpcEvents.STOPPING_SOI_SERVER_FAIL,
   IpcEvents.STOPPING_SOI_SERVER_SUCCESS
 ];
+
+// message send to engine ui
+export const ipcEngineEvents = [
+  IpcEvents.MESSAGE_TO_ENGINE_UI
+]
 
 export const WEBCONTENTS_READY_FOR_IPC_SIGNAL =
   "WEBCONTENTS_READY_FOR_IPC_SIGNAL";

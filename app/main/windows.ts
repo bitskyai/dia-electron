@@ -25,6 +25,7 @@ export function getMainWindowOptions(): Electron.BrowserWindowConstructorOptions
     acceptFirstMouse: true,
     backgroundColor: "#1d2427",
     webPreferences: {
+      devTools:true,
       preload: path.join(__dirname, "preload.js"),
       webviewTag: false,
       nodeIntegration: true
