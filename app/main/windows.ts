@@ -67,6 +67,7 @@ export function createMainWindow(): Electron.BrowserWindow {
     shell.openExternal(url);
   });
 
+  // browserWindow.webContents.toggleDevTools();
   // browserWindows.push(browserWindow);
   browserWindows.main = browserWindow;
   global.browserWindows.main = browserWindow;

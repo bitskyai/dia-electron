@@ -148,9 +148,9 @@ function TouchBarManager() {
         {SOIURL}
       </a>
       {status.isRunning ? (
-        <Tag color="#87d068">Running</Tag>
+        <Tag color="green">Running</Tag>
       ) : (
-        <Tag color="#f50">Stop</Tag>
+        <Tag color="red">Stopped</Tag>
       )}
     </div>
   );

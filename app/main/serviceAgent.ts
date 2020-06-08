@@ -102,14 +102,14 @@ export function setupServiceAgent():ServiceAgent {
             data: _serviceAgent.getConfig(),
           };
           break;
-        default:
-          event.returnValue = {
-            status: false,
-            error: {
-              message:
-                "not matched subject. Please pass one of ['getServiceConfig', 'updateServiceConfig', 'startService', 'stopService']",
-            },
-          };
+        // default:
+        //   event.returnValue = {
+        //     status: false,
+        //     error: {
+        //       message:
+        //         "not matched subject. Please pass one of ['getServiceConfig', 'updateServiceConfig', 'startService', 'stopService']",
+        //     },
+        //   };
       }
     });
 

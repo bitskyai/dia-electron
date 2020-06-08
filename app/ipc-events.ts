@@ -63,5 +63,13 @@ export const ipcEngineEvents = [
   IpcEvents.MESSAGE_TO_ENGINE_UI
 ]
 
+// message send to Browser Window
+export const BROWSER_WINDOW_EVENTS = {
+  STARTING_HEADLESS: "startingHeadless",
+  STARTED_HEADLESS: "startedHeadless",
+  STOPPING_HEADLESS: "stoppingHeadless",
+  STOPPED_HEADLESS: "stoppedHeadless",
+}
+
 export const WEBCONTENTS_READY_FOR_IPC_SIGNAL =
   "WEBCONTENTS_READY_FOR_IPC_SIGNAL";

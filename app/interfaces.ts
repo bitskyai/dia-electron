@@ -65,6 +65,14 @@ export interface BaseAgentPreference {
   MUNEW_SECURITY_KEY?: string;
   AGENT_HOME: string; // format is path string
   LOG_LEVEL: LogLevel; // enum
+  //-------------------------------
+  // Runtime relative config. 
+  // Blow is system config, user cannot direct change
+  // following values normally changed because of user's action.
+  // Like: start agent, stop agent...
+  RUNNING: boolean;
+  STARTING: boolean;
+  STOPPING: boolean;
 }
 
 export interface HeadlessAgentPreference extends BaseAgentPreference {
