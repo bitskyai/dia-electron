@@ -69,6 +69,10 @@ export const BROWSER_WINDOW_EVENTS = {
   STARTED_HEADLESS: "startedHeadless",
   STOPPING_HEADLESS: "stoppingHeadless",
   STOPPED_HEADLESS: "stoppedHeadless",
+  STARTING_SERVICE: "startingService",
+  STARTED_SERVICE: "startedService",
+  STOPPING_SERVICE: "stoppingService",
+  STOPPED_SERVICE: "stoppedService",
 }
 
 export const WEBCONTENTS_READY_FOR_IPC_SIGNAL =

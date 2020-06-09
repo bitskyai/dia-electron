@@ -2,8 +2,9 @@ import * as path from "path";
 import { startServer, stopServer } from "../agents-service/server.js";
 import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
-import { IpcEvents } from "../ipc-events";
+import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
 import { ipcMainManager } from "./ipc";
+import engine from '../utils/engine';
 import {
   getServiceAgentPreferencesJSON,
   updateServiceAgentPreferencesJSON,
@@ -14,15 +15,27 @@ let _serviceAgent: ServiceAgent;
 
 class ServiceAgent {
   public port: number = 8091;
+  // in the middle of start agent
+  public starting: boolean = false;
+  // in the middle of stop agent
+  public stopping: boolean = false;
+  // agent is running
+  public running: boolean = false;
+
   constructor() {}
 
   getConfig(): BaseAgentPreference {
     try {
       let config = getServiceAgentPreferencesJSON();
+      config.TYPE = 'SERVICE';
+      config.MUNEW_BASE_URL = `http://localhost:${engine.enginePort}`;
       config.PORT = this.port;
+      config.RUNNING = this.running;
+      config.STARTING = this.starting;
+      config.STOPPING = this.stopping;
       return config;
     } catch (err) {
-      logger.error("HeadlessAgent -> getConfig fail. ", err);
+      logger.error("ServiceAgent -> getConfig fail. ", err);
       throw err;
     }
   }
@@ -38,6 +51,20 @@ class ServiceAgent {
 
   public async start() {
     try {
+      // -------------------------------
+      // update runtime configs
+      this.starting = true;
+      this.running = false;
+      this.stopping = false;
+
+      // notify engine-ui
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+        {
+          subject: BROWSER_WINDOW_EVENTS.STARTING_SERVICE,
+          data: this.getConfig(),
+        },
+      ]);
+
       const serviceConfig = this.getConfig();
       this.port = await getAvailablePort(this.port);
       const serviceHome = serviceConfig.AGENT_HOME;
@@ -57,16 +84,55 @@ class ServiceAgent {
       const indexOptions = {
         home: serviceHome,
       };
+
+      // TODO: need to remove
+      // Only for test purpose
+      await new Promise((resolve) => {
+        setTimeout(() => resolve(true), 10 * 1000);
+      });
+
       await startServer(configs, expressOptions, indexOptions);
+
+      // -------------------------------
+      // update runtime configs
+      this.starting = false;
+      this.running = true;
+      this.stopping = false;
+
+      // notify engine-ui
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+        {
+          subject: BROWSER_WINDOW_EVENTS.STARTED_SERVICE,
+          status: true,
+          data: this.getConfig(),
+          error: null,
+        },
+      ]);
     } catch (err) {
+      // -------------------------------
+      // update runtime configs
+      this.starting = false;
+      this.running = false;
+      this.stopping = false;
+
+      // notify engine-ui
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+        {
+          subject: BROWSER_WINDOW_EVENTS.STARTED_SERVICE,
+          status: false,
+          data: this.getConfig(),
+          error: err,
+        },
+      ]);
+
       throw err;
     }
   }
 
   public async restart() {
     try {
-      this.stop();
-      this.start();
+      await this.stop();
+      await this.start();
     } catch (err) {
       throw err;
     }
@@ -74,8 +140,58 @@ class ServiceAgent {
 
   public async stop() {
     try {
+      // -------------------------------
+      // update runtime configs
+      this.starting = false;
+      this.stopping = true;
+
+      // notify engine-ui
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+        {
+          subject: BROWSER_WINDOW_EVENTS.STOPPING_SERVICE,
+          data: this.getConfig(),
+        },
+      ]);
+
+      // TODO: need to remove
+      // Only for test purpose
+      await new Promise((resolve) => {
+        setTimeout(() => resolve(true), 10 * 1000);
+      });
+
       await stopServer();
+
+      // -------------------------------
+      // update runtime configs
+      this.starting = false;
+      this.running = false;
+      this.stopping = false;
+
+      // notify engine-ui
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+        {
+          subject: BROWSER_WINDOW_EVENTS.STOPPED_SERVICE,
+          status: true,
+          data: this.getConfig(),
+          error: null,
+        },
+      ]);
     } catch (err) {
+      // -------------------------------
+      // update runtime configs
+      this.starting = false;
+      this.stopping = false;
+
+      // notify engine-ui
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+        {
+          subject: BROWSER_WINDOW_EVENTS.STOPPED_SERVICE,
+          status: false,
+          data: this.getConfig(),
+          error: err,
+        },
+      ]);
+
       throw err;
     }
   }
@@ -88,7 +204,6 @@ export function setupServiceAgent():ServiceAgent {
     }
 
     _serviceAgent = new ServiceAgent();
-
     _serviceAgent.start();
 
     // setup message listener
@@ -96,12 +211,53 @@ export function setupServiceAgent():ServiceAgent {
       const subject = body && body.subject;
       console.log("subject: ", subject);
       switch (subject) {
-        case "getServiceConfig":
-          event.returnValue = {
-            status: true,
-            data: _serviceAgent.getConfig(),
-          };
-          break;
+          case "service/getConfig":
+            event.returnValue = {
+              status: true,
+              data: _serviceAgent.getConfig(),
+            };
+            break;
+          case "service/updateConfig":
+            console.log('service/updateConfig -> body: ', body);
+            event.returnValue = {
+              status: true,
+              data: _serviceAgent.setConfig(body.data),
+            };
+            _serviceAgent.restart();
+            break;
+          case "service/start":
+            let startValue = {
+              status: false,
+              error: null,
+            };
+            try {
+              _serviceAgent.start();
+              startValue.status = true;
+            } catch (err) {
+              startValue.status = false;
+              startValue.error = err;
+            }
+  
+            event.returnValue = startValue;
+            console.log("service/start -> returnValue: ", startValue);
+            break;
+          case "service/stop":
+            let stopValue = {
+              status: false,
+              data: {},
+              error: null,
+            };
+            try {
+              _serviceAgent.stop();
+              stopValue.status = true;
+            } catch (err) {
+              stopValue.status = false;
+              stopValue.error = err;
+            }
+  
+            event.returnValue = stopValue;
+            console.log("service/stop -> returnValue: ", stopValue);
+            break;
         // default:
         //   event.returnValue = {
         //     status: false,

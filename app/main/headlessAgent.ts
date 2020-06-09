@@ -142,8 +142,8 @@ class HeadlessAgent {
 
   public async restart() {
     try {
-      this.stop();
-      this.start();
+      await this.stop();
+      await this.start();
     } catch (err) {
       throw err;
     }
