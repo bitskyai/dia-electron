@@ -4,6 +4,7 @@ import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
 import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
 import { ipcMainManager } from "./ipc";
+import engine from '../utils/engine';
 import {
   getHeadlessAgentPreferencesJSON,
   updateHeadlessAgentPreferencesJSON,
@@ -26,6 +27,8 @@ class HeadlessAgent {
   getConfig(): HeadlessAgentPreference {
     try {
       let config = getHeadlessAgentPreferencesJSON();
+      config.TYPE = 'HEADLESSBROWSER';
+      config.MUNEW_BASE_URL = `http://localhost:${engine.enginePort}`;
       config.PORT = this.port;
       config.RUNNING = this.running;
       config.STARTING = this.starting;
@@ -214,13 +217,20 @@ export function setupHeadlessAgent(): HeadlessAgent {
     // setup message listener
     ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
       const subject = body && body.subject;
-      console.log("subject: ", subject);
       switch (subject) {
         case "getHeadlessConfig":
           event.returnValue = {
             status: true,
             data: _headlessAgent.getConfig(),
           };
+          break;
+        case "headless/updateConfig":
+          console.log('headless/updateConfig -> body: ', body);
+          event.returnValue = {
+            status: true,
+            data: _headlessAgent.setConfig(body.data),
+          };
+          _headlessAgent.restart();
           break;
         case "headless/start":
           let startValue = {

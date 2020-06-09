@@ -59,6 +59,7 @@ export const enum LogLevel {
 }
 
 export interface BaseAgentPreference {
+  TYPE?: string;
   PORT: number;
   MUNEW_BASE_URL?: string; // format is URL
   GLOBAL_ID?: string; // format is uuid
@@ -70,9 +71,9 @@ export interface BaseAgentPreference {
   // Blow is system config, user cannot direct change
   // following values normally changed because of user's action.
   // Like: start agent, stop agent...
-  RUNNING: boolean;
-  STARTING: boolean;
-  STOPPING: boolean;
+  RUNNING?: boolean;
+  STARTING?: boolean;
+  STOPPING?: boolean;
 }
 
 export interface HeadlessAgentPreference extends BaseAgentPreference {

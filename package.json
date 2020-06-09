@@ -31,6 +31,7 @@
     "ajv": "^6.10.1",
     "antd": "^3.25.2",
     "axios": "^0.18.0",
+    "bitspider-agent-baseservice": "^0.2.1",
     "body-parser": "^1.18.3",
     "cheerio": "^1.0.0-rc.2",
     "circular-json": "^0.5.9",
@@ -38,6 +39,7 @@
     "connected-react-router": "^6.3.2",
     "cookie-parser": "~1.4.4",
     "core-js": "2",
+    "cors": "^2.8.5",
     "csv-parse": "^4.6.5",
     "detect-port": "^1.3.0",
     "devtron": "^1.4.0",
@@ -66,6 +68,7 @@
     "mongodb": "^3.1.13",
     "morgan": "^1.9.1",
     "pubsub-js": "^1.8.0",
+    "puppeteer": "3.0.4",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-hot-loader": "^4.8.2",
@@ -90,9 +93,7 @@
     "update-electron-app": "^1.5.0",
     "uuid": "^3.3.2",
     "validator": "^10.11.0",
-    "winston": "^3.2.1",
-    "bitspider-agent-baseservice": "^0.2.1",
-    "puppeteer": "3.0.4"
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
@@ -113,8 +114,11 @@
     "asar": "^2.0.1",
     "copyfiles": "^2.1.1",
     "cross-env": "^6.0.3",
+    "cross-zip": "^3.1.0",
     "electron": "^7.0.0",
     "electron-devtools-installer": "^2.2.4",
+    "fs-extra": "^9.0.0",
+    "glob": "^7.1.6",
     "husky": "^3.0.9",
     "less": "^3.10.3",
     "log-symbols": "^3.0.0",
@@ -128,10 +132,7 @@
     "tslint": "^5.20.0",
     "tslint-microsoft-contrib": "^6.2.0",
     "tslint-react": "^4.1.0",
-    "typescript": "^3.6.4",
-    "cross-zip": "^3.1.0",
-    "fs-extra": "^9.0.0",
-    "glob":"^7.1.6"
+    "typescript": "^3.6.4"
   },
   "devEngines": {
     "node": ">=7.x",

@@ -70,10 +70,12 @@ export function getHeadlessAgentPreferencesJSON(): HeadlessAgentPreference {
   }
 }
 
-export function updateHeadlessAgentPreferencesJSON(headlessJSON:HeadlessAgentPreference): true {
+export function updateHeadlessAgentPreferencesJSON(
+  headlessJSON: HeadlessAgentPreference
+): Object {
   try {
     return updatePreferencesJSON({
-      HEADLESS_AGENT: headlessJSON
+      HEADLESS_AGENT: headlessJSON,
     });
   } catch (err) {
     logger.error("updateHeadlessAgentPreferencesJSON fail, error: ", err);
@@ -91,10 +93,12 @@ export function getServiceAgentPreferencesJSON(): BaseAgentPreference {
   }
 }
 
-export function updateServiceAgentPreferencesJSON(serviceJSON:BaseAgentPreference): true {
+export function updateServiceAgentPreferencesJSON(
+  serviceJSON: BaseAgentPreference
+): Object {
   try {
     return updatePreferencesJSON({
-      SERVICE_AGENT: serviceJSON
+      SERVICE_AGENT: serviceJSON,
     });
   } catch (err) {
     logger.error("updateServiceAgentPreferencesJSON fail, error: ", err);
@@ -131,7 +135,9 @@ export function updateProcessEnvs(preferencesJSON: Preferences): boolean {
  * @param preferencesJSON {object}
  * @returns true
  */
-export function updatePreferencesJSON(preferencesJSON: Preferences|Object): true {
+export function updatePreferencesJSON(
+  preferencesJSON: Preferences | Object
+): Object {
   try {
     let curPreferencesJSON = getPreferencesJSON();
     // preferencesJSON = _.merge(curPreferencesJSON, preferencesJSON, {
@@ -144,7 +150,7 @@ export function updatePreferencesJSON(preferencesJSON: Preferences|Object): true
     };
     preferencesJSON = cleanPreferences(preferencesJSON);
     fs.outputJSONSync(PREFERENCES_JSON_PATH, preferencesJSON);
-    return true;
+    return preferencesJSON;
   } catch (err) {
     logger.error(
       "updatePreferencesJSON-> Output preferences JSON fail. Path: ",
@@ -165,7 +171,7 @@ export function getDefaultPreferences(): Preferences {
     LOG_FILES_PATH,
     version: "1.0.0",
     HEADLESS_AGENT: getDefaultHeadlessAgent(),
-    SERVICE_AGENT: getDefaultServiceAgent()
+    SERVICE_AGENT: getDefaultServiceAgent(),
   };
 }
 
