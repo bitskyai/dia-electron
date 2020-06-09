@@ -87,9 +87,9 @@ class ServiceAgent {
 
       // TODO: need to remove
       // Only for test purpose
-      await new Promise((resolve) => {
-        setTimeout(() => resolve(true), 10 * 1000);
-      });
+      // await new Promise((resolve) => {
+      //   setTimeout(() => resolve(true), 10 * 1000);
+      // });
 
       await startServer(configs, expressOptions, indexOptions);
 
@@ -155,9 +155,9 @@ class ServiceAgent {
 
       // TODO: need to remove
       // Only for test purpose
-      await new Promise((resolve) => {
-        setTimeout(() => resolve(true), 10 * 1000);
-      });
+      // await new Promise((resolve) => {
+      //   setTimeout(() => resolve(true), 10 * 1000);
+      // });
 
       await stopServer();
 

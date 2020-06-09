@@ -28,9 +28,11 @@ class Engine {
       await startServer();
       logger.info("main->main.js->onReady, dia-engine successfully started.");
       const mainWindow = getOrCreateMainWindow();
-      // mainWindow.loadURL(`http://localhost:${this.enginePort}`);
-      // only for test
-      mainWindow.loadURL(`http://localhost:8000`);
+      mainWindow.loadURL(`http://localhost:${this.enginePort}`);
+
+      // Only used for UI Develop
+      // mainWindow.loadURL(`http://localhost:8000`);
+
       logger.info(
         `main->main.js->onReady, load http://localhost:${this.enginePort} in main browser`
       );
