@@ -79,7 +79,8 @@ class HeadlessAgent {
         SERVICE_NAME: "agents-headless",
         SCREENSHOT: headlessConfig.SCREENSHOT,
         AGENT_HOME: headlessHome,
-        LOG_LEVEL: headlessConfig.LOG_LEVEL
+        LOG_LEVEL: headlessConfig.LOG_LEVEL,
+        CUSTOM_FUNCTION_TIMEOUT: headlessConfig.CUSTOM_FUNCTION_TIMEOUT,
       };
       const expressOptions = {
         static: headlessHome,
@@ -104,8 +105,7 @@ class HeadlessAgent {
       //   setTimeout(() => resolve(true), 10 * 1000);
       // });
 
-      console.log("headlessAgent->start-> configs: ", configs);
-
+      // console.log("headlessAgent->start-> configs: ", configs);
       await startServer(configs, expressOptions, indexOptions);
 
       // -------------------------------

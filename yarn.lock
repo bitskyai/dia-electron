@@ -1851,13 +1851,14 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-bitspider-agent-baseservice@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/bitspider-agent-baseservice/-/bitspider-agent-baseservice-0.2.1.tgz#0c8d60af28e68535606bb68640a0945e90e18f64"
-  integrity sha512-Q/NgSO+1gIeZyCriV3V5K5ENtcNr6LbKy0LS8QC/4Fs3i53REhj0JRyCUgpS7qyftWqEyN0E49dzuAiCUbrT1A==
+bitspider-agent-baseservice@0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/bitspider-agent-baseservice/-/bitspider-agent-baseservice-0.3.1.tgz#11ff1b6f6dbf13a9c33949640cfdca34907c0ba1"
+  integrity sha512-D1oda/iEnM7BIE3HCEBUUN9LDpXQeWdNuWOveUFeJpC6ubq+dvlDT+SMBVftsQCuKR1kdVZCxAGNiauuyogQBw==
   dependencies:
     axios "0.19.2"
     cookie-parser "1.4.5"
+    cors "^2.8.5"
     ejs "3.1.3"
     express "4.17.1"
     fs-extra "9.0.0"
