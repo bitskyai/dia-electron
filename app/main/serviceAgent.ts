@@ -74,8 +74,8 @@ class ServiceAgent {
         PORT: this.port,
         MUNEW_BASE_URL: serviceConfig.MUNEW_BASE_URL,
         GLOBAL_ID: serviceConfig.GLOBAL_ID,
-        HEADLESS: false,
         LOG_FILES_PATH: logPath,
+        LOG_LEVEL: serviceConfig.LOG_LEVEL,
         SERVICE_NAME: "agents-service",
       };
       const expressOptions = {

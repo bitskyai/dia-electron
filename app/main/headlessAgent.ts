@@ -74,11 +74,12 @@ class HeadlessAgent {
         PORT: this.port,
         MUNEW_BASE_URL: headlessConfig.MUNEW_BASE_URL,
         GLOBAL_ID: headlessConfig.GLOBAL_ID,
-        HEADLESS: false,
+        HEADLESS: headlessConfig.HEADLESS,
         LOG_FILES_PATH: logPath,
         SERVICE_NAME: "agents-headless",
-        SCREENSHOT: true,
+        SCREENSHOT: headlessConfig.SCREENSHOT,
         AGENT_HOME: headlessHome,
+        LOG_LEVEL: headlessConfig.LOG_LEVEL
       };
       const expressOptions = {
         static: headlessHome,
@@ -102,6 +103,8 @@ class HeadlessAgent {
       // await new Promise((resolve) => {
       //   setTimeout(() => resolve(true), 10 * 1000);
       // });
+
+      console.log("headlessAgent->start-> configs: ", configs);
 
       await startServer(configs, expressOptions, indexOptions);
 
