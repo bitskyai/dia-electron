@@ -14,7 +14,9 @@ const config = {
   packagerConfig: {
     name: "munew",
     executableName: "munew",
-    asar: true,
+    asar: {
+      unpackDir: "node_modules/puppeteer/.local-chromium"
+    },
     icon: path.resolve(__dirname, 'assets', 'icons', 'munew'),
     ignore: [
       /^\/\.vscode/,
