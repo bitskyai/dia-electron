@@ -1,4 +1,5 @@
 import * as path from "path";
+import * as _ from "lodash";
 import { startServer, stopServer } from "../agents-service/server.js";
 import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
@@ -70,14 +71,15 @@ class ServiceAgent {
       const serviceHome = serviceConfig.AGENT_HOME;
       const logPath = path.join(serviceHome, "log");
       logger.info(`service agent port: ${this.port} `);
-      const configs = {
-        PORT: this.port,
-        MUNEW_BASE_URL: serviceConfig.MUNEW_BASE_URL,
-        GLOBAL_ID: serviceConfig.GLOBAL_ID,
-        LOG_FILES_PATH: logPath,
-        LOG_LEVEL: serviceConfig.LOG_LEVEL,
-        SERVICE_NAME: "agents-service",
-      };
+      const configs = _.merge(
+        {},
+        {
+          PORT: this.port,
+          LOG_FILES_PATH: logPath,
+          SERVICE_NAME: "agents-service",
+        },
+        serviceConfig
+      );
       const expressOptions = {
         static: serviceHome,
       };

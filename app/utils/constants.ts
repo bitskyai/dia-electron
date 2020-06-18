@@ -23,7 +23,8 @@ export const DEFAULT_MONGODB_CONFIG = {
   TYPEORM_URL: `mongodb://localhost:27017/munew_dia`
 };
 
-export const LOG_FILES_PATH = path.join(MUNEW_HOME_FOLDER, "./log");
+// log files path for engine
+export const LOG_FILES_PATH = path.join(MUNEW_HOME_FOLDER, "./engine/log");
 
 export const PREFERENCES_JSON_PATH = path.join(MUNEW_HOME_FOLDER, 'preferences.json');
 

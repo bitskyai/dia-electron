@@ -1,10 +1,11 @@
 import * as path from "path";
+import * as _ from "lodash";
 import { startServer, stopServer } from "../agents-headless/server.js";
 import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
 import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
 import { ipcMainManager } from "./ipc";
-import engine from '../utils/engine';
+import engine from "../utils/engine";
 import {
   getHeadlessAgentPreferencesJSON,
   updateHeadlessAgentPreferencesJSON,
@@ -27,7 +28,7 @@ class HeadlessAgent {
   getConfig(): HeadlessAgentPreference {
     try {
       let config = getHeadlessAgentPreferencesJSON();
-      config.TYPE = 'HEADLESSBROWSER';
+      config.TYPE = "HEADLESSBROWSER";
       config.MUNEW_BASE_URL = `http://localhost:${engine.enginePort}`;
       config.PORT = this.port;
       config.RUNNING = this.running;
@@ -70,18 +71,15 @@ class HeadlessAgent {
       const headlessHome = headlessConfig.AGENT_HOME;
       const logPath = path.join(headlessHome, "log");
       logger.info(`headless agent port: ${this.port} `);
-      const configs = {
-        PORT: this.port,
-        MUNEW_BASE_URL: headlessConfig.MUNEW_BASE_URL,
-        GLOBAL_ID: headlessConfig.GLOBAL_ID,
-        HEADLESS: headlessConfig.HEADLESS,
-        LOG_FILES_PATH: logPath,
-        SERVICE_NAME: "agents-headless",
-        SCREENSHOT: headlessConfig.SCREENSHOT,
-        AGENT_HOME: headlessHome,
-        LOG_LEVEL: headlessConfig.LOG_LEVEL,
-        CUSTOM_FUNCTION_TIMEOUT: headlessConfig.CUSTOM_FUNCTION_TIMEOUT,
-      };
+      const configs = _.merge(
+        {},
+        {
+          PORT: this.port,
+          LOG_FILES_PATH: logPath,
+          SERVICE_NAME: "agents-headless",
+        },
+        headlessConfig
+      );
       const expressOptions = {
         static: headlessHome,
       };
@@ -228,7 +226,7 @@ export function setupHeadlessAgent(): HeadlessAgent {
           };
           break;
         case "headless/updateConfig":
-          console.log('headless/updateConfig -> body: ', body);
+          console.log("headless/updateConfig -> body: ", body);
           event.returnValue = {
             status: true,
             data: _headlessAgent.setConfig(body.data),

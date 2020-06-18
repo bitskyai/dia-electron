@@ -2,6 +2,7 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as _ from "lodash";
+import { v4 as uuidv4 } from "uuid";
 import logger from "../utils/logger";
 import {
   DEFAULT_SQLITE_DB_CONFIG,
@@ -23,37 +24,36 @@ import {
  */
 export function getPreferencesJSON(): Preferences {
   try {
-    let preferencesJSON: Preferences;
     const defaultPreferencesJSON = getDefaultPreferences();
+    // if doesn't exist then return default preferences
+    let preferencesJSON: Preferences;
+    let mergedPreferencesJSON: Preferences;
     // if file exist then return
-    if (fs.existsSync(PREFERENCES_JSON_PATH)) {
-      preferencesJSON = fs.readJSONSync(PREFERENCES_JSON_PATH);
-      return _.merge({}, defaultPreferencesJSON, preferencesJSON);
-    } else {
-      // if doesn't exist then return default preferences
-      preferencesJSON = defaultPreferencesJSON;
-      // And write to disk async
-      fs.outputJSON(PREFERENCES_JSON_PATH, preferencesJSON, (err) => {
-        if (err) {
-          logger.error(
-            "Output preferences JSON fail. Path: ",
-            PREFERENCES_JSON_PATH,
-            "Preference JSON: ",
-            preferencesJSON,
-            "Error: ",
-            err
-          );
-        } else {
-          logger.info(
-            "getPreferencesJSON-> Output preferences JSON successful. Path: ",
-            PREFERENCES_JSON_PATH,
-            "Preference JSON: ",
-            preferencesJSON
-          );
-        }
-      });
+    fs.ensureFileSync(PREFERENCES_JSON_PATH);
+    preferencesJSON = fs.readJSONSync(PREFERENCES_JSON_PATH);
+    mergedPreferencesJSON = _.merge({}, defaultPreferencesJSON, preferencesJSON);
+    if (_.get(mergedPreferencesJSON, "TYPEORM_CONNECTION") === "mongodb") {
+      delete mergedPreferencesJSON.TYPEORM_DATABASE;
     }
-    return preferencesJSON;
+
+    if(!(_.isEqual(preferencesJSON, mergedPreferencesJSON))){
+      // if merged preferences isn't same with preferences get from local, need to update
+      // 1. maybe we change the default perferences
+      console.log('===preferencesJSON: ');
+      console.log(preferencesJSON);
+
+      console.log('===mergedPreferencesJSON: ');
+      console.log(mergedPreferencesJSON);
+      fs.writeJSONSync(PREFERENCES_JSON_PATH, mergedPreferencesJSON);
+      logger.info(
+        "getPreferencesJSON-> Output preferences JSON successful. Path: ",
+        PREFERENCES_JSON_PATH,
+        "Preference JSON: ",
+        mergedPreferencesJSON
+      );
+    }
+
+    return mergedPreferencesJSON;
   } catch (err) {
     logger.error("getPreferencesJSON fail, error: ", err);
     throw err;
@@ -217,9 +217,10 @@ export function getDefaultServiceAgent(): BaseAgentPreference {
 export function getDefaultBaseAgent(): BaseAgentPreference {
   return {
     PORT: 9999,
-    MUNEW_BASE_URL: undefined,
-    GLOBAL_ID: undefined,
-    MUNEW_SECURITY_KEY: undefined,
+    AGENT_SERIAL_ID: uuidv4(),
+    // MUNEW_BASE_URL: undefined,
+    // GLOBAL_ID: undefined,
+    // MUNEW_SECURITY_KEY: undefined,
     AGENT_HOME: MUNEW_HOME_FOLDER,
     LOG_LEVEL: LogLevel.info,
   };
