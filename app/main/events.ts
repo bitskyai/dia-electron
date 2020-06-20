@@ -2,19 +2,20 @@
 import {
   getPreferencesJSON,
   updatePreferencesJSON,
-  getDefaultDBsConfig
+  getDefaultDBsConfig,
 } from "./preferences";
 import { ipcMainManager } from "./ipc";
-import { hideSettings } from "./menu";
+import { hideSettings, showSettings } from "./menu";
 import { IpcEvents } from "../ipc-events";
 import logger from "../utils/logger";
 import { testDBConnection } from "../engine-ui/src/server";
 import engine from "../utils/engine";
 import SOIManager from "../utils/soi-manager";
+import { getOrCreateSOIEditorWindow } from "./soiEditorWindows";
 import {
   getFileContent,
   updateFileContent,
-  copyDefaultSOI
+  copyDefaultSOI,
 } from "../utils/soi-file-manager";
 
 export function setUpEventListeners() {
@@ -26,18 +27,60 @@ export function setUpEventListeners() {
     }
   });
 
-  ipcMainManager.on(IpcEvents.SYNC_GET_PREFERENCES_JSON, event => {
+  ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
+    const subject = body && body.subject;
+    switch (subject) {
+      case "soiEditor/open":
+        let soiEditorWindow = getOrCreateSOIEditorWindow();
+        soiEditorWindow.show();
+        soiEditorWindow.focus();
+        event.returnValue = {
+          status: true,
+        };
+        break;
+      case "settings/open":
+        showSettings();
+        event.returnValue = {
+          status: true,
+        };
+        break;
+    }
+  });
+
+  ipcMainManager.on(IpcEvents.OPEN_SOI_EDITOR, () => {
+    try {
+      // let soiEditorWindow: Electron.BrowserWindow | null = null;
+      console.log("****IpcEvents.OPEN_SOI_EDITOR");
+      let soiEditorWindow = getOrCreateSOIEditorWindow();
+      soiEditorWindow.show();
+      soiEditorWindow.focus();
+    } catch (err) {
+      logger.error("IpcEvents.OPEN_SOI_EDITOR failed. Error: ", err);
+    }
+  });
+
+  ipcMainManager.on(IpcEvents.CLOSE_SOI_EDITOR, () => {
+    try {
+      // let soiEditorWindow: Electron.BrowserWindow | null = null;
+      let soiEditorWindow = getOrCreateSOIEditorWindow();
+      soiEditorWindow.close();
+    } catch (err) {
+      logger.error("IpcEvents.CLOSE_SOI_EDITOR failed. Error: ", err);
+    }
+  });
+
+  ipcMainManager.on(IpcEvents.SYNC_GET_PREFERENCES_JSON, (event) => {
     try {
       event.returnValue = {
         status: true,
         payload: {
-          preferences: getPreferencesJSON()
-        }
+          preferences: getPreferencesJSON(),
+        },
       };
     } catch (err) {
       event.returnValue = {
         status: false,
-        error: err
+        error: err,
       };
     }
   });
@@ -49,12 +92,12 @@ export function setUpEventListeners() {
         updatePreferencesJSON(arg.preferences);
         await engine.restartEngine();
         event.returnValue = {
-          status: true
+          status: true,
         };
       } catch (err) {
         event.returnValue = {
           status: false,
-          error: err
+          error: err,
         };
       }
     }
@@ -64,7 +107,7 @@ export function setUpEventListeners() {
     try {
       console.log("dbConfig: ", arg.dbConfig);
       let dbConfig = {
-        type: arg.dbConfig.TYPEORM_CONNECTION
+        type: arg.dbConfig.TYPEORM_CONNECTION,
       };
       if (arg.dbConfig.TYPEORM_CONNECTION === "sqlite") {
         dbConfig.database = arg.dbConfig.TYPEORM_DATABASE;
@@ -77,40 +120,37 @@ export function setUpEventListeners() {
       event.returnValue = {
         status: true,
         payload: {
-          connected
-        }
+          connected,
+        },
       };
     } catch (err) {
       event.returnValue = {
         status: false,
         error: err,
         payload: {
-          connected: false
-        }
+          connected: false,
+        },
       };
     }
   });
 
-  ipcMainManager.on(
-    IpcEvents.SYNC_GET_DEFAULT_DB_CONFIGURATIONS,
-    (event) => {
-      try {
-        // Get default DBs Configuration
-        const defaultDBsConfig = getDefaultDBsConfig();
-        event.returnValue = {
-          status: true,
-          payload: {
-            defaultDBsConfig: defaultDBsConfig
-          }
-        };
-      } catch (err) {
-        event.returnValue = {
-          status: false,
-          error: err
-        };
-      }
+  ipcMainManager.on(IpcEvents.SYNC_GET_DEFAULT_DB_CONFIGURATIONS, (event) => {
+    try {
+      // Get default DBs Configuration
+      const defaultDBsConfig = getDefaultDBsConfig();
+      event.returnValue = {
+        status: true,
+        payload: {
+          defaultDBsConfig: defaultDBsConfig,
+        },
+      };
+    } catch (err) {
+      event.returnValue = {
+        status: false,
+        error: err,
+      };
     }
-  );
+  });
 
   // get SOI file content by path
   /*
@@ -122,11 +162,11 @@ export function setUpEventListeners() {
     try {
       event.returnValue = {
         status: true,
-        fileContent: getFileContent(arg.filePath)
+        fileContent: getFileContent(arg.filePath),
       };
     } catch (err) {
       event.returnValue = {
-        status: false
+        status: false,
       };
     }
   });
@@ -142,11 +182,11 @@ export function setUpEventListeners() {
     try {
       updateFileContent(arg.filePath, arg.fileContent);
       event.returnValue = {
-        status: true
+        status: true,
       };
     } catch (err) {
       event.returnValue = {
-        status: false
+        status: false,
       };
     }
   });
@@ -156,27 +196,27 @@ export function setUpEventListeners() {
     try {
       let status = await SOIManager.status();
       event.returnValue = {
-        status
+        status,
       };
     } catch (err) {
       logger.error(`${IpcEvents.SYNC_SOI_STATUS} error: `, err);
       event.returnValue = {
         status: undefined,
-        error: err
+        error: err,
       };
     }
   });
 
   // reset SOI to default
-  ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, event => {
+  ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, (event) => {
     try {
       copyDefaultSOI(true);
       event.returnValue = {
-        status: true
+        status: true,
       };
     } catch (err) {
       event.returnValue = {
-        status: false
+        status: false,
       };
     }
   });

@@ -1,10 +1,8 @@
 import { ipcRenderer } from "electron";
-import { getOrCreateSOIEditorWindow } from "../render/windows";
 import { openLinkExternal } from "../utils";
-import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
+import { IpcEvents } from "../ipc-events";
 // import { IpcEvents } from '../ipc-events';
 // import { ipcMainManager } from './ipc';
-export let soiEditorWindow: Electron.BrowserWindow | null = null;
 
 // indicate currently is in electron browser window
 window.__electron__ = true;
@@ -35,21 +33,20 @@ window.addEventListener("DOMContentLoaded", () => {
     replaceText(`${type}-version`, (process.versions as any)[type]);
   }
 
-  waitDomElement("#munew_default_soi_menu", (btn: any) => {
-    btn.addEventListener("click", (event: any) => {
-      event.preventDefault();
-      event.stopPropagation();
-      soiEditorWindow = getOrCreateSOIEditorWindow();
-      soiEditorWindow.focus();
-    });
-  });
-  waitDomElement("#munew_default_settings_menu", (btn: any) => {
-    btn.addEventListener("click", (event: any) => {
-      event.preventDefault();
-      event.stopPropagation();
-      ipcRenderer.send(IpcEvents.OPEN_SETTINGS, "settings");
-    });
-  });
+//   waitDomElement("#munew_default_soi_menu", (btn: any) => {
+//     btn.addEventListener("click", (event: any) => {
+//       event.preventDefault();
+//       event.stopPropagation();
+//       ipcRenderer.send(IpcEvents.OPEN_SOI_EDITOR, "soiEditor");
+//     });
+//   });
+//   waitDomElement("#munew_default_settings_menu", (btn: any) => {
+//     btn.addEventListener("click", (event: any) => {
+//       event.preventDefault();
+//       event.stopPropagation();
+//       ipcRenderer.send(IpcEvents.OPEN_SETTINGS, "settings");
+//     });
+//   });
 });
 
 window.addEventListener("syncEngineUIToMain", (event: any) => {

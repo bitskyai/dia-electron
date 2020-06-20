@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { PageHeader, Button, Icon, message, Tag } from "antd";
 import { useSelector, useDispatch } from "react-redux";
+import { ipcRenderer } from "electron";
 import PubSub from 'pubsub-js';
 import { showOrHideConsole, showOrHideExplorer, updateSOIStatus } from "../App/actions";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
-import { getOrCreateSOIEditorWindow } from "../../../render/windows";
 import { PUBSUB_TOPICS } from '../../utils/constants';
 
 function TouchBarManager() {
@@ -62,8 +62,7 @@ function TouchBarManager() {
   };
 
   const clickBackBtn = () => {
-    let win = getOrCreateSOIEditorWindow();
-    win.close();
+    ipcRenderer.send(IpcEvents.CLOSE_SOI_EDITOR, "soiEditor");
   };
 
   const downloadElectron = () => {
