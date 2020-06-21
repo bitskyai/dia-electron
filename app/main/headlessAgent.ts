@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as _ from "lodash";
+const { Launcher } = require("chrome-launcher");
 import { startServer, stopServer } from "../agents-headless/server.js";
 import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
@@ -23,7 +24,15 @@ class HeadlessAgent {
   public stopping: boolean = false;
   // agent is running
   public running: boolean = false;
-  constructor() {}
+  //
+  public chromeInstallations: Array<String> = [];
+  constructor() {
+    try {
+      this.chromeInstallations = Launcher.getInstallations();
+    } catch (err) {
+      this.chromeInstallations = [];
+    }
+  }
 
   getConfig(): HeadlessAgentPreference {
     try {
@@ -219,10 +228,13 @@ export function setupHeadlessAgent(): HeadlessAgent {
     ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
       const subject = body && body.subject;
       switch (subject) {
-        case "getHeadlessConfig":
+        case "headless/getConfig":
           event.returnValue = {
             status: true,
             data: _headlessAgent.getConfig(),
+            options: {
+              chromeInstallations: _headlessAgent.chromeInstallations,
+            },
           };
           break;
         case "headless/updateConfig":
@@ -265,6 +277,25 @@ export function setupHeadlessAgent(): HeadlessAgent {
 
           event.returnValue = stopValue;
           console.log("headless/stop -> returnValue: ", stopValue);
+          break;
+        case "headless/getChromeInstallations":
+          let returnValue = {
+            status: true,
+            installations: [],
+            error: null,
+          };
+          try {
+            returnValue.installations = Launcher.getChromeInstallations();
+          } catch (err) {
+            returnValue.status = false;
+            returnValue.error = err;
+          }
+
+          event.returnValue = returnValue;
+          console.log(
+            "headless/getChromeInstallations -> Installations: ",
+            returnValue.installations
+          );
           break;
         // default:
         //   console.log("default subject ");

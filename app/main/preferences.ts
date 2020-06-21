@@ -39,11 +39,11 @@ export function getPreferencesJSON(): Preferences {
     if(!(_.isEqual(preferencesJSON, mergedPreferencesJSON))){
       // if merged preferences isn't same with preferences get from local, need to update
       // 1. maybe we change the default perferences
-      console.log('===preferencesJSON: ');
-      console.log(preferencesJSON);
+      // console.log('===preferencesJSON: ');
+      // console.log(preferencesJSON);
 
-      console.log('===mergedPreferencesJSON: ');
-      console.log(mergedPreferencesJSON);
+      // console.log('===mergedPreferencesJSON: ');
+      // console.log(mergedPreferencesJSON);
       fs.writeJSONSync(PREFERENCES_JSON_PATH, mergedPreferencesJSON);
       logger.info(
         "getPreferencesJSON-> Output preferences JSON successful. Path: ",
