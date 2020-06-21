@@ -1,5 +1,7 @@
 // Setup Event Listeners
 import { dialog } from "electron";
+import * as fs from 'fs-extra';
+import * as path from 'path';
 import {
   getPreferencesJSON,
   updatePreferencesJSON,
@@ -59,6 +61,28 @@ export function setUpEventListeners() {
             };
           });
         break;
+      case "common/isUserDataDirectory":
+          let isUserDataDir = {
+            validPath: false,
+            userDataDir: false
+          }
+
+          try{
+            let userDataDir = body.data.directory;
+            const exist = fs.pathExistsSync(userDataDir);
+            if(exist){
+              isUserDataDir.validPath = true;
+              // now check whether it is a user data directory
+              // it should have a default folder if it is a Chrome User Data Directory
+              const defaultFolder = path.join(userDataDir, 'Default');
+              isUserDataDir.userDataDir = fs.pathExistsSync(defaultFolder);
+            }
+          }catch(err){
+            logger.error(`common/isUserDataDirectory failed. Error: ${err.message}`, {error: err, body: body});
+          }
+
+          event.returnValue = isUserDataDir;
+          break;
       case "soiEditor/open":
         let soiEditorWindow = getOrCreateSOIEditorWindow();
         soiEditorWindow.show();
