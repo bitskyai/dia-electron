@@ -1,4 +1,5 @@
 // Setup Event Listeners
+import { dialog } from "electron";
 import {
   getPreferencesJSON,
   updatePreferencesJSON,
@@ -30,6 +31,34 @@ export function setUpEventListeners() {
   ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
     const subject = body && body.subject;
     switch (subject) {
+      case "common/openDirectoryPicker":
+        dialog
+          .showOpenDialog({
+            properties: ["openDirectory", "showHiddenFiles"],
+          })
+          .then((result) => {
+            if (result.canceled) {
+              event.returnValue = {
+                status: true,
+                directory: undefined,
+              };
+            } else {
+              const dir = result.filePaths && result.filePaths[0];
+              event.returnValue = {
+                status: true,
+                directory: dir,
+              };
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            event.returnValue = {
+              status: false,
+              error: err,
+              directory: undefined,
+            };
+          });
+        break;
       case "soiEditor/open":
         let soiEditorWindow = getOrCreateSOIEditorWindow();
         soiEditorWindow.show();

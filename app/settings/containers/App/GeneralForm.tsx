@@ -14,7 +14,6 @@ import {
 } from "../../notification";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
-import { clear } from "winston";
 
 const DEAULT_SQLITE_DATABASE = "munew_dia.sql";
 
