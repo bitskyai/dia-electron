@@ -26,11 +26,16 @@ export function getPreferencesJSON(): Preferences {
   try {
     const defaultPreferencesJSON = getDefaultPreferences();
     // if doesn't exist then return default preferences
-    let preferencesJSON: Preferences;
+    let preferencesJSON: Preferences | {};
     let mergedPreferencesJSON: Preferences;
     // if file exist then return
     fs.ensureFileSync(PREFERENCES_JSON_PATH);
-    preferencesJSON = fs.readJSONSync(PREFERENCES_JSON_PATH);
+    try{
+      // to avoid if user delete preference.json
+      preferencesJSON = fs.readJSONSync(PREFERENCES_JSON_PATH);
+    }catch(err){
+      preferencesJSON = {};
+    }
     mergedPreferencesJSON = _.merge({}, defaultPreferencesJSON, preferencesJSON);
     if (_.get(mergedPreferencesJSON, "TYPEORM_CONNECTION") === "mongodb") {
       delete mergedPreferencesJSON.TYPEORM_DATABASE;
