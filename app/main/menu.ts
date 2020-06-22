@@ -141,9 +141,11 @@ export function setupMenu() {
       menu.submenu = getHelpItems();
     }
 
-    if (label !== "Edit") {
-      menus.push(menu);
-    }
+    menus.push(menu);
+
+    // if (label !== "Edit") {
+    //   menus.push(menu);
+    // }
   });
   // menus.splice(process.platform === "darwin" ? 1 : 0, 0, getFileMenu());
   // logger.debug("setupMenu->menu: ", JSON.stringify(menus, null, 2));
