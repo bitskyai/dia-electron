@@ -31,7 +31,7 @@ class Engine {
       mainWindow.loadURL(`http://localhost:${this.enginePort}`);
 
       // Only used for UI Develop
-      // mainWindow.loadURL(`http://localhost:8901`);
+      // mainWindow.loadURL(`http://localhost:8000`);
 
       logger.info(
         `main->main.js->onReady, load http://localhost:${this.enginePort} in main browser`
