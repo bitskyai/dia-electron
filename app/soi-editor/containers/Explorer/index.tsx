@@ -92,28 +92,9 @@ function Explorer(props: ExplorerProps) {
     // only show frequently used files
     let arr = [
       {
-        type: DirType.directory,
-        name: "src",
-        path: "src",
-        children: [
-          {
-            type: DirType.file,
-            name: "customConfig.js",
-            path: "src/customConfig.js"
-          },
-          {
-            type: DirType.directory,
-            name: "routes",
-            path: "src/routes",
-            children: [
-              {
-                type: DirType.file,
-                name: "intelligences.js",
-                path: "src/routes/intelligences.js"
-              }
-            ]
-          }
-        ]
+        type: DirType.file,
+        name: "worker.js",
+        path: "worker.js"
       },
       {
         type: "button",

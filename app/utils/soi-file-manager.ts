@@ -9,7 +9,7 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import logger from "./logger";
 import { copyFolderRecursiveSync } from "./index";
-import { MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER } from './constants';
+import { MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER } from "./constants";
 
 export const SOI_CONFIG_JSON_NAME = "utils/additionalNodeModules.json";
 export const getSOIPath = () => {
@@ -21,7 +21,11 @@ export function copyDefaultSOI(force?: boolean): Boolean | Error {
     logger.functionStart("copyDefaultSOI");
     const SOI_PATH = getSOIPath();
     // Path to
-    const defaultSOIPath = path.join(__dirname, "..", DEFAULT_ANALYST_SERVICE_FOLDER);
+    const defaultSOIPath = path.join(
+      __dirname,
+      "..",
+      DEFAULT_ANALYST_SERVICE_FOLDER
+    );
     logger.debug("defaultSOIPath: ", defaultSOIPath);
     logger.debug("SOI_PATH: ", SOI_PATH);
     if (fs.existsSync(SOI_PATH)) {
@@ -46,16 +50,19 @@ export function writeConfigJson(data?: object) {
   try {
     logger.functionStart("writeConfigJson");
     const SOI_PATH = getSOIPath();
-    const configJSONPath = path.join(SOI_PATH, "./src", SOI_CONFIG_JSON_NAME);
+    const configJSONPath = path.join(SOI_PATH, SOI_CONFIG_JSON_NAME);
     logger.debug("SOI Config JSON Path: ", configJSONPath);
     logger.debug("Config JSON: ", data);
-    if(!data){
+    if (!data) {
       data = {
-        additionalNodePath: [path.join(__dirname, "../../../node_modules")]
+        additionalNodePath: [
+          path.join(SOI_PATH, "node_modules"),
+          path.join(__dirname, "../../../node_modules"),
+        ],
       };
     }
     fs.ensureFileSync(configJSONPath);
-    fs.writeJsonSync(configJSONPath, data || {});
+    fs.writeJsonSync(configJSONPath, data || {}, { spaces: 2 });
     logger.functionEnd("writeConfigJson");
     return true;
   } catch (err) {
@@ -69,19 +76,19 @@ export function writeConfigJson(data?: object) {
  * @param {string} filePath - Relative path of file in SOI folder
  * @returns {string}
  */
-export function getFileContent(filePath: string):string {
+export function getFileContent(filePath: string): string {
   logger.functionStart("getFileContent");
   try {
     const fileFullPath = path.join(getSOIPath(), filePath);
-    logger.debug('fileFullPath: ', fileFullPath);
-    if(fs.existsSync(fileFullPath)){
-      logger.functionEnd('getFileContent');
+    logger.debug("fileFullPath: ", fileFullPath);
+    if (fs.existsSync(fileFullPath)) {
+      logger.functionEnd("getFileContent");
       return fs.readFileSync(fileFullPath, "utf8");
     }
     throw new Error(`getFileContent ${fileFullPath} doesn't exist`);
   } catch (err) {
-    logger.error('getFileContent error: ', err);
-    logger.functionEnd('getFileContent');
+    logger.error("getFileContent error: ", err);
+    logger.functionEnd("getFileContent");
     throw err;
   }
 }
@@ -92,19 +99,19 @@ export function getFileContent(filePath: string):string {
  * @param {string} content - content need to update
  * @returns {boolean}
  */
-export function updateFileContent(filePath:string, content:string){
+export function updateFileContent(filePath: string, content: string) {
   logger.functionStart("copyDefaultSOI");
-  try{
+  try {
     const fileFullPath = path.join(getSOIPath(), filePath);
-    logger.debug('fileFullPath: ', fileFullPath);
-    if(fs.existsSync(fileFullPath)){
-      logger.functionEnd('updateFileContent');
+    logger.debug("fileFullPath: ", fileFullPath);
+    if (fs.existsSync(fileFullPath)) {
+      logger.functionEnd("updateFileContent");
       return fs.writeFileSync(fileFullPath, content, "utf8");
     }
     throw new Error(`updateFileContent ${fileFullPath} doesn't exist`);
-  }catch(err){
-    logger.error('updateFileContent error: ', err);
-    logger.functionEnd('copyDefaultSOI');
+  } catch (err) {
+    logger.error("updateFileContent error: ", err);
+    logger.functionEnd("copyDefaultSOI");
     throw err;
   }
 }

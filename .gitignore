@@ -64,7 +64,7 @@ typings/
 
 dist
 build
-analystservice
+retailerservice
 release
 out
 agents-headless

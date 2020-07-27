@@ -10,7 +10,7 @@ const getHomeFolder = () => {
   }
 };
 export const MUNEW_HOME_FOLDER = path.join(getHomeFolder(), ".munew");
-export const DEFAULT_ANALYST_SERVICE_FOLDER = 'analystservice';
+export const DEFAULT_ANALYST_SERVICE_FOLDER = 'retailerservice';
 // default sqlite db configuration
 export const DEFAULT_SQLITE_DB_CONFIG = {
   TYPEORM_CONNECTION: TypeormConnection.sqlite,

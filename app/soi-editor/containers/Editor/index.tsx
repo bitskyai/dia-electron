@@ -1,15 +1,15 @@
 // Credit goes in large part to https://github.com/superRaytin/react-monaco-editor,
 // this component is a changed version of it.
 import { message } from "antd";
-import PubSub from 'pubsub-js';
-import _ from 'lodash';
+import PubSub from "pubsub-js";
+import _ from "lodash";
 import * as MonacoType from "monaco-editor";
 import * as React from "react";
 import * as path from "path";
 import { loadMonaco } from "../../utils";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
-import { PUBSUB_TOPICS } from '../../utils/constants';
+import { PUBSUB_TOPICS } from "../../utils/constants";
 
 export interface EditorProps {
   path: string;
@@ -35,7 +35,7 @@ export class Editor extends React.Component<EditorProps> {
 
   public componentDidMount() {
     PubSub.unsubscribe(PUBSUB_TOPICS.RE_GET_FILE_CONTENT);
-    PubSub.subscribe(PUBSUB_TOPICS.RE_GET_FILE_CONTENT, ()=>{
+    PubSub.subscribe(PUBSUB_TOPICS.RE_GET_FILE_CONTENT, () => {
       this.setContent();
     });
     this.initMonaco();
@@ -68,7 +68,7 @@ export class Editor extends React.Component<EditorProps> {
       IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT,
       {
         filePath: this.props.path,
-        fileContent: this.editor.getValue()
+        fileContent: this.editor.getValue(),
       }
     );
     if (result && result.status) {
@@ -99,7 +99,7 @@ export class Editor extends React.Component<EditorProps> {
           theme: "main",
           contextmenu: false,
           model: null,
-          ...monacoOptions
+          ...monacoOptions,
         });
       }
 
@@ -145,12 +145,17 @@ export class Editor extends React.Component<EditorProps> {
   }
 
   private getReadOnly(): boolean {
-    let readOnlyFiles = ['package.json', 'src/utils/additionalNodeModules.json'];
+    let readOnlyFiles = [
+      "package.json",
+      "utils/additionalNodeModules.json",
+      "utils/nodeModules.js",
+      "index.js",
+    ];
     let readonly = false;
-    for(let i=0; i< readOnlyFiles.length; i++){
-      console.log('readOnlyFiles[i]: ', readOnlyFiles[i]);
-      console.log('this.props.path: ', this.props.path);
-      if(_.isEqual(readOnlyFiles[i], this.props.path)){
+    for (let i = 0; i < readOnlyFiles.length; i++) {
+      console.log("readOnlyFiles[i]: ", readOnlyFiles[i]);
+      console.log("this.props.path: ", this.props.path);
+      if (_.isEqual(readOnlyFiles[i], this.props.path)) {
         readonly = true;
         break;
       }
@@ -164,14 +169,14 @@ export class Editor extends React.Component<EditorProps> {
       let result = ipcRendererManager.sendSync(
         IpcEvents.SYNC_SOI_GET_FILE_CONTENT,
         {
-          filePath: this.props.path
+          filePath: this.props.path,
         }
       );
       if (result && result.status) {
         return result.fileContent;
       } else {
         message.error("Failed");
-        return '';
+        return "";
       }
     } catch (err) {
       throw err;
@@ -195,13 +200,13 @@ export class Editor extends React.Component<EditorProps> {
     if (monaco) {
       const model = monaco.editor.createModel(value || "", this.getLanguage());
       model.updateOptions({
-        tabSize: 2
+        tabSize: 2,
       });
 
       this.editor.setModel(model);
       this.editor.updateOptions({
-        readOnly: this.getReadOnly()
-      })
+        readOnly: this.getReadOnly(),
+      });
     }
   }
 }
