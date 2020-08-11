@@ -97,7 +97,6 @@ class HeadlessAgent {
         items: [
           undefined,
           undefined,
-          undefined,
           {
             url: "/screenshots",
             title: "Screenshots",
