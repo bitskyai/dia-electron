@@ -12,8 +12,8 @@ const config = {
     generateAssets: require("./tools/generateAssets")
   },
   packagerConfig: {
-    name: "munew",
-    executableName: "munew",
+    name: "bitsky",
+    executableName: "bitsky",
     asar: {
       unpackDir: "node_modules/puppeteer/.local-chromium"
     },
@@ -34,20 +34,20 @@ const config = {
       /^\/package-lock\.json/,
       /^\/LICENSE/
     ],
-    appBundleId: "com.munew",
+    appBundleId: "com.bitsky",
     appCategoryType: "public.app-category.developer-tools",
     protocols: [
       {
-        name: "Munew Launch Protocol",
-        schemes: ["munew"]
+        name: "BitSky Launch Protocol",
+        schemes: ["bitsky"]
       }
     ],
     win32metadata: {
-      CompanyName: "Munew",
-      OriginalFilename: "Munew"
+      CompanyName: "BitSky",
+      OriginalFilename: "BitSky"
     }
     // osxSign: {
-    //   identity: 'Developer ID Application: Munew (LT94ZKYDCJ)'
+    //   identity: 'Developer ID Application: BitSky (LT94ZKYDCJ)'
     // }
   },
   makers: [
@@ -66,14 +66,14 @@ const config = {
         }
 
         return {
-          name: "Munew",
-          authors: "Munew",
-          exe: "Munew.exe",
+          name: "BitSky",
+          authors: "BitSky",
+          exe: "BitSky.exe",
           // iconUrl: 'https://raw.githubusercontent.com/electron/fiddle/0119f0ce697f5ff7dec4fe51f17620c78cfd488b/assets/icons/fiddle.ico',
           // loadingGif: './assets/loading.gif',
           noMsi: true,
           remoteReleases: "",
-          setupExe: `Munew-${version}-${arch}-setup.exe`,
+          setupExe: `BitSky-${version}-${arch}-setup.exe`,
           setupIcon: path.resolve(iconDir, "munew.ico"),
           certificatePassword: process.env.WINDOWS_CERTIFICATE_PASSWORD,
           certificateFile
@@ -103,8 +103,8 @@ const config = {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "munew",
-          name: "dia"
+          owner: "bitskyai",
+          name: "bitsky"
         },
         draft: true,
         prerelease: false

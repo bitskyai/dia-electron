@@ -28,18 +28,18 @@ class Engine {
       await startServer();
       logger.info("main->main.js->onReady, dia-engine successfully started.");
       const mainWindow = getOrCreateMainWindow();
-      mainWindow.loadURL(`http://localhost:${this.enginePort}`);
+      // mainWindow.loadURL(`http://localhost:${this.enginePort}`);
 
       // Only used for UI Develop
-      // mainWindow.loadURL(`http://localhost:8000`);
+      mainWindow.loadURL(`http://localhost:8000`);
 
       logger.info(
         `main->main.js->onReady, load http://localhost:${this.enginePort} in main browser`
       );
     } catch (err) {
       dialog.showErrorBox(
-        "Open Munew Failed",
-        `You can try to close Munew and reopen it again, if still doesn't work, try to delete ${MUNEW_HOME_FOLDER} folder in your home folder. Error:${JSON.stringify(
+        "Open BitSky Failed",
+        `You can try to close BitSky and reopen it again, if still doesn't work, try to delete ${MUNEW_HOME_FOLDER} folder in your home folder. Error:${JSON.stringify(
           err
         )}`
       );
@@ -53,8 +53,8 @@ class Engine {
       this.startEngine();
     } catch (err) {
       dialog.showErrorBox(
-        "Restart Munew Failed",
-        `You can try to close Munew and reopen it again, if still doesn't work, try to delete ${MUNEW_HOME_FOLDER} folder in your home folder. Error:${JSON.stringify(
+        "Restart BitSky Failed",
+        `You can try to close BitSky and reopen it again, if still doesn't work, try to delete ${MUNEW_HOME_FOLDER} folder in your home folder. Error:${JSON.stringify(
           err
         )}`
       );
@@ -67,8 +67,8 @@ class Engine {
       await stopServer();
     } catch (err) {
       dialog.showErrorBox(
-        "Stop Munew Failed",
-        `You can try to force close Munew. Error:${JSON.stringify(err)}`
+        "Stop BitSky Failed",
+        `You can try to force close BitSky. Error:${JSON.stringify(err)}`
       );
       throw err;
     }

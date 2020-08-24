@@ -8,7 +8,7 @@ export function setupUpdates() {
     const updateApp = require('update-electron-app');
 
     updateApp({
-      repo: 'munew/dia',
+      repo: 'bitskyai/bitsky',
       updateInterval: '1 hour',
     });
   }, 10000);

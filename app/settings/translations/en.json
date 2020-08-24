@@ -29,7 +29,7 @@
   "munew.settings.dbPathDescription": "Specific which folder to store your database file",
   "munew.settings.dbPathRequired": "You must specific Database Path",
   "munew.settings.dbURLTitle": "Database URL",
-  "munew.settings.dbURLDescription": "Connection url where perform connection to. You need to specific url format like this <span class='ant-typography'><code>mongodb://{dbuser}:{dbpassword}@{host}:{port}/{dbname}</code></span>. Example: <span class='ant-typography'><code>mongodb://localhost:27017/munew</code></span>",
+  "munew.settings.dbURLDescription": "Connection url where perform connection to. You need to specific url format like this <span class='ant-typography'><code>mongodb://{dbuser}:{dbpassword}@{host}:{port}/{dbname}</code></span>. Example: <span class='ant-typography'><code>mongodb://localhost:27017/bitsky</code></span>",
   "munew.settings.dbURLRequired": "You must specific Database URL",
   "munew.settings.savePreferencesSuccessful": "Save preferences successfully",
   "munew.settings.error.getPreferencesTitle": "Get settings failed",

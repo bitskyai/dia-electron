@@ -1,25 +1,25 @@
 {
-  "name": "munew",
+  "name": "bitsky-electron",
   "version": "0.7.0",
   "description": "Cross platform clients",
   "license": "Apache-2.0",
-  "productName": "munew",
+  "productName": "BitSky",
   "readmeFilename": "README.md",
   "author": {
-    "name": "munew.io",
-    "email": "munewio@gmail.com"
+    "name": "bitsky.ai",
+    "email": "bitskyai@gmail.com"
   },
-  "homepage": "https://munew.io",
+  "homepage": "https://bitsky.ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/munew/dia-electron.git"
+    "url": "https://github.com/bitskyai/dia-electron.git"
   },
   "bugs": {
-    "url": "https://github.com/munew/dia-electron.git/issues"
+    "url": "https://github.com/bitskyai/dia-electron.git/issues"
   },
   "tags": [
     "Electron",
-    "Munew",
+    "BitSky",
     "DIA"
   ],
   "config": {

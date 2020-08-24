@@ -9,18 +9,18 @@ const getHomeFolder = () => {
     return path.join(remote.app.getPath("home"));
   }
 };
-export const MUNEW_HOME_FOLDER = path.join(getHomeFolder(), ".munew");
+export const MUNEW_HOME_FOLDER = path.join(getHomeFolder(), ".bitsky");
 export const DEFAULT_ANALYST_SERVICE_FOLDER = 'retailerservice';
 // default sqlite db configuration
 export const DEFAULT_SQLITE_DB_CONFIG = {
   TYPEORM_CONNECTION: TypeormConnection.sqlite,
-  TYPEORM_DATABASE: path.join(MUNEW_HOME_FOLDER, "munew_dia.sql")
+  TYPEORM_DATABASE: path.join(MUNEW_HOME_FOLDER, "bitsky.sql")
 };
 
 // default mongodb configuration
 export const DEFAULT_MONGODB_CONFIG = {
   TYPEORM_CONNECTION: TypeormConnection.mongodb,
-  TYPEORM_URL: `mongodb://localhost:27017/munew_dia`
+  TYPEORM_URL: `mongodb://localhost:27017/bitsky`
 };
 
 // log files path for engine

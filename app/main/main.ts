@@ -87,7 +87,7 @@ export function main() {
   }
 
   // Set the app's name
-  app.name = "Munew DIA";
+  app.name = "BitSky";
 
   // Ensure that there's only ever one Fiddle running
   listenForProtocolHandler();

@@ -58,14 +58,14 @@ class App extends React.PureComponent {
               <Title level={3}>
                 <FormattedMessage id="munew.settings.about" />
               </Title>
-              <Title level={4}>Munew {packageJSON.version}</Title>
+              <Title level={4}>BitSky {packageJSON.version}</Title>
               <Paragraph>
                 <FormattedMessage id="munew.settings.productDescription" />
               </Paragraph>
               <Paragraph>
                 <ul>
                   <li>
-                    <a href="https://munew.io" target="_blank">
+                    <a href="https://bitsky.ai" target="_blank">
                       <FormattedMessage id="munew.settings.website" />
                     </a>
                   </li>
@@ -74,7 +74,7 @@ class App extends React.PureComponent {
                   </li>
                   <li>
                     <a
-                      href="https://github.com/munew/dia/blob/master/LICENSE"
+                      href="https://github.com/bitskyai/bitsky/blob/master/LICENSE"
                       target="_blank"
                     >
                       <FormattedMessage id="munew.settings.license" />
@@ -88,13 +88,13 @@ class App extends React.PureComponent {
               <Paragraph>
                 <ul>
                   <li>
-                    <a href="https://github.com/munew/dia/issues/new" target="_blank">
+                    <a href="https://github.com/bitskyai/bitsky/issues/new" target="_blank">
                       <FormattedMessage id="munew.settings.reportBug" />
                     </a>
                   </li>
                   <li>
                     <a
-                      href="https://github.com/munew"
+                      href="https://github.com/bitskyai"
                       target="_blank"
                     >
                       <FormattedMessage id="munew.settings.github" />

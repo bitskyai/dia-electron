@@ -38,21 +38,21 @@ function getHelpItems(): Array<MenuItemConstructorOptions> {
   preferencesMenu.shift();
   return preferencesMenu.concat([
     {
-      label: "Open Munew Repository...",
+      label: "Open BitSky Repository...",
       click() {
-        shell.openExternal("https://github.com/munew");
+        shell.openExternal("https://github.com/bitskyai");
       },
     },
     {
       label: "Documents",
       click() {
-        shell.openExternal("https://docs.munew.io");
+        shell.openExternal("https://docs.bitsky.ai");
       },
     },
     {
-      label: "Open Munew Issue Tracker...",
+      label: "Open BitSky Issue Tracker...",
       click() {
-        shell.openExternal("https://github.com/munew/dia/issues");
+        shell.openExternal("https://github.com/bitskyai/bitsky/issues");
       },
     },
   ]);
