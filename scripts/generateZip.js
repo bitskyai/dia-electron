@@ -13,9 +13,9 @@ if(!files.length){
     fs.copySync(file, path.join(__dirname, "../out/installer", path.basename(file)));
   });
   // then make the whole make folder as a zip
-  zip.zipSync(path.join(__dirname, "../out/installer"), path.join(__dirname, "../out/munew.zip"));
+  zip.zipSync(path.join(__dirname, "../out/installer"), path.join(__dirname, "../out/bitsky.zip"));
 }else{
   files.forEach((file) => {
-    fs.copySync(file, path.join(__dirname, "../out/munew.zip"));
+    fs.copySync(file, path.join(__dirname, "../out/bitsky.zip"));
   });
 }

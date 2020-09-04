@@ -1,5 +1,5 @@
 {
-  "name": "bitsky-electron",
+  "name": "bitsky-desktop-app",
   "version": "0.7.0",
   "description": "Cross platform clients",
   "license": "Apache-2.0",
@@ -7,20 +7,19 @@
   "readmeFilename": "README.md",
   "author": {
     "name": "bitsky.ai",
-    "email": "bitskyai@gmail.com"
+    "email": "help.bitskyai@gmail.com"
   },
   "homepage": "https://bitsky.ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bitskyai/dia-electron.git"
+    "url": "https://github.com/bitskyai/bitsky-desktop-app.git"
   },
   "bugs": {
-    "url": "https://github.com/bitskyai/dia-electron.git/issues"
+    "url": "https://github.com/bitskyai/bitsky-desktop-app.git/issues"
   },
   "tags": [
     "Electron",
-    "BitSky",
-    "DIA"
+    "BitSky"
   ],
   "config": {
     "forge": "./forge.config.js"
@@ -30,8 +29,8 @@
     "@hot-loader/react-dom": "^16.8.6",
     "ajv": "^6.10.1",
     "antd": "^3.25.2",
-    "bitspider-agent-baseservice": "0.6.0",
-    "bitspider-retailer-sdk": "0.4.1",
+    "@bitskyai/producer-sdk": "0.6.0",
+    "@bitskyai/retailer-sdk": "0.4.1",
     "body-parser": "^1.18.3",
     "chrome-launcher": "0.13.3",
     "circular-json": "^0.5.9",
