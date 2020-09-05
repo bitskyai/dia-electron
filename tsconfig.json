@@ -29,8 +29,8 @@
   "include": ["app/**/*"],
   "exclude": [
     "node_modules",
-    "app/retailerservice",
-    "app/engine-ui",
+    "app/hello-retailer",
+    "app/web-app",
     "app/soi-editor"
   ],
   "formatCodeOptions": {

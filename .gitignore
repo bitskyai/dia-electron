@@ -64,12 +64,11 @@ typings/
 
 dist
 build
-retailerservice
+hello-retailer
 release
 out
-agents-headless
-agents-service
-
-app/engine-ui
+headless-producer
+service-producer
+web-app
 
 *.sql

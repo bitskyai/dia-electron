@@ -57,7 +57,7 @@ export async function onReady() {
     // since currently don't have apple developer account, and auto update require developer account
     // so disable it for now
     // setupUpdates();
-    setupDevTools();
+    // setupDevTools();
     setUpEventListeners();
   } catch (err) {
     logger.error("Error in onReady, error: ", err);

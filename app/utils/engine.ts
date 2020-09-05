@@ -1,6 +1,6 @@
 import { dialog } from "electron";
 import { getPreferencesJSON, updateProcessEnvs } from "../main/preferences";
-import { startServer, stopServer } from "../engine-ui/src/server.js";
+import { startServer, stopServer } from "../web-app/build/server.js";
 import logger from "./logger";
 import { getAvailablePort } from "./index";
 import { getOrCreateMainWindow } from "../main/windows";
@@ -28,10 +28,10 @@ class Engine {
       await startServer();
       logger.info("main->main.js->onReady, dia-engine successfully started.");
       const mainWindow = getOrCreateMainWindow();
-      // mainWindow.loadURL(`http://localhost:${this.enginePort}`);
+      mainWindow.loadURL(`http://localhost:${this.enginePort}`);
 
       // Only used for UI Develop
-      mainWindow.loadURL(`http://localhost:8000`);
+      // mainWindow.loadURL(`http://localhost:8000`);
 
       logger.info(
         `main->main.js->onReady, load http://localhost:${this.enginePort} in main browser`

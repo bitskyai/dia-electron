@@ -11,7 +11,7 @@ import { ipcMainManager } from "./ipc";
 import { hideSettings, showSettings } from "./menu";
 import { IpcEvents } from "../ipc-events";
 import logger from "../utils/logger";
-import { testDBConnection } from "../engine-ui/src/server";
+import { testDBConnection } from "../web-app/build/server";
 import engine from "../utils/engine";
 import SOIManager from "../utils/soi-manager";
 import { getOrCreateSOIEditorWindow } from "./soiEditorWindows";

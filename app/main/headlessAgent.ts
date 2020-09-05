@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as _ from "lodash";
 const { Launcher } = require("chrome-launcher");
-import { startServer, stopServer } from "../agents-headless/server.js";
+import { startServer, stopServer } from "../headless-producer/server.js";
 import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
 import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
@@ -67,7 +67,7 @@ class HeadlessAgent {
       this.running = false;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTING_HEADLESS,
@@ -85,7 +85,7 @@ class HeadlessAgent {
         {
           PORT: this.port,
           LOG_FILES_PATH: logPath,
-          SERVICE_NAME: "agents-headless",
+          SERVICE_NAME: "headless-producer",
         },
         headlessConfig
       );
@@ -120,7 +120,7 @@ class HeadlessAgent {
       this.running = true;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTED_HEADLESS,
@@ -136,7 +136,7 @@ class HeadlessAgent {
       this.running = false;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTED_HEADLESS,
@@ -165,7 +165,7 @@ class HeadlessAgent {
       this.starting = false;
       this.stopping = true;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPING_HEADLESS,
@@ -186,7 +186,7 @@ class HeadlessAgent {
       this.running = false;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPED_HEADLESS,
@@ -201,7 +201,7 @@ class HeadlessAgent {
       this.starting = false;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPED_HEADLESS,

@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as _ from "lodash";
-import { startServer, stopServer } from "../agents-service/server.js";
+import { startServer, stopServer } from "../service-producer/server.js";
 import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
 import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
@@ -58,7 +58,7 @@ class ServiceAgent {
       this.running = false;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTING_SERVICE,
@@ -76,7 +76,7 @@ class ServiceAgent {
         {
           PORT: this.port,
           LOG_FILES_PATH: logPath,
-          SERVICE_NAME: "agents-service",
+          SERVICE_NAME: "service-producer",
         },
         serviceConfig
       );
@@ -101,7 +101,7 @@ class ServiceAgent {
       this.running = true;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTED_SERVICE,
@@ -117,7 +117,7 @@ class ServiceAgent {
       this.running = false;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTED_SERVICE,
@@ -147,7 +147,7 @@ class ServiceAgent {
       this.starting = false;
       this.stopping = true;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPING_SERVICE,
@@ -169,7 +169,7 @@ class ServiceAgent {
       this.running = false;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPED_SERVICE,
@@ -184,7 +184,7 @@ class ServiceAgent {
       this.starting = false;
       this.stopping = false;
 
-      // notify engine-ui
+      // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPED_SERVICE,
