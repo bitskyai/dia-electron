@@ -37,7 +37,7 @@ export async function onReady() {
       logger.error("start engine file. error: ", err);
     }
 
-    // Temp comment to fix https://github.com/munew/dia/issues/41
+    // Temp comment to fix https://github.com/bitskyai/bitsky-builder/issues/41
     // if run this, then cannot load browser, seems it was caused by single thread
     // try {
     //   SOIManager.runSOI();

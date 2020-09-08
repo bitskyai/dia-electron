@@ -38,7 +38,7 @@ class HeadlessAgent {
     try {
       let config = getHeadlessAgentPreferencesJSON();
       config.TYPE = "HEADLESSBROWSER";
-      config.MUNEW_BASE_URL = `http://localhost:${engine.enginePort}`;
+      config.BITSKY_BASE_URL = `http://localhost:${engine.enginePort}`;
       config.PORT = this.port;
       config.RUNNING = this.running;
       config.STARTING = this.starting;
@@ -77,7 +77,7 @@ class HeadlessAgent {
 
       const headlessConfig = this.getConfig();
       this.port = await getAvailablePort(this.port);
-      const headlessHome = headlessConfig.AGENT_HOME;
+      const headlessHome = headlessConfig.PRODUCER_HOME;
       const logPath = path.join(headlessHome, "log");
       logger.info(`headless agent port: ${this.port} `);
       const configs = _.merge(

@@ -158,8 +158,8 @@ function TouchBarManager() {
     <PageHeader
       ghost={false}
       onBack={() => clickBackBtn()}
-      title="Default Retailer Service"
-      subTitle="A default Retailer Service help you to get start data crawling"
+      title="Hello Retailer Service"
+      subTitle="A default Retailer Service help you to get start with data crawling"
       extra={getActionBtns()}
     >
       {content}

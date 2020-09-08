@@ -197,7 +197,7 @@ export function getDefaultHeadlessAgent(): HeadlessAgentPreference {
     CUSTOM_FUNCTION_TIMEOUT: 1 * 60 * 1000,
     HEADLESS: true,
     SCREENSHOT: false,
-    AGENT_HOME: path.join(MUNEW_HOME_FOLDER, "headless"),
+    PRODUCER_HOME: path.join(MUNEW_HOME_FOLDER, "headless"),
   });
 
   return headlessAgent;
@@ -210,7 +210,7 @@ export function getDefaultHeadlessAgent(): HeadlessAgentPreference {
 export function getDefaultServiceAgent(): BaseAgentPreference {
   const baseAgentPreferenceJSON = getDefaultBaseAgent();
   const serviceAgent = _.merge({}, baseAgentPreferenceJSON, {
-    AGENT_HOME: path.join(MUNEW_HOME_FOLDER, "service"),
+    PRODUCER_HOME: path.join(MUNEW_HOME_FOLDER, "service"),
   });
   return serviceAgent;
 }
@@ -222,11 +222,11 @@ export function getDefaultServiceAgent(): BaseAgentPreference {
 export function getDefaultBaseAgent(): BaseAgentPreference {
   return {
     PORT: 9999,
-    AGENT_SERIAL_ID: uuidv4(),
-    // MUNEW_BASE_URL: undefined,
+    PRODUCER_SERIAL_ID: uuidv4(),
+    // BITSKY_BASE_URL: undefined,
     // GLOBAL_ID: undefined,
-    // MUNEW_SECURITY_KEY: undefined,
-    AGENT_HOME: MUNEW_HOME_FOLDER,
+    // BITSKY_SECURITY_KEY: undefined,
+    PRODUCER_HOME: MUNEW_HOME_FOLDER,
     LOG_LEVEL: LogLevel.info,
   };
 }

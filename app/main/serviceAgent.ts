@@ -29,7 +29,7 @@ class ServiceAgent {
     try {
       let config = getServiceAgentPreferencesJSON();
       config.TYPE = 'SERVICE';
-      config.MUNEW_BASE_URL = `http://localhost:${engine.enginePort}`;
+      config.BITSKY_BASE_URL = `http://localhost:${engine.enginePort}`;
       config.PORT = this.port;
       config.RUNNING = this.running;
       config.STARTING = this.starting;
@@ -68,7 +68,7 @@ class ServiceAgent {
 
       const serviceConfig = this.getConfig();
       this.port = await getAvailablePort(this.port);
-      const serviceHome = serviceConfig.AGENT_HOME;
+      const serviceHome = serviceConfig.PRODUCER_HOME;
       const logPath = path.join(serviceHome, "log");
       logger.info(`service agent port: ${this.port} `);
       const configs = _.merge(

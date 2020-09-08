@@ -61,12 +61,12 @@ export const enum LogLevel {
 export interface BaseAgentPreference {
   TYPE?: string;
   PORT: number;
-  MUNEW_BASE_URL?: string; // format is URL
+  BITSKY_BASE_URL?: string; // format is URL
   GLOBAL_ID?: string; // format is uuid
-  MUNEW_SECURITY_KEY?: string;
-  AGENT_HOME: string; // format is path string
+  BITSKY_SECURITY_KEY?: string;
+  PRODUCER_HOME: string; // format is path string
   LOG_LEVEL: LogLevel; // enum
-  AGENT_SERIAL_ID: string; 
+  PRODUCER_SERIAL_ID: string; 
   //-------------------------------
   // Runtime relative config. 
   // Blow is system config, user cannot direct change
