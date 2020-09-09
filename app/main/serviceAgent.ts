@@ -16,11 +16,11 @@ let _serviceAgent: ServiceAgent;
 
 class ServiceAgent {
   public port: number = 8091;
-  // in the middle of start agent
+  // in the middle of start producer
   public starting: boolean = false;
-  // in the middle of stop agent
+  // in the middle of stop producer
   public stopping: boolean = false;
-  // agent is running
+  // producer is running
   public running: boolean = false;
 
   constructor() {}
@@ -70,7 +70,7 @@ class ServiceAgent {
       this.port = await getAvailablePort(this.port);
       const serviceHome = serviceConfig.PRODUCER_HOME;
       const logPath = path.join(serviceHome, "log");
-      logger.info(`service agent port: ${this.port} `);
+      logger.info(`service producer port: ${this.port} `);
       const configs = _.merge(
         {},
         {

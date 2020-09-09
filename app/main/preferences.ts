@@ -188,7 +188,7 @@ export function getDefaultDBsConfig() {
 }
 
 /**
- * Get default configuration for headless agent
+ * Get default configuration for headless producer
  * @returns {HeadlessAgentPreference}
  */
 export function getDefaultHeadlessAgent(): HeadlessAgentPreference {
@@ -204,7 +204,7 @@ export function getDefaultHeadlessAgent(): HeadlessAgentPreference {
 }
 
 /**
- * Get default configuration for service agent
+ * Get default configuration for service producer
  * @returns {BaseAgentPreference}
  */
 export function getDefaultServiceAgent(): BaseAgentPreference {
@@ -216,7 +216,7 @@ export function getDefaultServiceAgent(): BaseAgentPreference {
 }
 
 /**
- * Get default base configuration for agent
+ * Get default base configuration for producer
  * @returns {BaseAgentPreference}
  */
 export function getDefaultBaseAgent(): BaseAgentPreference {

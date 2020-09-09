@@ -45,9 +45,9 @@ export async function onReady() {
     //   logger.error("start soi fail. error: ", err);
     // }
 
-    // setup headless agent
+    // setup headless producer
     setupHeadlessAgent();
-    // setup service agent
+    // setup service producer
     setupServiceAgent();
     // setup menus for main processes
     setupMenu();

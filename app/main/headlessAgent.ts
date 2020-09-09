@@ -18,11 +18,11 @@ let _headlessAgent: HeadlessAgent;
 
 class HeadlessAgent {
   public port: number = 8090;
-  // in the middle of start agent
+  // in the middle of start producer
   public starting: boolean = false;
-  // in the middle of stop agent
+  // in the middle of stop producer
   public stopping: boolean = false;
-  // agent is running
+  // producer is running
   public running: boolean = false;
   //
   public chromeInstallations: Array<String> = [];
@@ -79,7 +79,7 @@ class HeadlessAgent {
       this.port = await getAvailablePort(this.port);
       const headlessHome = headlessConfig.PRODUCER_HOME;
       const logPath = path.join(headlessHome, "log");
-      logger.info(`headless agent port: ${this.port} `);
+      logger.info(`headless producer port: ${this.port} `);
       const configs = _.merge(
         {},
         {

@@ -71,7 +71,7 @@ export interface BaseAgentPreference {
   // Runtime relative config. 
   // Blow is system config, user cannot direct change
   // following values normally changed because of user's action.
-  // Like: start agent, stop agent...
+  // Like: start producer, stop producer...
   RUNNING?: boolean;
   STARTING?: boolean;
   STOPPING?: boolean;
