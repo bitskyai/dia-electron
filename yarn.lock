@@ -729,10 +729,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@bitskyai/producer-sdk@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@bitskyai/producer-sdk/-/producer-sdk-0.1.0.tgz#819c90406f98726e7746f52ca9deb2938851f043"
-  integrity sha512-zBjefGbCQJ/IJBOPcgYvm/nnXMmZrTv3P7FwY/L/bivYm4epnBWfy3BxOumtZXGR2WAtRbSc9MMelbiu3yAdYw==
+"@bitskyai/producer-sdk@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@bitskyai/producer-sdk/-/producer-sdk-0.1.1.tgz#872ef5fc70fe3fc4d4af778ff266d794319cefc5"
+  integrity sha512-qU9YC6C64tMxD+NfB5X3Z0bExuhbFkfdeGU7v7+CBUSFfnNfRskNvyZfzN7Mm/nVuGO0AClGuRhsXnXaeDxypg==
   dependencies:
     axios "0.20.0"
     cookie-parser "1.4.5"
@@ -747,10 +747,10 @@
     uuid "8.3.0"
     winston "3.3.3"
 
-"@bitskyai/retailer-sdk@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@bitskyai/retailer-sdk/-/retailer-sdk-0.1.0.tgz#dc5fc0db32b8f1527e5371af9e48e091083a2682"
-  integrity sha512-RBU6eifVZlH1gXXZd2JLljK4e2hY+tEFj7i7Z+6sWMegsx4GReFH80c2Lf8OpLdMUDaWfPyZF1/vf64jCHKq4A==
+"@bitskyai/retailer-sdk@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@bitskyai/retailer-sdk/-/retailer-sdk-0.1.1.tgz#8d48a8b92e0b553e402d16d3c5af45de9936cec2"
+  integrity sha512-h0wv56lUmK/D7900ERog55JnT7O6PlpRkrG1xJmUWWVE5YJPusS75B+Nyktp50cdfZ87tnB3JL04bk85VRy5Kg==
   dependencies:
     axios "0.20.0"
     cheerio "1.0.0-rc.3"
