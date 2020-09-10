@@ -14,8 +14,8 @@ import { LogLevel } from "../interfaces";
 import { MUNEW_HOME_FOLDER } from "../utils/constants";
 import {
   Preferences,
-  HeadlessAgentPreference,
-  BaseAgentPreference,
+  HeadlessProducerPreference,
+  BaseProducerPreference,
 } from "../interfaces";
 
 /**
@@ -65,48 +65,48 @@ export function getPreferencesJSON(): Preferences {
   }
 }
 
-export function getHeadlessAgentPreferencesJSON(): HeadlessAgentPreference {
+export function getHeadlessProducerPreferencesJSON(): HeadlessProducerPreference {
   try {
     let preferencesJSON = getPreferencesJSON();
-    return _.get(preferencesJSON, "HEADLESS_AGENT");
+    return _.get(preferencesJSON, "HEADLESS_PRODUCER");
   } catch (err) {
-    logger.error("getHeadlessAgentPreferencesJSON fail, error: ", err);
+    logger.error("getHeadlessProducerPreferencesJSON fail, error: ", err);
     throw err;
   }
 }
 
-export function updateHeadlessAgentPreferencesJSON(
-  headlessJSON: HeadlessAgentPreference
+export function updateHeadlessProducerPreferencesJSON(
+  headlessJSON: HeadlessProducerPreference
 ): Object {
   try {
     return updatePreferencesJSON({
-      HEADLESS_AGENT: headlessJSON,
+      HEADLESS_PRODUCER: headlessJSON,
     });
   } catch (err) {
-    logger.error("updateHeadlessAgentPreferencesJSON fail, error: ", err);
+    logger.error("updateHeadlessProducerPreferencesJSON fail, error: ", err);
     throw err;
   }
 }
 
-export function getServiceAgentPreferencesJSON(): BaseAgentPreference {
+export function getServiceProducerPreferencesJSON(): BaseProducerPreference {
   try {
     let preferencesJSON = getPreferencesJSON();
-    return _.get(preferencesJSON, "SERVICE_AGENT");
+    return _.get(preferencesJSON, "SERVICE_PRODUCER");
   } catch (err) {
-    logger.error("getServiceAgentPreferencesJSON fail, error: ", err);
+    logger.error("getServiceProducerPreferencesJSON fail, error: ", err);
     throw err;
   }
 }
 
-export function updateServiceAgentPreferencesJSON(
-  serviceJSON: BaseAgentPreference
+export function updateServiceProducerPreferencesJSON(
+  serviceJSON: BaseProducerPreference
 ): Object {
   try {
     return updatePreferencesJSON({
-      SERVICE_AGENT: serviceJSON,
+      SERVICE_PRODUCER: serviceJSON,
     });
   } catch (err) {
-    logger.error("updateServiceAgentPreferencesJSON fail, error: ", err);
+    logger.error("updateServiceProducerPreferencesJSON fail, error: ", err);
     throw err;
   }
 }
@@ -175,8 +175,8 @@ export function getDefaultPreferences(): Preferences {
     ...DEFAULT_SQLITE_DB_CONFIG,
     LOG_FILES_PATH,
     version: "1.0.0",
-    HEADLESS_AGENT: getDefaultHeadlessAgent(),
-    SERVICE_AGENT: getDefaultServiceAgent(),
+    HEADLESS_PRODUCER: getDefaultHeadlessProducer(),
+    SERVICE_PRODUCER: getDefaultServiceProducer(),
   };
 }
 
@@ -189,37 +189,37 @@ export function getDefaultDBsConfig() {
 
 /**
  * Get default configuration for headless producer
- * @returns {HeadlessAgentPreference}
+ * @returns {HeadlessProducerPreference}
  */
-export function getDefaultHeadlessAgent(): HeadlessAgentPreference {
-  const baseAgentPreferenceJSON = getDefaultBaseAgent();
-  const headlessAgent = _.merge({}, baseAgentPreferenceJSON, {
+export function getDefaultHeadlessProducer(): HeadlessProducerPreference {
+  const baseProducerPreferenceJSON = getDefaultBaseProducer();
+  const headlessProducer = _.merge({}, baseProducerPreferenceJSON, {
     CUSTOM_FUNCTION_TIMEOUT: 1 * 60 * 1000,
     HEADLESS: true,
     SCREENSHOT: false,
     PRODUCER_HOME: path.join(MUNEW_HOME_FOLDER, "headless"),
   });
 
-  return headlessAgent;
+  return headlessProducer;
 }
 
 /**
  * Get default configuration for service producer
- * @returns {BaseAgentPreference}
+ * @returns {BaseProducerPreference}
  */
-export function getDefaultServiceAgent(): BaseAgentPreference {
-  const baseAgentPreferenceJSON = getDefaultBaseAgent();
-  const serviceAgent = _.merge({}, baseAgentPreferenceJSON, {
+export function getDefaultServiceProducer(): BaseProducerPreference {
+  const baseProducerPreferenceJSON = getDefaultBaseProducer();
+  const serviceProducer = _.merge({}, baseProducerPreferenceJSON, {
     PRODUCER_HOME: path.join(MUNEW_HOME_FOLDER, "service"),
   });
-  return serviceAgent;
+  return serviceProducer;
 }
 
 /**
  * Get default base configuration for producer
- * @returns {BaseAgentPreference}
+ * @returns {BaseProducerPreference}
  */
-export function getDefaultBaseAgent(): BaseAgentPreference {
+export function getDefaultBaseProducer(): BaseProducerPreference {
   return {
     PORT: 9999,
     PRODUCER_SERIAL_ID: uuidv4(),

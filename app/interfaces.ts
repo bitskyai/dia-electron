@@ -58,7 +58,7 @@ export const enum LogLevel {
   "debug" = "debug",
 }
 
-export interface BaseAgentPreference {
+export interface BaseProducerPreference {
   TYPE?: string;
   PORT: number;
   BITSKY_BASE_URL?: string; // format is URL
@@ -77,7 +77,7 @@ export interface BaseAgentPreference {
   STOPPING?: boolean;
 }
 
-export interface HeadlessAgentPreference extends BaseAgentPreference {
+export interface HeadlessProducerPreference extends BaseProducerPreference {
   CUSTOM_FUNCTION_TIMEOUT: number; // unit: ms
   HEADLESS: boolean; // whether headless or not
   SCREENSHOT: boolean; // whether take screenshot
@@ -89,6 +89,6 @@ export interface Preferences {
   TYPEORM_CONNECTION: TypeormConnection;
   TYPEORM_DATABASE?: string;
   TYPEORM_URL?: string;
-  HEADLESS_AGENT: HeadlessAgentPreference;
-  SERVICE_AGENT: BaseAgentPreference;
+  HEADLESS_PRODUCER: HeadlessProducerPreference;
+  SERVICE_PRODUCER: BaseProducerPreference;
 }

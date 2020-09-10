@@ -11,8 +11,8 @@ import { shouldQuit } from "./squirrel";
 import { getOrCreateMainWindow } from "./windows";
 import logger from "../utils/logger";
 import engine from "../utils/engine";
-import { setupHeadlessAgent } from "./headlessAgent";
-import { setupServiceAgent } from "./serviceAgent";
+import { setupHeadlessProducer } from "./headlessProducer";
+import { setupServiceProducer } from "./serviceProducer";
 import RetailerManager from "../utils/retailer-manager";
 
 /**
@@ -46,9 +46,9 @@ export async function onReady() {
     // }
 
     // setup headless producer
-    setupHeadlessAgent();
+    setupHeadlessProducer();
     // setup service producer
-    setupServiceAgent();
+    setupServiceProducer();
     // setup menus for main processes
     setupMenu();
     setupAboutPanel();
@@ -57,7 +57,7 @@ export async function onReady() {
     // since currently don't have apple developer account, and auto update require developer account
     // so disable it for now
     // setupUpdates();
-    // setupDevTools();
+    setupDevTools();
     setUpEventListeners();
   } catch (err) {
     logger.error("Error in onReady, error: ", err);

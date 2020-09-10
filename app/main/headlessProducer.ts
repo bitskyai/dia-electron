@@ -8,15 +8,15 @@ import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
 import { ipcMainManager } from "./ipc";
 import engine from "../utils/engine";
 import {
-  getHeadlessAgentPreferencesJSON,
-  updateHeadlessAgentPreferencesJSON,
+  getHeadlessProducerPreferencesJSON,
+  updateHeadlessProducerPreferencesJSON,
 } from "./preferences";
 
-import { HeadlessAgentPreference } from "../interfaces";
+import { HeadlessProducerPreference } from "../interfaces";
 
-let _headlessAgent: HeadlessAgent;
+let _headlessProducer: HeadlessProducer;
 
-class HeadlessAgent {
+class HeadlessProducer {
   public port: number = 8090;
   // in the middle of start producer
   public starting: boolean = false;
@@ -34,9 +34,9 @@ class HeadlessAgent {
     }
   }
 
-  getConfig(): HeadlessAgentPreference {
+  getConfig(): HeadlessProducerPreference {
     try {
-      let config = getHeadlessAgentPreferencesJSON();
+      let config = getHeadlessProducerPreferencesJSON();
       config.TYPE = "HEADLESSBROWSER";
       config.BITSKY_BASE_URL = `http://localhost:${engine.enginePort}`;
       config.PORT = this.port;
@@ -45,14 +45,14 @@ class HeadlessAgent {
       config.STOPPING = this.stopping;
       return config;
     } catch (err) {
-      logger.error("HeadlessAgent -> getConfig fail. ", err);
+      logger.error("HeadlessProducer -> getConfig fail. ", err);
       throw err;
     }
   }
 
-  setConfig(agentConfig: HeadlessAgentPreference) {
+  setConfig(producerConfig: HeadlessProducerPreference) {
     try {
-      return updateHeadlessAgentPreferencesJSON(agentConfig);
+      return updateHeadlessProducerPreferencesJSON(producerConfig);
     } catch (err) {
       logger.error("setConfig -> getConfig fail. ", err);
       throw err;
@@ -111,7 +111,7 @@ class HeadlessAgent {
       //   setTimeout(() => resolve(true), 10 * 1000);
       // });
 
-      // console.log("headlessAgent->start-> configs: ", configs);
+      // console.log("headlessProducer->start-> configs: ", configs);
       await startServer(configs, expressOptions, indexOptions);
 
       // -------------------------------
@@ -215,13 +215,13 @@ class HeadlessAgent {
   }
 }
 
-export function setupHeadlessAgent(): HeadlessAgent {
+export function setupHeadlessProducer(): HeadlessProducer {
   try {
-    if (_headlessAgent) {
-      return _headlessAgent;
+    if (_headlessProducer) {
+      return _headlessProducer;
     }
-    _headlessAgent = new HeadlessAgent();
-    _headlessAgent.start();
+    _headlessProducer = new HeadlessProducer();
+    _headlessProducer.start();
 
     // setup message listener
     ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
@@ -230,9 +230,9 @@ export function setupHeadlessAgent(): HeadlessAgent {
         case "headless/getConfig":
           event.returnValue = {
             status: true,
-            data: _headlessAgent.getConfig(),
+            data: _headlessProducer.getConfig(),
             options: {
-              chromeInstallations: _headlessAgent.chromeInstallations,
+              chromeInstallations: _headlessProducer.chromeInstallations,
             },
           };
           break;
@@ -240,9 +240,9 @@ export function setupHeadlessAgent(): HeadlessAgent {
           console.log("headless/updateConfig -> body: ", body);
           event.returnValue = {
             status: true,
-            data: _headlessAgent.setConfig(body.data),
+            data: _headlessProducer.setConfig(body.data),
           };
-          _headlessAgent.restart();
+          _headlessProducer.restart();
           break;
         case "headless/start":
           let startValue = {
@@ -250,7 +250,7 @@ export function setupHeadlessAgent(): HeadlessAgent {
             error: null,
           };
           try {
-            _headlessAgent.start();
+            _headlessProducer.start();
             startValue.status = true;
           } catch (err) {
             startValue.status = false;
@@ -267,7 +267,7 @@ export function setupHeadlessAgent(): HeadlessAgent {
             error: null,
           };
           try {
-            _headlessAgent.stop();
+            _headlessProducer.stop();
             stopValue.status = true;
           } catch (err) {
             stopValue.status = false;
@@ -308,9 +308,9 @@ export function setupHeadlessAgent(): HeadlessAgent {
       }
     });
 
-    return _headlessAgent;
+    return _headlessProducer;
   } catch (err) {
-    logger.error("setupHeadlessAgent fail.", err);
+    logger.error("setupHeadlessProducer fail.", err);
     throw err;
   }
 }

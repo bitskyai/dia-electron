@@ -7,14 +7,14 @@ import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
 import { ipcMainManager } from "./ipc";
 import engine from '../utils/engine';
 import {
-  getServiceAgentPreferencesJSON,
-  updateServiceAgentPreferencesJSON,
+  getServiceProducerPreferencesJSON,
+  updateServiceProducerPreferencesJSON,
 } from "./preferences";
-import { BaseAgentPreference } from "../interfaces";
+import { BaseProducerPreference } from "../interfaces";
 
-let _serviceAgent: ServiceAgent;
+let _serviceProducer: ServiceProducer;
 
-class ServiceAgent {
+class ServiceProducer {
   public port: number = 8091;
   // in the middle of start producer
   public starting: boolean = false;
@@ -25,9 +25,9 @@ class ServiceAgent {
 
   constructor() {}
 
-  getConfig(): BaseAgentPreference {
+  getConfig(): BaseProducerPreference {
     try {
-      let config = getServiceAgentPreferencesJSON();
+      let config = getServiceProducerPreferencesJSON();
       config.TYPE = 'SERVICE';
       config.BITSKY_BASE_URL = `http://localhost:${engine.enginePort}`;
       config.PORT = this.port;
@@ -36,14 +36,14 @@ class ServiceAgent {
       config.STOPPING = this.stopping;
       return config;
     } catch (err) {
-      logger.error("ServiceAgent -> getConfig fail. ", err);
+      logger.error("ServiceProducer -> getConfig fail. ", err);
       throw err;
     }
   }
 
-  setConfig(agentConfig: BaseAgentPreference) {
+  setConfig(producerConfig: BaseProducerPreference) {
     try {
-      return updateServiceAgentPreferencesJSON(agentConfig);
+      return updateServiceProducerPreferencesJSON(producerConfig);
     } catch (err) {
       logger.error("setConfig -> getConfig fail. ", err);
       throw err;
@@ -199,14 +199,14 @@ class ServiceAgent {
   }
 }
 
-export function setupServiceAgent():ServiceAgent {
+export function setupServiceProducer():ServiceProducer {
   try {
-    if (_serviceAgent) {
-      return _serviceAgent;
+    if (_serviceProducer) {
+      return _serviceProducer;
     }
 
-    _serviceAgent = new ServiceAgent();
-    _serviceAgent.start();
+    _serviceProducer = new ServiceProducer();
+    _serviceProducer.start();
 
     // setup message listener
     ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
@@ -216,16 +216,16 @@ export function setupServiceAgent():ServiceAgent {
           case "service/getConfig":
             event.returnValue = {
               status: true,
-              data: _serviceAgent.getConfig(),
+              data: _serviceProducer.getConfig(),
             };
             break;
           case "service/updateConfig":
             console.log('service/updateConfig -> body: ', body);
             event.returnValue = {
               status: true,
-              data: _serviceAgent.setConfig(body.data),
+              data: _serviceProducer.setConfig(body.data),
             };
-            _serviceAgent.restart();
+            _serviceProducer.restart();
             break;
           case "service/start":
             let startValue = {
@@ -233,7 +233,7 @@ export function setupServiceAgent():ServiceAgent {
               error: null,
             };
             try {
-              _serviceAgent.start();
+              _serviceProducer.start();
               startValue.status = true;
             } catch (err) {
               startValue.status = false;
@@ -250,7 +250,7 @@ export function setupServiceAgent():ServiceAgent {
               error: null,
             };
             try {
-              _serviceAgent.stop();
+              _serviceProducer.stop();
               stopValue.status = true;
             } catch (err) {
               stopValue.status = false;
@@ -271,9 +271,9 @@ export function setupServiceAgent():ServiceAgent {
       }
     });
 
-    return _serviceAgent;
+    return _serviceProducer;
   } catch (err) {
-    logger.error("setupServiceAgent fail.", err);
+    logger.error("setupServiceProducer fail.", err);
     throw err;
   }
 }
