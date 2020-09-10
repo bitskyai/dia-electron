@@ -33,14 +33,14 @@ export class Root {
     // Create redux store with history
     const initialState = {};
     const store = configureStore(initialState, history);
-    const MOUNT_NODE = document.getElementById("munew-retailer-app") as HTMLElement;
+    const MOUNT_NODE = document.getElementById("bitsky-retailer-app") as HTMLElement;
     const render = (
       messages: any,
       Component = App
     ): void | Element | React.Component => {
       // hide loading page
       MOUNT_NODE.style.display = 'block';
-      const loadingPage = document.getElementById("munew-loading") as HTMLElement;
+      const loadingPage = document.getElementById("bitsky-loading") as HTMLElement;
       loadingPage.style.display = 'none';
       return ReactDOM.render(
         // tslint:disable-next-line:jsx-wrap-multiline
@@ -84,6 +84,6 @@ export class Root {
   }
 }
 
-window.MunewDIA = window.MunewDIA || {};
-window.MunewDIA.app = window.MunewDIA.app || new Root();
-window.MunewDIA.app.setup();
+window.BitskyDIA = window.BitskyDIA || {};
+window.BitskyDIA.app = window.BitskyDIA.app || new Root();
+window.BitskyDIA.app.setup();

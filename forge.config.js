@@ -17,7 +17,7 @@ const config = {
     asar: {
       unpackDir: "node_modules/puppeteer/.local-chromium"
     },
-    icon: path.resolve(__dirname, 'assets', 'icons', 'munew'),
+    icon: path.resolve(__dirname, 'assets', 'icons', 'bitsky'),
     ignore: [
       /^\/\.vscode/,
       /^\/tools/,
@@ -74,7 +74,7 @@ const config = {
           noMsi: true,
           remoteReleases: "",
           setupExe: `BitSky-${version}-${arch}-setup.exe`,
-          setupIcon: path.resolve(iconDir, "munew.ico"),
+          setupIcon: path.resolve(iconDir, "bitsky.ico"),
           certificatePassword: process.env.WINDOWS_CERTIFICATE_PASSWORD,
           certificateFile
         };
@@ -89,7 +89,7 @@ const config = {
       platforms: ["linux"],
       config: {
         icon: {
-          scalable: path.resolve(iconDir, "munew.svg")
+          scalable: path.resolve(iconDir, "bitsky.svg")
         }
       }
     },

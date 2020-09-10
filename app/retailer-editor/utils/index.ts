@@ -4,7 +4,7 @@
  * mobx state with a gigantic Monaco tree.
  */
 export const loadMonaco = async () => {
-  const { app } = window.MunewDIA;
+  const { app } = window.BitskyDIA;
   const loader = require("monaco-loader");
   const monaco = app.monaco || (await loader());
 

@@ -11,7 +11,7 @@ import {
   PREFERENCES_JSON_PATH,
 } from "../utils/constants";
 import { LogLevel } from "../interfaces";
-import { MUNEW_HOME_FOLDER } from "../utils/constants";
+import { BITSKY_HOME_FOLDER } from "../utils/constants";
 import {
   Preferences,
   HeadlessProducerPreference,
@@ -197,7 +197,7 @@ export function getDefaultHeadlessProducer(): HeadlessProducerPreference {
     CUSTOM_FUNCTION_TIMEOUT: 1 * 60 * 1000,
     HEADLESS: true,
     SCREENSHOT: false,
-    PRODUCER_HOME: path.join(MUNEW_HOME_FOLDER, "headless"),
+    PRODUCER_HOME: path.join(BITSKY_HOME_FOLDER, "headless"),
   });
 
   return headlessProducer;
@@ -210,7 +210,7 @@ export function getDefaultHeadlessProducer(): HeadlessProducerPreference {
 export function getDefaultServiceProducer(): BaseProducerPreference {
   const baseProducerPreferenceJSON = getDefaultBaseProducer();
   const serviceProducer = _.merge({}, baseProducerPreferenceJSON, {
-    PRODUCER_HOME: path.join(MUNEW_HOME_FOLDER, "service"),
+    PRODUCER_HOME: path.join(BITSKY_HOME_FOLDER, "service"),
   });
   return serviceProducer;
 }
@@ -226,7 +226,7 @@ export function getDefaultBaseProducer(): BaseProducerPreference {
     // BITSKY_BASE_URL: undefined,
     // GLOBAL_ID: undefined,
     // BITSKY_SECURITY_KEY: undefined,
-    PRODUCER_HOME: MUNEW_HOME_FOLDER,
+    PRODUCER_HOME: BITSKY_HOME_FOLDER,
     LOG_LEVEL: LogLevel.info,
   };
 }

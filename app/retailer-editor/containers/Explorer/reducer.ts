@@ -5,7 +5,7 @@ import {
   UPDATE_CURRENT_SELECTED_FILE
 } from "./constants";
 import { readFolderRecursiveSync } from "../../../utils";
-import { MUNEW_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER } from '../../../utils/constants';
+import { BITSKY_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER } from '../../../utils/constants';
 
 export const initialState = {
   retailerFolderStructure: {
@@ -23,7 +23,7 @@ const explorerReducer = (state = initialState, action) =>
       case GET_RETAILER_FOLDER_STRUCTURE:
         try {
           const retailerFolderStructure = readFolderRecursiveSync(
-            path.join(MUNEW_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER),
+            path.join(BITSKY_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER),
             "."
           );
           draft.retailerFolderStructure = {

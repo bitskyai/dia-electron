@@ -33,14 +33,14 @@ window.addEventListener("DOMContentLoaded", () => {
     replaceText(`${type}-version`, (process.versions as any)[type]);
   }
 
-//   waitDomElement("#munew_default_retailer_menu", (btn: any) => {
+//   waitDomElement("#bitsky_default_retailer_menu", (btn: any) => {
 //     btn.addEventListener("click", (event: any) => {
 //       event.preventDefault();
 //       event.stopPropagation();
 //       ipcRenderer.send(IpcEvents.OPEN_RETAILER_EDITOR, "retailerEditor");
 //     });
 //   });
-//   waitDomElement("#munew_default_settings_menu", (btn: any) => {
+//   waitDomElement("#bitsky_default_settings_menu", (btn: any) => {
 //     btn.addEventListener("click", (event: any) => {
 //       event.preventDefault();
 //       event.stopPropagation();

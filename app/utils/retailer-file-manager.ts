@@ -9,11 +9,11 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import logger from "./logger";
 import { copyFolderRecursiveSync } from "./index";
-import { MUNEW_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER } from "./constants";
+import { BITSKY_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER } from "./constants";
 
 export const RETAILER_CONFIG_JSON_NAME = "utils/additionalNodeModules.json";
 export const getRetailerPath = () => {
-  return path.join(MUNEW_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER);
+  return path.join(BITSKY_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER);
 };
 
 export function copyDefaultRetailer(force?: boolean): Boolean | Error {
@@ -31,12 +31,12 @@ export function copyDefaultRetailer(force?: boolean): Boolean | Error {
     if (fs.existsSync(RETAILER_PATH)) {
       if (!force) {
         logger.debug(
-          `All ready has ${DEFAULT_RETAILER_SERVICE_FOLDER} in ${MUNEW_HOME_FOLDER}, and don't force clean folder, so return`
+          `All ready has ${DEFAULT_RETAILER_SERVICE_FOLDER} in ${BITSKY_HOME_FOLDER}, and don't force clean folder, so return`
         );
         return true;
       }
     }
-    copyFolderRecursiveSync(defaultRetailerPath, MUNEW_HOME_FOLDER, force);
+    copyFolderRecursiveSync(defaultRetailerPath, BITSKY_HOME_FOLDER, force);
     writeConfigJson();
     logger.functionEnd("copyDefaultRetailer");
     return true;

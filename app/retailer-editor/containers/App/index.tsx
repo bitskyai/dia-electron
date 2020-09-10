@@ -112,7 +112,7 @@ class App extends React.PureComponent<AppProps, AppState> {
 
   render() {
     return (
-      <div className="munew-retailer-app">
+      <div className="bitsky-retailer-app">
         {this.renderNavBar()}
         <Mosaic<number | string>
           renderTile={this.getMosaicWindow}

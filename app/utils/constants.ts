@@ -9,12 +9,12 @@ const getHomeFolder = () => {
     return path.join(remote.app.getPath("home"));
   }
 };
-export const MUNEW_HOME_FOLDER = path.join(getHomeFolder(), ".bitsky");
+export const BITSKY_HOME_FOLDER = path.join(getHomeFolder(), ".bitsky");
 export const DEFAULT_RETAILER_SERVICE_FOLDER = 'hello-retailer';
 // default sqlite db configuration
 export const DEFAULT_SQLITE_DB_CONFIG = {
   TYPEORM_CONNECTION: TypeormConnection.sqlite,
-  TYPEORM_DATABASE: path.join(MUNEW_HOME_FOLDER, "bitsky.sql")
+  TYPEORM_DATABASE: path.join(BITSKY_HOME_FOLDER, "bitsky.sql")
 };
 
 // default mongodb configuration
@@ -24,9 +24,9 @@ export const DEFAULT_MONGODB_CONFIG = {
 };
 
 // log files path for engine
-export const LOG_FILES_PATH = path.join(MUNEW_HOME_FOLDER, "./engine/log");
+export const LOG_FILES_PATH = path.join(BITSKY_HOME_FOLDER, "./engine/log");
 
-export const PREFERENCES_JSON_PATH = path.join(MUNEW_HOME_FOLDER, 'preferences.json');
+export const PREFERENCES_JSON_PATH = path.join(BITSKY_HOME_FOLDER, 'preferences.json');
 
 // Timeout value for check whether a Retailer start successfully
 export const RETAILER_CHECK_TIMEOUT = 15*1000;

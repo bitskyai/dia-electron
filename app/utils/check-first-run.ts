@@ -1,12 +1,12 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import { FIRST_TIME_RUN_FILE } from "../shared-constants";
-import { MUNEW_HOME_FOLDER } from "./constants";
+import { BITSKY_HOME_FOLDER } from "./constants";
 import logger from "./logger";
 
 const getConfigPath = () => {
   const firstRunFilePath = path.join(
-    MUNEW_HOME_FOLDER,
+    BITSKY_HOME_FOLDER,
     "FirstRun",
     FIRST_TIME_RUN_FILE
   );

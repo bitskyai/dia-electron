@@ -33,63 +33,63 @@ class App extends React.PureComponent {
   render() {
     const { formatMessage } = this.props.intl;
     return (
-      <div className="munew-settings">
+      <div className="bitsky-settings">
         <PageHeader
-          title={formatMessage({ id: "munew.settings.title" })}
+          title={formatMessage({ id: "bitsky.settings.title" })}
           style={{
             border: "1px solid rgb(235, 237, 240)"
           }}
           // subTitle="This is a subtitle"
           extra={[
             <Button key="closeBtn" type="link" onClick={this.onClose}>
-              X{/* <FormattedMessage id="munew.settings.close" /> */}
+              X{/* <FormattedMessage id="bitsky.settings.close" /> */}
             </Button>
           ]}
         ></PageHeader>
         <Tabs tabPosition="left">
           <TabPane
-            tab={formatMessage({ id: "munew.settings.general" })}
+            tab={formatMessage({ id: "bitsky.settings.general" })}
             key="1"
           >
             <GeneralForm />
           </TabPane>
-          <TabPane tab={formatMessage({ id: "munew.settings.about" })} key="2">
+          <TabPane tab={formatMessage({ id: "bitsky.settings.about" })} key="2">
             <Typography className="tab-panel-content">
               <Title level={3}>
-                <FormattedMessage id="munew.settings.about" />
+                <FormattedMessage id="bitsky.settings.about" />
               </Title>
               <Title level={4}>BitSky {packageJSON.version}</Title>
               <Paragraph>
-                <FormattedMessage id="munew.settings.productDescription" />
+                <FormattedMessage id="bitsky.settings.productDescription" />
               </Paragraph>
               <Paragraph>
                 <ul>
                   <li>
                     <a href="https://bitsky.ai" target="_blank">
-                      <FormattedMessage id="munew.settings.website" />
+                      <FormattedMessage id="bitsky.settings.website" />
                     </a>
                   </li>
                   <li>
-                    <FormattedMessage id="munew.settings.copyright" />
+                    <FormattedMessage id="bitsky.settings.copyright" />
                   </li>
                   <li>
                     <a
                       href="https://github.com/bitskyai/bitsky/blob/master/LICENSE"
                       target="_blank"
                     >
-                      <FormattedMessage id="munew.settings.license" />
+                      <FormattedMessage id="bitsky.settings.license" />
                     </a>
                   </li>
                 </ul>
               </Paragraph>
               <Title level={3}>
-                <FormattedMessage id="munew.settings.community" />
+                <FormattedMessage id="bitsky.settings.community" />
               </Title>
               <Paragraph>
                 <ul>
                   <li>
                     <a href="https://github.com/bitskyai/bitsky/issues/new" target="_blank">
-                      <FormattedMessage id="munew.settings.reportBug" />
+                      <FormattedMessage id="bitsky.settings.reportBug" />
                     </a>
                   </li>
                   <li>
@@ -97,7 +97,7 @@ class App extends React.PureComponent {
                       href="https://github.com/bitskyai"
                       target="_blank"
                     >
-                      <FormattedMessage id="munew.settings.github" />
+                      <FormattedMessage id="bitsky.settings.github" />
                     </a>
                   </li>
                 </ul>

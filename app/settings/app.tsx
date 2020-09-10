@@ -20,14 +20,14 @@ export class Root {
   }
 
   public async setup(): Promise<void | Element | React.Component> {
-    const MOUNT_NODE = document.getElementById("munew-settings") as HTMLElement;
+    const MOUNT_NODE = document.getElementById("bitsky-settings") as HTMLElement;
     const render = (
       messages: any,
       Component = App
     ): void | Element | React.Component => {
       // hide loading page
       MOUNT_NODE.style.display = 'block';
-      const loadingPage = document.getElementById("munew-loading") as HTMLElement;
+      const loadingPage = document.getElementById("bitsky-loading") as HTMLElement;
       loadingPage.style.display = 'none';
 
       return ReactDOM.render(

@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "fs-extra";
 import { READ_FILE } from "./constants";
 import { OpenFilesHash, OpenFile } from "../../../interfaces";
-import { MUNEW_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER } from '../../../utils/constants';
+import { BITSKY_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER } from '../../../utils/constants';
 
 const openFiles: OpenFilesHash = {};
 export const initialState = {
@@ -16,7 +16,7 @@ const editorsReducer = (state = initialState, action) =>
       case READ_FILE:
         const content = fs.readFileSync(
           path.join(
-            MUNEW_HOME_FOLDER, 
+            BITSKY_HOME_FOLDER, 
             DEFAULT_RETAILER_SERVICE_FOLDER,
             action.payload.filepath
           ),
