@@ -20,7 +20,7 @@ import TouchBarManager from "../TouchBarManager";
 import Editors from "../Editors";
 import Console from "../Consle";
 import { loadMonaco } from "../../utils";
-import { updateMosaicNodes, addConoleLog, updateSOIStatus } from "./actions";
+import { updateMosaicNodes, addConoleLog, updateRetailerStatus } from "./actions";
 import { initialState } from "./reducer";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
@@ -43,76 +43,76 @@ class App extends React.PureComponent<AppProps, AppState> {
       mosaicNodes: initialState.mosaicNodes
     };
 
-    ipcRendererManager.on(IpcEvents.SOI_CONSOLE_LOG, (event, log) => {
+    ipcRendererManager.on(IpcEvents.RETAILER_CONSOLE_LOG, (event, log) => {
       this.props.dispatch(addConoleLog(log));
     });
 
     this.setUpEventListeners();
-    this.updateSOIStatus();
+    this.updateRetailerStatus();
     loadMonaco();
   }
 
   private setUpEventListeners() {
-    ipcRendererManager.on(IpcEvents.STARTING_SOI_SERVER, (event, args) => {
-      console.log("IpcEvents.STARTING_SOI_SERVER");
-      this.updateSOIStatus(args.payload.status);
+    ipcRendererManager.on(IpcEvents.STARTING_RETAILER_SERVER, (event, args) => {
+      console.log("IpcEvents.STARTING_RETAILER_SERVER");
+      this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(
-      IpcEvents.STARTING_SOI_SERVER_SUCCESS,
+      IpcEvents.STARTING_RETAILER_SERVER_SUCCESS,
       (event, args) => {
-        console.log("IpcEvents.STARTING_SOI_SERVER_SUCCESS");
-        this.updateSOIStatus(args.payload.status);
+        console.log("IpcEvents.STARTING_RETAILER_SERVER_SUCCESS");
+        this.updateRetailerStatus(args.payload.status);
       }
     );
-    ipcRendererManager.on(IpcEvents.STARTING_SOI_SERVER_FAIL, (event, args) => {
-      console.log("IpcEvents.STARTING_SOI_SERVER_FAIL");
-      this.updateSOIStatus(args.payload.status);
+    ipcRendererManager.on(IpcEvents.STARTING_RETAILER_SERVER_FAIL, (event, args) => {
+      console.log("IpcEvents.STARTING_RETAILER_SERVER_FAIL");
+      this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(
-      IpcEvents.STOPPING_SOI_SERVER_SUCCESS,
+      IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS,
       (event, args) => {
-        console.log("IpcEvents.STOPPING_SOI_SERVER_SUCCESS");
-        this.updateSOIStatus(args.payload.status);
+        console.log("IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS");
+        this.updateRetailerStatus(args.payload.status);
       }
     );
-    ipcRendererManager.on(IpcEvents.STOPPING_SOI_SERVER, (event, args) => {
-      console.log("IpcEvents.STOPPING_SOI_SERVER");
-      this.updateSOIStatus(args.payload.status);
+    ipcRendererManager.on(IpcEvents.STOPPING_RETAILER_SERVER, (event, args) => {
+      console.log("IpcEvents.STOPPING_RETAILER_SERVER");
+      this.updateRetailerStatus(args.payload.status);
     });
-    ipcRendererManager.on(IpcEvents.STOPPING_SOI_SERVER_FAIL, (event, args) => {
-      console.log("IpcEvents.STOPPING_SOI_SERVER_FAIL");
-      this.updateSOIStatus(args.payload.status);
+    ipcRendererManager.on(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, (event, args) => {
+      console.log("IpcEvents.STOPPING_RETAILER_SERVER_FAIL");
+      this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(IpcEvents.DOWNLOADING_ELECTRON, (event, args) => {
       console.log("IpcEvents.DOWNLOADING_ELECTRON");
-      this.updateSOIStatus(args.payload.status);
+      this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(IpcEvents.DOWNLOAD_ELECTRON_FAIL, (event, args) => {
       console.log("IpcEvents.DOWNLOAD_ELECTRON_FAIL");
-      this.updateSOIStatus(args.payload.status);
+      this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(
       IpcEvents.DOWNLOAD_ELECTRON_SUCCESS,
       (event, args) => {
         console.log("IpcEvents.DOWNLOAD_ELECTRON_SUCCESS");
-        this.updateSOIStatus(args.payload.status);
+        this.updateRetailerStatus(args.payload.status);
       }
     );
   }
 
-  private updateSOIStatus(status?) {
+  private updateRetailerStatus(status?) {
     if (!status) {
-      let result = ipcRendererManager.sendSync(IpcEvents.SYNC_SOI_STATUS);
+      let result = ipcRendererManager.sendSync(IpcEvents.SYNC_RETAILER_STATUS);
       status = result.status;
     }
-    console.log('updateSOIStatus->status: ', status);
+    console.log('updateRetailerStatus->status: ', status);
     // Need to handle error
-    this.props.dispatch(updateSOIStatus(status));
+    this.props.dispatch(updateRetailerStatus(status));
   }
 
   render() {
     return (
-      <div className="munew-soi-app">
+      <div className="munew-retailer-app">
         {this.renderNavBar()}
         <Mosaic<number | string>
           renderTile={this.getMosaicWindow}

@@ -1,11 +1,11 @@
 import {
-  GET_SOI_FOLDER_STRUCTURE,
+  GET_RETAILER_FOLDER_STRUCTURE,
   UPDATE_CURRENT_SELECTED_FILE
 } from "./constants";
 
-export const getSOIFolderStructue = () => {
+export const getRetailerFolderStructue = () => {
   return {
-    type: GET_SOI_FOLDER_STRUCTURE
+    type: GET_RETAILER_FOLDER_STRUCTURE
   };
 };
 

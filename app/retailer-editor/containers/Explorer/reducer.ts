@@ -1,14 +1,14 @@
 import produce from "immer";
 import * as path from "path";
 import {
-  GET_SOI_FOLDER_STRUCTURE,
+  GET_RETAILER_FOLDER_STRUCTURE,
   UPDATE_CURRENT_SELECTED_FILE
 } from "./constants";
 import { readFolderRecursiveSync } from "../../../utils";
 import { MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER } from '../../../utils/constants';
 
 export const initialState = {
-  soiFolderStructure: {
+  retailerFolderStructure: {
     data: [],
     lastGetTime: null,
     fail: null,
@@ -20,20 +20,20 @@ export const initialState = {
 const explorerReducer = (state = initialState, action) =>
   produce(state, (draft: any): any => {
     switch (action.type) {
-      case GET_SOI_FOLDER_STRUCTURE:
+      case GET_RETAILER_FOLDER_STRUCTURE:
         try {
-          const soiFolderStructure = readFolderRecursiveSync(
+          const retailerFolderStructure = readFolderRecursiveSync(
             path.join(MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER),
             "."
           );
-          draft.soiFolderStructure = {
-            data: soiFolderStructure,
+          draft.retailerFolderStructure = {
+            data: retailerFolderStructure,
             lastGetTime: Date.now(),
             fail: null,
             loaded: true
           };
         } catch (err) {
-          draft.soiFolderStructure = {
+          draft.retailerFolderStructure = {
             data: [],
             lastGetTime: Date.now(),
             fail: err,

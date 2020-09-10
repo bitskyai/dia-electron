@@ -16,7 +16,7 @@ export interface DirStructure {
   children?: Array<DirStructure>;
 }
 
-export interface SOIFolderStructure {
+export interface RetailerFolderStructure {
   data: Array<DirStructure> | null;
   lastGetTime: number;
   fail: Error | null;

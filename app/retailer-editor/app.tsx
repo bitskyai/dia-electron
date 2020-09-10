@@ -33,7 +33,7 @@ export class Root {
     // Create redux store with history
     const initialState = {};
     const store = configureStore(initialState, history);
-    const MOUNT_NODE = document.getElementById("munew-soi-app") as HTMLElement;
+    const MOUNT_NODE = document.getElementById("munew-retailer-app") as HTMLElement;
     const render = (
       messages: any,
       Component = App

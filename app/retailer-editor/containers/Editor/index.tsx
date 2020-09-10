@@ -65,7 +65,7 @@ export class Editor extends React.Component<EditorProps> {
 
   public async saveFile() {
     let result = ipcRendererManager.sendSync(
-      IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT,
+      IpcEvents.SYNC_RETAILER_UPDATE_FILE_CONTENT,
       {
         filePath: this.props.path,
         fileContent: this.editor.getValue(),
@@ -167,7 +167,7 @@ export class Editor extends React.Component<EditorProps> {
     try {
       // return getFileContent(this.props.path);
       let result = ipcRendererManager.sendSync(
-        IpcEvents.SYNC_SOI_GET_FILE_CONTENT,
+        IpcEvents.SYNC_RETAILER_GET_FILE_CONTENT,
         {
           filePath: this.props.path,
         }

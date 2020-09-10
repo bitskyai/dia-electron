@@ -31,7 +31,7 @@
     "node_modules",
     "app/hello-retailer",
     "app/web-app",
-    "app/soi-editor"
+    "app/retailer-editor"
   ],
   "formatCodeOptions": {
     "indentSize": 2,

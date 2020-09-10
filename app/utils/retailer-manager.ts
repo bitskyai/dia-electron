@@ -3,7 +3,7 @@ import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
 import { fancyImport } from "./import";
-import { copyDefaultSOI, getSOIPath, writeConfigJson } from "./soi-file-manager";
+import { copyDefaultRetailer, getRetailerPath, writeConfigJson } from "./retailer-file-manager";
 import { MUNEW_HOME_FOLDER } from "./constants";
 import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
@@ -11,32 +11,32 @@ import { IpcEvents } from "../ipc-events";
 import { ipcMainManager } from "../main/ipc";
 import { LogItem } from "../interfaces";
 import { getAvailablePort } from "./index";
-import { SOI_CHECK_TIMEOUT } from "./constants";
+import { RETAILER_CHECK_TIMEOUT } from "./constants";
 
-class SOIManager {
-  public soiProcess: ChildProcess | null = null;
+class RetailerManager {
+  public retailerProcess: ChildProcess | null = null;
   public version: string = "7.1.2";
   private isElectronDownloaded: boolean = false;
   // whether electron is downloading
   private isDownloading: boolean = false;
-  // whether SOI is running
+  // whether Retailer is running
   private isRunning: boolean = false;
   // whether during the middle of start server
   private isStartingServer: boolean = false;
   // whether during the middle of stop server
   private isStoppingServer: boolean = false;
   // Port number isStoppingServer be changed if port isn't available
-  private SOIPort: number = 8081;
+  private RetailerPort: number = 8081;
 
   constructor() {
-    this.runSOI = this.runSOI.bind(this);
-    this.stopSOI = this.stopSOI.bind(this);
+    this.runRetailer = this.runRetailer.bind(this);
+    this.stopRetailer = this.stopRetailer.bind(this);
     let force = false;
     if (isFirstRun()) {
-      // if it is first time run, then need to clean previous SOI
+      // if it is first time run, then need to clean previous Retailer
       force = true;
     }
-    copyDefaultSOI(force);
+    copyDefaultRetailer(force);
     writeConfigJson();
   }
 
@@ -57,9 +57,9 @@ class SOIManager {
     let status = await this.status();
     if (this.isDownloading) {
       logger.info(
-        `SOIManager: Electron ${version} already downloading. please wait...`
+        `RetailerManager: Electron ${version} already downloading. please wait...`
       );
-      ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOADING_ELECTRON, [
+      ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOADING_ELECTRON, [
         {
           status: "downloading",
           payload: {
@@ -73,9 +73,9 @@ class SOIManager {
 
     // if already download, then direct response downloading success
     if (this.isElectronDownloaded) {
-      logger.info(`SOIManager: Electron ${version} already downloaded.`);
+      logger.info(`RetailerManager: Electron ${version} already downloaded.`);
       this.isDownloading = false;
-      ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOAD_ELECTRON_SUCCESS, [
+      ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOAD_ELECTRON_SUCCESS, [
         {
           status: "success",
           payload: {
@@ -87,11 +87,11 @@ class SOIManager {
       return true;
     }
 
-    logger.info(`SOIManager: Electron ${version} not present, downloading`);
+    logger.info(`RetailerManager: Electron ${version} not present, downloading`);
     // start downloading electron
     this.isDownloading = true;
-    // publish message to let SOI Editor know it is downloading electron
-    ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOADING_ELECTRON, [
+    // publish message to let Retailer Editor know it is downloading electron
+    ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOADING_ELECTRON, [
       {
         status: "downloading",
         payload: {
@@ -104,7 +104,7 @@ class SOIManager {
       const zipPath = await eDownload({ version });
       const extractPath = this.getDownloadPath();
       logger.info(
-        `SOIManager: Electron ${version} downloaded, now unpacking to ${extractPath}`
+        `RetailerManager: Electron ${version} downloaded, now unpacking to ${extractPath}`
       );
       // Ensure the target path is empty
       await fs.emptyDir(extractPath);
@@ -115,7 +115,7 @@ class SOIManager {
       status = await this.status();
       if (this.isElectronDownloaded) {
         // if isDownloaded is true, then successfully download
-        ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOAD_ELECTRON_SUCCESS, [
+        ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOAD_ELECTRON_SUCCESS, [
           {
             status: "success",
             payload: {
@@ -126,7 +126,7 @@ class SOIManager {
         ]);
       } else {
         // otherwise, download fail
-        ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOAD_ELECTRON_FAIL, [
+        ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOAD_ELECTRON_FAIL, [
           {
             status: "fail",
             payload: {
@@ -141,7 +141,7 @@ class SOIManager {
       logger.error(`Failure while unzipping ${version}`, error);
       this.isDownloading = false;
       let status = await this.status();
-      ipcMainManager.sendToSOIEditor(IpcEvents.DOWNLOAD_ELECTRON_FAIL, [
+      ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOAD_ELECTRON_FAIL, [
         {
           status: "fail",
           payload: {
@@ -190,7 +190,7 @@ class SOIManager {
    */
   private unzip(zipPath: string, extractPath: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      logger.functionStart("SOIManager->unzip");
+      logger.functionStart("RetailerManager->unzip");
       const extract = await fancyImport<any>("extract-zip");
       logger.debug("zipPath: ", zipPath);
       logger.debug("extractPath: ", extractPath);
@@ -205,31 +205,31 @@ class SOIManager {
           reject(error);
           return;
         }
-        logger.info(`SOIManager: Unpacked!`);
+        logger.info(`RetailerManager: Unpacked!`);
         process.noAsar = false;
         resolve();
-        logger.functionEnd("SOIManager->unzip");
+        logger.functionEnd("RetailerManager->unzip");
       });
     });
   }
 
   /**
-   * check whether a SOI start successful or not
+   * check whether a Retailer start successful or not
    */
-  public async checkWhetherStartSOISuccessful() {
+  public async checkWhetherStartRetailerSuccessful() {
     return new Promise((resolve, reject) => {
       // if port number isn't available, then means start successfully, otherwise need to continue to wait until timeout
       let startTimestamp = Date.now();
       const checkHandler = setInterval(async () => {
-        let port = await getAvailablePort(this.SOIPort);
-        if (port !== this.SOIPort) {
+        let port = await getAvailablePort(this.RetailerPort);
+        if (port !== this.RetailerPort) {
           // then means start successful
           resolve(true);
           clearInterval(checkHandler);
           return;
         }
         // check whether timeout
-        if (Date.now() - startTimestamp > SOI_CHECK_TIMEOUT) {
+        if (Date.now() - startTimestamp > RETAILER_CHECK_TIMEOUT) {
           reject(false);
           clearInterval(checkHandler);
           return;
@@ -282,22 +282,22 @@ class SOIManager {
   private async publishLog(data): Promise<void> {
     const logItem: LogItem | null = this.formatOutput(data);
     if (logItem) {
-      ipcMainManager.sendToSOIEditor(IpcEvents.SOI_CONSOLE_LOG, [logItem]);
+      ipcMainManager.sendToRetailerEditor(IpcEvents.RETAILER_CONSOLE_LOG, [logItem]);
     }
   }
 
   private async getAvailablePort(): Promise<number> {
-    this.SOIPort = await getAvailablePort(this.SOIPort);
-    return this.SOIPort;
+    this.RetailerPort = await getAvailablePort(this.RetailerPort);
+    return this.RetailerPort;
   }
 
-  public async runSOI(): Promise<void> {
+  public async runRetailer(): Promise<void> {
     try {
-      logger.functionStart("runSOI");
+      logger.functionStart("runRetailer");
       this.isStartingServer = true;
       let status = await this.status();
       if (this.isRunning) {
-        ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER_SUCCESS, [
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
           {
             status: "success",
             payload: {
@@ -307,15 +307,15 @@ class SOIManager {
         ]);
         return;
       }
-      const SOI_PATH = getSOIPath();
+      const RETAILER_PATH = getRetailerPath();
       await this.downloadElectron();
       const binaryPath = this.getElectronBinaryPath();
       logger.debug(`elelctron binary path: ${binaryPath}`);
-      logger.debug(`SOI_Path: ${SOI_PATH}`);
+      logger.debug(`RETAILER_Path: ${RETAILER_PATH}`);
       // get an available port
-      this.SOIPort = await this.getAvailablePort();
+      this.RetailerPort = await this.getAvailablePort();
       status = await this.status();
-      ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER, [
+      ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER, [
         {
           status: "starting",
           payload: {
@@ -324,29 +324,29 @@ class SOIManager {
         }
       ]);
       const env = { ...process.env };
-      env.PORT = this.SOIPort.toString();
+      env.PORT = this.RetailerPort.toString();
 
-      this.soiProcess = spawn(binaryPath, [SOI_PATH, "--inspect"], {
-        cwd: SOI_PATH,
+      this.retailerProcess = spawn(binaryPath, [RETAILER_PATH, "--inspect"], {
+        cwd: RETAILER_PATH,
         env
       });
 
-      this.soiProcess.stdout!.on("data", data => {
+      this.retailerProcess.stdout!.on("data", data => {
         // logger.debug("======stdout: ", data.toString());
         this.publishLog(data);
       });
-      this.soiProcess.stderr!.on("data", data => {
+      this.retailerProcess.stderr!.on("data", data => {
         // logger.debug("******stderr: ", data.toString());
         this.publishLog(data);
       });
-      this.soiProcess.on("close", async code => {
+      this.retailerProcess.on("close", async code => {
         const withCode =
           typeof code === "number" ? ` with code ${code.toString()}.` : `.`;
         logger.debug(withCode);
         this.publishLog(withCode);
-        this.soiProcess = null;
+        this.retailerProcess = null;
         status = await this.status();
-        ipcMainManager.sendToSOIEditor(IpcEvents.STOPPING_SOI_SERVER_SUCCESS, [
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
           {
             status: "success",
             payload: {
@@ -355,12 +355,12 @@ class SOIManager {
           }
         ]);
       });
-      const success = await this.checkWhetherStartSOISuccessful();
+      const success = await this.checkWhetherStartRetailerSuccessful();
       this.isStartingServer = false;
       if (success) {
         this.isRunning = true;
         status = await this.status();
-        ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER_SUCCESS, [
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
           {
             status: "success",
             payload: {
@@ -370,9 +370,9 @@ class SOIManager {
         ]);
       } else {
         this.isRunning = false;
-        await this.stopSOI();
+        await this.stopRetailer();
         status = await this.status();
-        ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER_FAIL, [
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
           {
             status: "fail",
             payload: {
@@ -381,14 +381,14 @@ class SOIManager {
           }
         ]);
       }
-      logger.functionEnd("runSOI");
+      logger.functionEnd("runRetailer");
     } catch (err) {
       this.isStartingServer = false;
       this.isRunning = false;
-      await this.stopSOI();
-      logger.error("runSOI error: ", err);
+      await this.stopRetailer();
+      logger.error("runRetailer error: ", err);
       let status = await this.status();
-      ipcMainManager.sendToSOIEditor(IpcEvents.STARTING_SOI_SERVER_FAIL, [
+      ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
         {
           status: "fail",
           payload: {
@@ -401,11 +401,11 @@ class SOIManager {
     }
   }
 
-  public async stopSOI() {
+  public async stopRetailer() {
     try {
       this.isStoppingServer = true;
       let status = await this.status();
-      ipcMainManager.sendToSOIEditor(IpcEvents.STOPPING_SOI_SERVER, [
+      ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER, [
         {
           status: "stopping",
           payload: {
@@ -414,12 +414,12 @@ class SOIManager {
         }
       ]);
 
-      if (this.soiProcess) {
-        this.soiProcess.kill();
+      if (this.retailerProcess) {
+        this.retailerProcess.kill();
         this.isRunning = false;
         this.isStoppingServer = false;
         status = await this.status();
-        ipcMainManager.sendToSOIEditor(IpcEvents.STOPPING_SOI_SERVER_SUCCESS, [
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
           {
             status: "success",
             payload: {
@@ -431,7 +431,7 @@ class SOIManager {
     } catch (err) {
       this.isStoppingServer = false;
       let status = await this.status();
-      ipcMainManager.sendToSOIEditor(IpcEvents.STOPPING_SOI_SERVER_FAIL, [
+      ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, [
         {
           status: "fail",
           payload: {
@@ -444,7 +444,7 @@ class SOIManager {
   }
 
   /**
-   * Get default SOI status
+   * Get default Retailer status
    */
   public async status() {
     // check whether isn't downloaded
@@ -452,7 +452,7 @@ class SOIManager {
     return {
       isElectronDownloaded: this.isElectronDownloaded,
       // after init, will not change
-      SOIPort: this.SOIPort,
+      RetailerPort: this.RetailerPort,
       // following is in-memory status
       isDownloading: this.isDownloading,
       isRunning: this.isRunning,
@@ -462,4 +462,4 @@ class SOIManager {
   }
 }
 
-export default new SOIManager();
+export default new RetailerManager();

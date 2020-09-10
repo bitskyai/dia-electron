@@ -11,7 +11,7 @@ interface browserWindowHash {
 // be closed automatically when the JavaScript object is garbage collected.
 export const browserWindows: browserWindowHash = {};
 
-export function getSOIEditorWindowOptions(): Electron.BrowserWindowConstructorOptions {
+export function getRetailerEditorWindowOptions(): Electron.BrowserWindowConstructorOptions {
   return {
     width: 1200,
     height: 900,
@@ -26,16 +26,16 @@ export function getSOIEditorWindowOptions(): Electron.BrowserWindowConstructorOp
   };
 }
 
-export function createSOIEditorWindow(): Electron.BrowserWindow {
-  // console.log("createSOIEditorWindow->remote: ", remote);
-  const browserWindow = new BrowserWindow(getSOIEditorWindowOptions());
+export function createRetailerEditorWindow(): Electron.BrowserWindow {
+  // console.log("createRetailerEditorWindow->remote: ", remote);
+  const browserWindow = new BrowserWindow(getRetailerEditorWindowOptions());
   browserWindow.webContents.once("dom-ready", () => {
     browserWindow.show();
   });
 
   browserWindow.on("closed", () => {
-    browserWindows.soiEditor = null;
-    global.browserWindows.soiEditor = null;
+    browserWindows.retailerEditor = null;
+    global.browserWindows.retailerEditor = null;
   });
 
   browserWindow.webContents.on("new-window", (event, url) => {
@@ -48,20 +48,20 @@ export function createSOIEditorWindow(): Electron.BrowserWindow {
     shell.openExternal(url);
   });
 
-  browserWindows.soiEditor = browserWindow;
-  const modalPath = path.join("./build/soi.html");
+  browserWindows.retailerEditor = browserWindow;
+  const modalPath = path.join("./build/retailer.html");
   browserWindow.loadFile(modalPath);
   browserWindow.show();
   // browserWindow.webContents.openDevTools();
 
-  global.browserWindows.soiEditor = browserWindow;
+  global.browserWindows.retailerEditor = browserWindow;
   return browserWindow;
 }
 
-export function getOrCreateSOIEditorWindow(): Electron.BrowserWindow {
-  if(global.browserWindows.soiEditor&&global.browserWindows.soiEditor.focus){
-    return global.browserWindows.soiEditor;
+export function getOrCreateRetailerEditorWindow(): Electron.BrowserWindow {
+  if(global.browserWindows.retailerEditor&&global.browserWindows.retailerEditor.focus){
+    return global.browserWindows.retailerEditor;
   }
-  return  createSOIEditorWindow();
-  // return global.browserWindows.soiEditor || createSOIEditorWindow();
+  return  createRetailerEditorWindow();
+  // return global.browserWindows.retailerEditor || createRetailerEditorWindow();
 }

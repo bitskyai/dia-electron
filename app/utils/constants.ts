@@ -28,5 +28,5 @@ export const LOG_FILES_PATH = path.join(MUNEW_HOME_FOLDER, "./engine/log");
 
 export const PREFERENCES_JSON_PATH = path.join(MUNEW_HOME_FOLDER, 'preferences.json');
 
-// Timeout value for check whether a SOI start successfully
-export const SOI_CHECK_TIMEOUT = 15*1000;
+// Timeout value for check whether a Retailer start successfully
+export const RETAILER_CHECK_TIMEOUT = 15*1000;

@@ -7,8 +7,8 @@ import {
   MosaicContext,
   MosaicNode
 } from "react-mosaic-component";
-import { SOIFolderStructure, DirType } from "../../../interfaces";
-import { getSOIFolderStructue, updateCurrentSelectedFile } from "./actions";
+import { RetailerFolderStructure, DirType } from "../../../interfaces";
+import { getRetailerFolderStructue, updateCurrentSelectedFile } from "./actions";
 import { responsedToExplorer } from "../App/actions";
 import { initialState } from "../App/reducer";
 const { TreeNode, DirectoryTree } = Tree;
@@ -35,8 +35,8 @@ function Explorer(props: ExplorerProps) {
 
   useEffect(() => {
     // second parameter is [], the effect will only run on first render
-    // Get SOI Folder Structure
-    dispatch(getSOIFolderStructue());
+    // Get Retailer Folder Structure
+    dispatch(getRetailerFolderStructue());
   }, []);
 
   useEffect(() => {
@@ -83,8 +83,8 @@ function Explorer(props: ExplorerProps) {
     }
   });
 
-  const soiFolderStructure: SOIFolderStructure = useSelector(state => {
-    return state.explorer.soiFolderStructure;
+  const retailerFolderStructure: RetailerFolderStructure = useSelector(state => {
+    return state.explorer.retailerFolderStructure;
   });
 
   const generateFolderStructure = folderStructure => {
@@ -149,7 +149,7 @@ function Explorer(props: ExplorerProps) {
     });
 
   const generateContent = () => {
-    if (!soiFolderStructure || !soiFolderStructure.loaded) {
+    if (!retailerFolderStructure || !retailerFolderStructure.loaded) {
       return <Skeleton active />;
     } else {
       return (
@@ -165,7 +165,7 @@ function Explorer(props: ExplorerProps) {
               onSelect={onSelect}
               onExpand={onExpand}
             >
-              {generateTreeNodes(generateFolderStructure(soiFolderStructure.data))}
+              {generateTreeNodes(generateFolderStructure(retailerFolderStructure.data))}
             </DirectoryTree>
           </div>
         </MosaicWindow>

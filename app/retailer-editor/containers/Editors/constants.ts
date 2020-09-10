@@ -8,4 +8,4 @@
  * Follow this format:
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
-export const READ_FILE = 'soi-editor/Editors/READ_FILE';
+export const READ_FILE = 'retailer-editor/Editors/READ_FILE';

@@ -1,7 +1,7 @@
 /**
- * Default SOI File Manager, it provides following features:
- * 1. Copy default SOI to app.getPath('home')
- * 2. Reset SOI to default SOI
+ * Default Retailer File Manager, it provides following features:
+ * 1. Copy default Retailer to app.getPath('home')
+ * 2. Reset Retailer to default Retailer
  * 3. Get file structures
  * 4. CRUD file content
  */
@@ -11,24 +11,24 @@ import logger from "./logger";
 import { copyFolderRecursiveSync } from "./index";
 import { MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER } from "./constants";
 
-export const SOI_CONFIG_JSON_NAME = "utils/additionalNodeModules.json";
-export const getSOIPath = () => {
+export const RETAILER_CONFIG_JSON_NAME = "utils/additionalNodeModules.json";
+export const getRetailerPath = () => {
   return path.join(MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER);
 };
 
-export function copyDefaultSOI(force?: boolean): Boolean | Error {
+export function copyDefaultRetailer(force?: boolean): Boolean | Error {
   try {
-    logger.functionStart("copyDefaultSOI");
-    const SOI_PATH = getSOIPath();
+    logger.functionStart("copyDefaultRetailer");
+    const RETAILER_PATH = getRetailerPath();
     // Path to
-    const defaultSOIPath = path.join(
+    const defaultRetailerPath = path.join(
       __dirname,
       "..",
       DEFAULT_ANALYST_SERVICE_FOLDER
     );
-    logger.debug("defaultSOIPath: ", defaultSOIPath);
-    logger.debug("SOI_PATH: ", SOI_PATH);
-    if (fs.existsSync(SOI_PATH)) {
+    logger.debug("defaultRetailerPath: ", defaultRetailerPath);
+    logger.debug("RETAILER_PATH: ", RETAILER_PATH);
+    if (fs.existsSync(RETAILER_PATH)) {
       if (!force) {
         logger.debug(
           `All ready has ${DEFAULT_ANALYST_SERVICE_FOLDER} in ${MUNEW_HOME_FOLDER}, and don't force clean folder, so return`
@@ -36,12 +36,12 @@ export function copyDefaultSOI(force?: boolean): Boolean | Error {
         return true;
       }
     }
-    copyFolderRecursiveSync(defaultSOIPath, MUNEW_HOME_FOLDER, force);
+    copyFolderRecursiveSync(defaultRetailerPath, MUNEW_HOME_FOLDER, force);
     writeConfigJson();
-    logger.functionEnd("copyDefaultSOI");
+    logger.functionEnd("copyDefaultRetailer");
     return true;
   } catch (err) {
-    logger.error("copyDefaultSOI error: ", err);
+    logger.error("copyDefaultRetailer error: ", err);
     return false;
   }
 }
@@ -49,14 +49,14 @@ export function copyDefaultSOI(force?: boolean): Boolean | Error {
 export function writeConfigJson(data?: object) {
   try {
     logger.functionStart("writeConfigJson");
-    const SOI_PATH = getSOIPath();
-    const configJSONPath = path.join(SOI_PATH, SOI_CONFIG_JSON_NAME);
-    logger.debug("SOI Config JSON Path: ", configJSONPath);
+    const RETAILER_PATH = getRetailerPath();
+    const configJSONPath = path.join(RETAILER_PATH, RETAILER_CONFIG_JSON_NAME);
+    logger.debug("Retailer Config JSON Path: ", configJSONPath);
     logger.debug("Config JSON: ", data);
     if (!data) {
       data = {
         additionalNodePath: [
-          path.join(SOI_PATH, "node_modules"),
+          path.join(RETAILER_PATH, "node_modules"),
           path.join(__dirname, "../../../node_modules"),
         ],
       };
@@ -73,13 +73,13 @@ export function writeConfigJson(data?: object) {
 
 /**
  * Get content of a specific file
- * @param {string} filePath - Relative path of file in SOI folder
+ * @param {string} filePath - Relative path of file in Retailer folder
  * @returns {string}
  */
 export function getFileContent(filePath: string): string {
   logger.functionStart("getFileContent");
   try {
-    const fileFullPath = path.join(getSOIPath(), filePath);
+    const fileFullPath = path.join(getRetailerPath(), filePath);
     logger.debug("fileFullPath: ", fileFullPath);
     if (fs.existsSync(fileFullPath)) {
       logger.functionEnd("getFileContent");
@@ -95,14 +95,14 @@ export function getFileContent(filePath: string): string {
 
 /**
  * Update specific file content
- * @param {string} filePath - Relative path of file in SOI folder
+ * @param {string} filePath - Relative path of file in Retailer folder
  * @param {string} content - content need to update
  * @returns {boolean}
  */
 export function updateFileContent(filePath: string, content: string) {
-  logger.functionStart("copyDefaultSOI");
+  logger.functionStart("copyDefaultRetailer");
   try {
-    const fileFullPath = path.join(getSOIPath(), filePath);
+    const fileFullPath = path.join(getRetailerPath(), filePath);
     logger.debug("fileFullPath: ", fileFullPath);
     if (fs.existsSync(fileFullPath)) {
       logger.functionEnd("updateFileContent");
@@ -111,7 +111,7 @@ export function updateFileContent(filePath: string, content: string) {
     throw new Error(`updateFileContent ${fileFullPath} doesn't exist`);
   } catch (err) {
     logger.error("updateFileContent error: ", err);
-    logger.functionEnd("copyDefaultSOI");
+    logger.functionEnd("copyDefaultRetailer");
     throw err;
   }
 }

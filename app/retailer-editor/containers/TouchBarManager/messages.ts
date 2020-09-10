@@ -5,7 +5,7 @@
  */
 import { defineMessages } from 'react-intl';
 
-export const scope = 'munew.defaultsoi.components';
+export const scope = 'munew.defaultretailer.components';
 
 export default defineMessages({
   licenseMessage: {

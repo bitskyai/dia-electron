@@ -13,13 +13,13 @@ import { IpcEvents } from "../ipc-events";
 import logger from "../utils/logger";
 import { testDBConnection } from "../web-app/build/server";
 import engine from "../utils/engine";
-import SOIManager from "../utils/soi-manager";
-import { getOrCreateSOIEditorWindow } from "./soiEditorWindows";
+import RetailerManager from "../utils/retailer-manager";
+import { getOrCreateRetailerEditorWindow } from "./retailerEditorWindows";
 import {
   getFileContent,
   updateFileContent,
-  copyDefaultSOI,
-} from "../utils/soi-file-manager";
+  copyDefaultRetailer,
+} from "../utils/retailer-file-manager";
 
 export function setUpEventListeners() {
   ipcMainManager.on(IpcEvents.CLOSE_SETTINGS, () => {
@@ -83,10 +83,10 @@ export function setUpEventListeners() {
 
           event.returnValue = isUserDataDir;
           break;
-      case "soiEditor/open":
-        let soiEditorWindow = getOrCreateSOIEditorWindow();
-        soiEditorWindow.show();
-        soiEditorWindow.focus();
+      case "retailerEditor/open":
+        let retailerEditorWindow = getOrCreateRetailerEditorWindow();
+        retailerEditorWindow.show();
+        retailerEditorWindow.focus();
         event.returnValue = {
           status: true,
         };
@@ -100,25 +100,25 @@ export function setUpEventListeners() {
     }
   });
 
-  ipcMainManager.on(IpcEvents.OPEN_SOI_EDITOR, () => {
+  ipcMainManager.on(IpcEvents.OPEN_RETAILER_EDITOR, () => {
     try {
-      // let soiEditorWindow: Electron.BrowserWindow | null = null;
-      console.log("****IpcEvents.OPEN_SOI_EDITOR");
-      let soiEditorWindow = getOrCreateSOIEditorWindow();
-      soiEditorWindow.show();
-      soiEditorWindow.focus();
+      // let retailerEditorWindow: Electron.BrowserWindow | null = null;
+      console.log("****IpcEvents.OPEN_RETAILER_EDITOR");
+      let retailerEditorWindow = getOrCreateRetailerEditorWindow();
+      retailerEditorWindow.show();
+      retailerEditorWindow.focus();
     } catch (err) {
-      logger.error("IpcEvents.OPEN_SOI_EDITOR failed. Error: ", err);
+      logger.error("IpcEvents.OPEN_RETAILER_EDITOR failed. Error: ", err);
     }
   });
 
-  ipcMainManager.on(IpcEvents.CLOSE_SOI_EDITOR, () => {
+  ipcMainManager.on(IpcEvents.CLOSE_RETAILER_EDITOR, () => {
     try {
-      // let soiEditorWindow: Electron.BrowserWindow | null = null;
-      let soiEditorWindow = getOrCreateSOIEditorWindow();
-      soiEditorWindow.close();
+      // let retailerEditorWindow: Electron.BrowserWindow | null = null;
+      let retailerEditorWindow = getOrCreateRetailerEditorWindow();
+      retailerEditorWindow.close();
     } catch (err) {
-      logger.error("IpcEvents.CLOSE_SOI_EDITOR failed. Error: ", err);
+      logger.error("IpcEvents.CLOSE_RETAILER_EDITOR failed. Error: ", err);
     }
   });
 
@@ -205,13 +205,13 @@ export function setUpEventListeners() {
     }
   });
 
-  // get SOI file content by path
+  // get Retailer file content by path
   /*
      arg = {
        filePath
      }
      */
-  ipcMainManager.on(IpcEvents.SYNC_SOI_GET_FILE_CONTENT, (event, arg) => {
+  ipcMainManager.on(IpcEvents.SYNC_RETAILER_GET_FILE_CONTENT, (event, arg) => {
     try {
       event.returnValue = {
         status: true,
@@ -224,14 +224,14 @@ export function setUpEventListeners() {
     }
   });
 
-  // update SOI file content
+  // update Retailer file content
   /*
       arg = {
         filePath,
         fileContent
       }
      */
-  ipcMainManager.on(IpcEvents.SYNC_SOI_UPDATE_FILE_CONTENT, (event, arg) => {
+  ipcMainManager.on(IpcEvents.SYNC_RETAILER_UPDATE_FILE_CONTENT, (event, arg) => {
     try {
       updateFileContent(arg.filePath, arg.fileContent);
       event.returnValue = {
@@ -244,15 +244,15 @@ export function setUpEventListeners() {
     }
   });
 
-  // reset SOI to default
-  ipcMainManager.on(IpcEvents.SYNC_SOI_STATUS, async (event) => {
+  // reset Retailer to default
+  ipcMainManager.on(IpcEvents.SYNC_RETAILER_STATUS, async (event) => {
     try {
-      let status = await SOIManager.status();
+      let status = await RetailerManager.status();
       event.returnValue = {
         status,
       };
     } catch (err) {
-      logger.error(`${IpcEvents.SYNC_SOI_STATUS} error: `, err);
+      logger.error(`${IpcEvents.SYNC_RETAILER_STATUS} error: `, err);
       event.returnValue = {
         status: undefined,
         error: err,
@@ -260,10 +260,10 @@ export function setUpEventListeners() {
     }
   });
 
-  // reset SOI to default
-  ipcMainManager.on(IpcEvents.SYNC_SOI_RESET_TO_DEFAULT, (event) => {
+  // reset Retailer to default
+  ipcMainManager.on(IpcEvents.SYNC_RETAILER_RESET_TO_DEFAULT, (event) => {
     try {
-      copyDefaultSOI(true);
+      copyDefaultRetailer(true);
       event.returnValue = {
         status: true,
       };
@@ -274,27 +274,27 @@ export function setUpEventListeners() {
     }
   });
 
-  // reset stop SOI server
-  ipcMainManager.on(IpcEvents.STOP_SOI_SERVER, () => {
+  // reset stop Retailer server
+  ipcMainManager.on(IpcEvents.STOP_RETAILER_SERVER, () => {
     try {
-      SOIManager.stopSOI();
+      RetailerManager.stopRetailer();
     } catch (err) {
-      logger.error(`${IpcEvents.STOP_SOI_SERVER} error: `, err);
+      logger.error(`${IpcEvents.STOP_RETAILER_SERVER} error: `, err);
     }
   });
 
-  // reset start SOI server
-  ipcMainManager.on(IpcEvents.START_SOI_SERVER, () => {
+  // reset start Retailer server
+  ipcMainManager.on(IpcEvents.START_RETAILER_SERVER, () => {
     try {
-      SOIManager.runSOI();
+      RetailerManager.runRetailer();
     } catch (err) {
-      logger.error(`${IpcEvents.START_SOI_SERVER} error: `, err);
+      logger.error(`${IpcEvents.START_RETAILER_SERVER} error: `, err);
     }
   });
 
   ipcMainManager.on(IpcEvents.DOWNLOAD_ELECTRON, () => {
     try {
-      SOIManager.downloadElectron();
+      RetailerManager.downloadElectron();
     } catch (err) {
       logger.error(`${IpcEvents.DOWNLOAD_ELECTRON} error: `, err);
     }

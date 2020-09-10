@@ -16,7 +16,7 @@ declare global {
   namespace NodeJs {
     export interface Global {
       browserWindows: {
-        soiEditor: any;
+        retailerEditor: any;
         main: any;
       };
     }

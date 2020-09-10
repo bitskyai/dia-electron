@@ -13,7 +13,7 @@ import logger from "../utils/logger";
 import engine from "../utils/engine";
 import { setupHeadlessAgent } from "./headlessAgent";
 import { setupServiceAgent } from "./serviceAgent";
-import SOIManager from "../utils/soi-manager";
+import RetailerManager from "../utils/retailer-manager";
 
 /**
  * Handle the app's "ready" event. This is essentially
@@ -25,7 +25,7 @@ export async function onReady() {
 
     // intial global variables
     global.browserWindows = {
-      soiEditor: null,
+      retailerEditor: null,
       main: null,
     };
 
@@ -40,9 +40,9 @@ export async function onReady() {
     // Temp comment to fix https://github.com/bitskyai/bitsky-builder/issues/41
     // if run this, then cannot load browser, seems it was caused by single thread
     // try {
-    //   SOIManager.runSOI();
+    //   RetailerManager.runRetailer();
     // } catch (err) {
-    //   logger.error("start soi fail. error: ", err);
+    //   logger.error("start retailer fail. error: ", err);
     // }
 
     // setup headless producer
@@ -71,7 +71,7 @@ export async function onReady() {
  */
 export function onBeforeQuit() {
   (global as any).isQuitting = true;
-  SOIManager.stopSOI();
+  RetailerManager.stopRetailer();
 }
 
 // In this file you can include the rest of your app"s specific main process

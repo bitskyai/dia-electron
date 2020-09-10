@@ -68,11 +68,11 @@ export class IpcMainManager extends EventEmitter {
     _target.send(channel, ..._args);
   }
 
-  public sendToSOIEditor(channel: IpcEvents, args?: Array<any>) {
+  public sendToRetailerEditor(channel: IpcEvents, args?: Array<any>) {
     const _args = args || [];
-    const soiEditorBrowserWindow = global.browserWindows.soiEditor;
-    if (soiEditorBrowserWindow && soiEditorBrowserWindow.webContents) {
-      soiEditorBrowserWindow.send(channel, ..._args);
+    const retailerEditorBrowserWindow = global.browserWindows.retailerEditor;
+    if (retailerEditorBrowserWindow && retailerEditorBrowserWindow.webContents) {
+      retailerEditorBrowserWindow.send(channel, ..._args);
     }
   }
 }
