@@ -10,7 +10,7 @@ const getHomeFolder = () => {
   }
 };
 export const MUNEW_HOME_FOLDER = path.join(getHomeFolder(), ".bitsky");
-export const DEFAULT_ANALYST_SERVICE_FOLDER = 'hello-retailer';
+export const DEFAULT_RETAILER_SERVICE_FOLDER = 'hello-retailer';
 // default sqlite db configuration
 export const DEFAULT_SQLITE_DB_CONFIG = {
   TYPEORM_CONNECTION: TypeormConnection.sqlite,

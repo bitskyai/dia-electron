@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "fs-extra";
 import { READ_FILE } from "./constants";
 import { OpenFilesHash, OpenFile } from "../../../interfaces";
-import { MUNEW_HOME_FOLDER, DEFAULT_ANALYST_SERVICE_FOLDER } from '../../../utils/constants';
+import { MUNEW_HOME_FOLDER, DEFAULT_RETAILER_SERVICE_FOLDER } from '../../../utils/constants';
 
 const openFiles: OpenFilesHash = {};
 export const initialState = {
@@ -17,7 +17,7 @@ const editorsReducer = (state = initialState, action) =>
         const content = fs.readFileSync(
           path.join(
             MUNEW_HOME_FOLDER, 
-            DEFAULT_ANALYST_SERVICE_FOLDER,
+            DEFAULT_RETAILER_SERVICE_FOLDER,
             action.payload.filepath
           ),
           "utf8"
