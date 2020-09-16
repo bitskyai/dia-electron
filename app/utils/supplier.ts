@@ -6,11 +6,11 @@ import { getAvailablePort } from "./index";
 import { getOrCreateMainWindow } from "../main/windows";
 import { BITSKY_HOME_FOLDER } from './constants'
 
-class Engine {
-  public enginePort: number = 9099;
+class Supplier {
+  public supplierPort: number = 9099;
   constructor() {}
 
-  public async startEngine() {
+  public async startSupplier() {
     try {
       const preferences = getPreferencesJSON();
       updateProcessEnvs(preferences);
@@ -22,19 +22,19 @@ class Engine {
         "main->main.js->onReady, LOG_FILES_PATH: ",
         process.env.LOG_FILES_PATH
       );
-      this.enginePort = await getAvailablePort(this.enginePort);
-      process.env.PORT = this.enginePort;
+      this.supplierPort = await getAvailablePort(this.supplierPort);
+      process.env.PORT = this.supplierPort;
       // start
       await startServer();
-      logger.info("main->main.js->onReady, dia-engine successfully started.");
+      logger.info("main->main.js->onReady, bitsky-supplier successfully started.");
       const mainWindow = getOrCreateMainWindow();
-      mainWindow.loadURL(`http://localhost:${this.enginePort}`);
+      mainWindow.loadURL(`http://localhost:${this.supplierPort}`);
 
       // Only used for UI Develop
       // mainWindow.loadURL(`http://localhost:8000`);
 
       logger.info(
-        `main->main.js->onReady, load http://localhost:${this.enginePort} in main browser`
+        `main->main.js->onReady, load http://localhost:${this.supplierPort} in main browser`
       );
     } catch (err) {
       dialog.showErrorBox(
@@ -47,10 +47,10 @@ class Engine {
     }
   }
 
-  public async restartEngine() {
+  public async restartSupplier() {
     try {
-      this.stopEngine();
-      this.startEngine();
+      this.stopSupplier();
+      this.startSupplier();
     } catch (err) {
       dialog.showErrorBox(
         "Restart BitSky Failed",
@@ -62,7 +62,7 @@ class Engine {
     }
   }
 
-  public async stopEngine() {
+  public async stopSupplier() {
     try {
       await stopServer();
     } catch (err) {
@@ -75,4 +75,4 @@ class Engine {
   }
 }
 
-export default new Engine();
+export default new Supplier();

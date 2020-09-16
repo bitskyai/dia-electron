@@ -24,13 +24,13 @@ export enum IpcEvents {
   STOP_RETAILER_SERVER = "STOP_RETAILER_SERVER",
   START_RETAILER_SERVER = "START_RETAILER_SERVER",
   SYNC_RETAILER_STATUS = "SYNC_RETAILER_STATUS",
-  SYNC_ENGINE_UI_TO_MAIN = "SYNC_ENGINE_UI_TO_MAIN",
-  MESSAGE_TO_ENGINE_UI = "MESSAGE_TO_ENGINE_UI"
+  SYNC_SUPPLIER_UI_TO_MAIN = "SYNC_SUPPLIER_UI_TO_MAIN",
+  MESSAGE_TO_SUPPLIER_UI = "MESSAGE_TO_SUPPLIER_UI"
 }
 
 // message send to main
 export const ipcMainEvents = [
-  IpcEvents.SYNC_ENGINE_UI_TO_MAIN,
+  IpcEvents.SYNC_SUPPLIER_UI_TO_MAIN,
   IpcEvents.OPEN_SETTINGS,
   IpcEvents.CLOSE_SETTINGS,
   IpcEvents.OPEN_RETAILER_EDITOR,
@@ -62,9 +62,9 @@ export const ipcRendererEvents = [
   IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS
 ];
 
-// message send to engine ui
-export const ipcEngineEvents = [
-  IpcEvents.MESSAGE_TO_ENGINE_UI
+// message send to supplier ui
+export const ipcSupplierEvents = [
+  IpcEvents.MESSAGE_TO_SUPPLIER_UI
 ]
 
 // message send to Browser Window

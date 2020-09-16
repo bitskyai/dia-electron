@@ -84,6 +84,6 @@ export class Root {
   }
 }
 
-window.BitskyDIA = window.BitskyDIA || {};
-window.BitskyDIA.app = window.BitskyDIA.app || new Root();
-window.BitskyDIA.app.setup();
+window.Bitsky = window.Bitsky || {};
+window.Bitsky.app = window.Bitsky.app || new Root();
+window.Bitsky.app.setup();

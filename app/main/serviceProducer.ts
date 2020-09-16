@@ -5,7 +5,7 @@ import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
 import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
 import { ipcMainManager } from "./ipc";
-import engine from '../utils/engine';
+import supplier from '../utils/supplier';
 import {
   getServiceProducerPreferencesJSON,
   updateServiceProducerPreferencesJSON,
@@ -29,7 +29,7 @@ class ServiceProducer {
     try {
       let config = getServiceProducerPreferencesJSON();
       config.TYPE = 'SERVICE';
-      config.BITSKY_BASE_URL = `http://localhost:${engine.enginePort}`;
+      config.BITSKY_BASE_URL = `http://localhost:${supplier.supplierPort}`;
       config.PORT = this.port;
       config.RUNNING = this.running;
       config.STARTING = this.starting;
@@ -59,7 +59,7 @@ class ServiceProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTING_SERVICE,
           data: this.getConfig(),
@@ -102,7 +102,7 @@ class ServiceProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTED_SERVICE,
           status: true,
@@ -118,7 +118,7 @@ class ServiceProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTED_SERVICE,
           status: false,
@@ -148,7 +148,7 @@ class ServiceProducer {
       this.stopping = true;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPING_SERVICE,
           data: this.getConfig(),
@@ -170,7 +170,7 @@ class ServiceProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPED_SERVICE,
           status: true,
@@ -185,7 +185,7 @@ class ServiceProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPED_SERVICE,
           status: false,
@@ -209,7 +209,7 @@ export function setupServiceProducer():ServiceProducer {
     _serviceProducer.start();
 
     // setup message listener
-    ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
+    ipcMainManager.on(IpcEvents.SYNC_SUPPLIER_UI_TO_MAIN, async (event, body) => {
       const subject = body && body.subject;
       console.log("subject: ", subject);
       switch (subject) {

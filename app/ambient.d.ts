@@ -4,7 +4,7 @@ import * as MonacoType from "monaco-editor";
 
 declare global {
   interface Window {
-    BitskyDIA: {
+    Bitsky: {
       app: any;
       editors: Record<string, MonacoType.editor.IStandaloneCodeEditor | null>;
     };

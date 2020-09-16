@@ -10,7 +10,7 @@ import { shouldQuit } from "./squirrel";
 // import { setupUpdates } from "./update";
 import { getOrCreateMainWindow } from "./windows";
 import logger from "../utils/logger";
-import engine from "../utils/engine";
+import supplier from "../utils/supplier";
 import { setupHeadlessProducer } from "./headlessProducer";
 import { setupServiceProducer } from "./serviceProducer";
 import RetailerManager from "../utils/retailer-manager";
@@ -32,9 +32,9 @@ export async function onReady() {
     await onFirstRunMaybe();
     if (!isDevMode()) process.env.NODE_ENV = "production";
     try {
-      await engine.startEngine();
+      await supplier.startSupplier();
     } catch (err) {
-      logger.error("start engine file. error: ", err);
+      logger.error("start supplier file. error: ", err);
     }
 
     // Temp comment to fix https://github.com/bitskyai/bitsky-builder/issues/41

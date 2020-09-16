@@ -23,8 +23,8 @@ export const DEFAULT_MONGODB_CONFIG = {
   TYPEORM_URL: `mongodb://localhost:27017/bitsky`
 };
 
-// log files path for engine
-export const LOG_FILES_PATH = path.join(BITSKY_HOME_FOLDER, "./engine/log");
+// log files path for supplier
+export const LOG_FILES_PATH = path.join(BITSKY_HOME_FOLDER, "./supplier/log");
 
 export const PREFERENCES_JSON_PATH = path.join(BITSKY_HOME_FOLDER, 'preferences.json');
 

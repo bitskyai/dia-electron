@@ -6,7 +6,7 @@ import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
 import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
 import { ipcMainManager } from "./ipc";
-import engine from "../utils/engine";
+import supplier from "../utils/supplier";
 import {
   getHeadlessProducerPreferencesJSON,
   updateHeadlessProducerPreferencesJSON,
@@ -38,7 +38,7 @@ class HeadlessProducer {
     try {
       let config = getHeadlessProducerPreferencesJSON();
       config.TYPE = "HEADLESSBROWSER";
-      config.BITSKY_BASE_URL = `http://localhost:${engine.enginePort}`;
+      config.BITSKY_BASE_URL = `http://localhost:${supplier.supplierPort}`;
       config.PORT = this.port;
       config.RUNNING = this.running;
       config.STARTING = this.starting;
@@ -68,7 +68,7 @@ class HeadlessProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTING_HEADLESS,
           data: this.getConfig(),
@@ -95,12 +95,10 @@ class HeadlessProducer {
       const indexOptions = {
         home: headlessHome,
         items: [
-          undefined,
-          undefined,
           {
             url: "/screenshots",
             title: "Screenshots",
-            description: "Screenshots of web page",
+            description: 'Screenshots of web page. <button type="button" class="btn btn-primary btn-sm"><a href="/screenshots" style="color: white;" target="_blank">View Screenshots</a></button>',
           },
         ],
       };
@@ -121,7 +119,7 @@ class HeadlessProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTED_HEADLESS,
           status: true,
@@ -137,7 +135,7 @@ class HeadlessProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STARTED_HEADLESS,
           status: false,
@@ -166,7 +164,7 @@ class HeadlessProducer {
       this.stopping = true;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPING_HEADLESS,
           data: this.getConfig(),
@@ -187,7 +185,7 @@ class HeadlessProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPED_HEADLESS,
           status: true,
@@ -202,7 +200,7 @@ class HeadlessProducer {
       this.stopping = false;
 
       // notify web-app
-      ipcMainManager.send(IpcEvents.MESSAGE_TO_ENGINE_UI, [
+      ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
           subject: BROWSER_WINDOW_EVENTS.STOPPED_HEADLESS,
           status: false,
@@ -224,7 +222,7 @@ export function setupHeadlessProducer(): HeadlessProducer {
     _headlessProducer.start();
 
     // setup message listener
-    ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
+    ipcMainManager.on(IpcEvents.SYNC_SUPPLIER_UI_TO_MAIN, async (event, body) => {
       const subject = body && body.subject;
       switch (subject) {
         case "headless/getConfig":

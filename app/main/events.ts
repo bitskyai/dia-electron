@@ -12,7 +12,7 @@ import { hideSettings, showSettings } from "./menu";
 import { IpcEvents } from "../ipc-events";
 import logger from "../utils/logger";
 import { testDBConnection } from "../web-app/build/server";
-import engine from "../utils/engine";
+import supplier from "../utils/supplier";
 import RetailerManager from "../utils/retailer-manager";
 import { getOrCreateRetailerEditorWindow } from "./retailerEditorWindows";
 import {
@@ -30,7 +30,7 @@ export function setUpEventListeners() {
     }
   });
 
-  ipcMainManager.on(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, async (event, body) => {
+  ipcMainManager.on(IpcEvents.SYNC_SUPPLIER_UI_TO_MAIN, async (event, body) => {
     const subject = body && body.subject;
     switch (subject) {
       case "common/openDirectoryPicker":
@@ -143,7 +143,7 @@ export function setUpEventListeners() {
     async (event, arg) => {
       try {
         updatePreferencesJSON(arg.preferences);
-        await engine.restartEngine();
+        await supplier.restartSupplier();
         event.returnValue = {
           status: true,
         };

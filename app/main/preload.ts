@@ -49,17 +49,17 @@ window.addEventListener("DOMContentLoaded", () => {
 //   });
 });
 
-window.addEventListener("syncEngineUIToMain", (event: any) => {
-  let result = ipcRenderer.sendSync(IpcEvents.SYNC_ENGINE_UI_TO_MAIN, {
+window.addEventListener("syncSupplierUIToMain", (event: any) => {
+  let result = ipcRenderer.sendSync(IpcEvents.SYNC_SUPPLIER_UI_TO_MAIN, {
     subject: event.detail.subject,
     data: event.detail.data,
   });
   event.detail.callback(result);
 });
 
-ipcRenderer.on(IpcEvents.MESSAGE_TO_ENGINE_UI, (e, payload) => {
-  console.log("MESSAGE_TO_ENGINE_UI->event: ", e);
-  console.log("MESSAGE_TO_ENGINE_UI->payload: ", payload);
+ipcRenderer.on(IpcEvents.MESSAGE_TO_SUPPLIER_UI, (e, payload) => {
+  console.log("MESSAGE_TO_SUPPLIER_UI->event: ", e);
+  console.log("MESSAGE_TO_SUPPLIER_UI->payload: ", payload);
   const subject = payload.subject;
   delete payload.subject;
   const event = new CustomEvent(subject, {

@@ -22,7 +22,7 @@ export interface EditorsProps {
  * Current only support CRUD one file
  */
 function Editors(props: EditorsProps) {
-  const monaco = window.BitskyDIA.app.monaco;
+  const monaco = window.Bitsky.app.monaco;
 
   const currentSelectedFilePath: string = useSelector(
     state => state.explorer.currentSelectedFilePath

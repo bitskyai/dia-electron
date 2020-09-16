@@ -1,6 +1,6 @@
 {
   "name": "bitsky",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Cross platform clients",
   "license": "Apache-2.0",
   "productName": "BitSky",
@@ -29,8 +29,8 @@
     "@hot-loader/react-dom": "^16.8.6",
     "ajv": "^6.10.1",
     "antd": "^3.25.2",
-    "@bitskyai/producer-sdk": "0.1.1",
-    "@bitskyai/retailer-sdk": "0.1.1",
+    "@bitskyai/producer-sdk": "0.1.2",
+    "@bitskyai/retailer-sdk": "0.1.2",
     "body-parser": "^1.18.3",
     "chrome-launcher": "0.13.3",
     "circular-json": "^0.5.9",
@@ -96,7 +96,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
-    "@electron-forge/cli": "6.0.0-beta.45",
+    "@electron-forge/cli": "^6.0.0-beta.53",
     "@electron-forge/maker-deb": "6.0.0-beta.45",
     "@electron-forge/maker-rpm": "6.0.0-beta.45",
     "@electron-forge/maker-squirrel": "6.0.0-beta.45",

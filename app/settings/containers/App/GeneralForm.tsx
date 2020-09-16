@@ -15,7 +15,7 @@ import {
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
 
-const DEAULT_SQLITE_DATABASE = "bitsky_dia.sql";
+const DEAULT_SQLITE_DATABASE = "bitsky.sql";
 
 class GeneralForm extends React.Component {
   constructor(props: any) {
