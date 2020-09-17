@@ -65,7 +65,7 @@ class App extends React.PureComponent {
               <Paragraph>
                 <ul>
                   <li>
-                    <a href="https://bitsky.ai" target="_blank">
+                    <a href="https://www.bitsky.ai" target="_blank">
                       <FormattedMessage id="bitsky.settings.website" />
                     </a>
                   </li>

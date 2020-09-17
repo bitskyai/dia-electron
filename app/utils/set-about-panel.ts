@@ -18,14 +18,14 @@ export function setupAboutPanel(): void {
   // TODO: need to implement about page information
   switch (process.platform) {
     case 'linux':
-      options.website = 'https://bitsky.ai';
+      options.website = 'https://www.bitsky.ai';
       break;
     case 'darwin':
-      options.credits = 'https://bitsky.ai';
+      options.credits = 'https://www.bitsky.ai';
       break;
     default:
       // fallthrough
-      options.credits = 'https://bitsky.ai';
+      options.credits = 'https://www.bitsky.ai';
   }
 
   console.log("About Panel Options: ", options);
