@@ -193,18 +193,6 @@ function TouchBarManager() {
         to see more detail
       </Paragraph>
       <div>
-        <Tooltip title="Retailer Service Base URL">
-          <a target="_blank" href={retailerURL} style={linkBtn}>
-            <img
-              style={linkBtnIcon}
-              src={
-                "https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg"
-              }
-              alt={"Open Retailer Service"}
-            />
-            {retailerURL}
-          </a>
-        </Tooltip>
         <Tooltip title="View more detail in User Manual">
           <a
             target="_blank"
@@ -222,22 +210,36 @@ function TouchBarManager() {
           </a>
         </Tooltip>
         {status.isRunning ? (
-          <Tooltip title="Add trigger tasks is used to trigger data crawling. By default will call trigger function inside worker.js">
-            <a
-              target="_blank"
-              style={linkBtn}
-              href={`${retailerURL}${"/apis/tasks/trigger"}`}
-            >
-              <img
-                style={linkBtnIcon}
-                src={
-                  "https://gw.alipayobjects.com/zos/rmsportal/MjEImQtenlyueSmVEfUD.svg"
-                }
-                alt={"Retailer Editor User Manual"}
-              />
-              Add trigger tasks
-            </a>
-          </Tooltip>
+          <>
+            <Tooltip title="Retailer Service Base URL">
+              <a target="_blank" href={retailerURL} style={linkBtn}>
+                <img
+                  style={linkBtnIcon}
+                  src={
+                    "https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg"
+                  }
+                  alt={"Open Retailer Service"}
+                />
+                {retailerURL}
+              </a>
+            </Tooltip>
+            <Tooltip title="Add trigger tasks is used to trigger data crawling. By default will call trigger function inside worker.js">
+              <a
+                target="_blank"
+                style={linkBtn}
+                href={`${retailerURL}${"/apis/tasks/trigger"}`}
+              >
+                <img
+                  style={linkBtnIcon}
+                  src={
+                    "https://gw.alipayobjects.com/zos/rmsportal/MjEImQtenlyueSmVEfUD.svg"
+                  }
+                  alt={"Retailer Editor User Manual"}
+                />
+                Add trigger tasks
+              </a>
+            </Tooltip>
+          </>
         ) : (
           <></>
         )}
