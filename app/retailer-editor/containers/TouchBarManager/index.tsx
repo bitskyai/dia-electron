@@ -97,12 +97,12 @@ function TouchBarManager() {
 
   const getActionBtns = () => {
     let actionBtns = [
-      <Tooltip title="Open or Close Console panel">
-        <Button key="console" type={consoleBtnType} onClick={clickConsole}>
-          <Icon type="code" />
-          Console
-        </Button>
-      </Tooltip>,
+      // <Tooltip title="Open or Close Console panel">
+      //   <Button key="console" type={consoleBtnType} onClick={clickConsole}>
+      //     <Icon type="code" />
+      //     Console
+      //   </Button>
+      // </Tooltip>,
       <Tooltip title="Open or Close Explorer panel">
         <Button key="explorer" type={explorerBtnType} onClick={clickExplorer}>
           <Icon type={explorerIconType} />
@@ -117,52 +117,53 @@ function TouchBarManager() {
       </Tooltip>,
     ];
 
-    if (!status.isElectronDownloaded) {
-      // if didn't download electron, then show Download
+    // Don't need user to download electron, so comment this
+    // if (!status.isElectronDownloaded) {
+    //   // if didn't download electron, then show Download
+    //   actionBtns = [
+    //     <Tooltip title="Download Electron">
+    //       <Button
+    //         key="download"
+    //         type="primary"
+    //         onClick={downloadElectron}
+    //         loading={status.isDownloading}
+    //       >
+    //         {!status.isDownloading ? <Icon type="download" /> : ""}
+    //         Download Electron
+    //       </Button>
+    //     </Tooltip>,
+    //   ].concat(actionBtns);
+    // } else {
+    // electron already download
+    if (status.isRunning) {
       actionBtns = [
-        <Tooltip title="Download Electron">
+        <Tooltip title="Stop retailer service">
           <Button
-            key="download"
+            key="stop"
             type="primary"
-            onClick={downloadElectron}
-            loading={status.isDownloading}
+            onClick={stopRetailer}
+            loading={status.isStoppingServer}
           >
-            {!status.isDownloading ? <Icon type="download" /> : ""}
-            Download Electron
+            {!status.isStoppingServer ? <Icon type="pause-circle" /> : ""}
+            Stop
           </Button>
         </Tooltip>,
       ].concat(actionBtns);
     } else {
-      // electron already download
-      if (status.isRunning) {
-        actionBtns = [
-          <Tooltip title="Stop retailer service">
-            <Button
-              key="stop"
-              type="primary"
-              onClick={stopRetailer}
-              loading={status.isStoppingServer}
-            >
-              {!status.isStoppingServer ? <Icon type="pause-circle" /> : ""}
-              Stop
-            </Button>
-          </Tooltip>,
-        ].concat(actionBtns);
-      } else {
-        actionBtns = [
-          <Tooltip title="Start retailer service">
-            <Button
-              key="run"
-              onClick={startRetailer}
-              loading={status.isStartingServer}
-            >
-              {!status.isStartingServer ? <Icon type="caret-right" /> : ""}
-              Start
-            </Button>
-          </Tooltip>,
-        ].concat(actionBtns);
-      }
+      actionBtns = [
+        <Tooltip title="Start retailer service">
+          <Button
+            key="run"
+            onClick={startRetailer}
+            loading={status.isStartingServer}
+          >
+            {!status.isStartingServer ? <Icon type="caret-right" /> : ""}
+            Start
+          </Button>
+        </Tooltip>,
+      ].concat(actionBtns);
     }
+    // }
 
     return actionBtns;
   };

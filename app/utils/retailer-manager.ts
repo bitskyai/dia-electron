@@ -10,7 +10,7 @@ import logger from "./logger";
 import { IpcEvents } from "../ipc-events";
 import { ipcMainManager } from "../main/ipc";
 import { LogItem } from "../interfaces";
-import { getAvailablePort } from "./index";
+import { getAvailablePort, clearRequireCacheStartWith } from "./index";
 import { RETAILER_CHECK_TIMEOUT } from "./constants";
 
 class RetailerManager {
@@ -147,7 +147,10 @@ class RetailerManager {
           payload: {
             status,
             version,
-            error
+            error: {
+              message: error.message,
+              stack: error.stack
+            }
           }
         }
       ]);
@@ -291,7 +294,7 @@ class RetailerManager {
     return this.RetailerPort;
   }
 
-  public async runRetailer(): Promise<void> {
+  public async runRetailerElectron(): Promise<void> {
     try {
       logger.functionStart("runRetailer");
       this.isStartingServer = true;
@@ -393,7 +396,10 @@ class RetailerManager {
           status: "fail",
           payload: {
             status,
-            error: err
+            error: {
+              message: err.message,
+              stack: err.stack
+            }
           }
         }
       ]);
@@ -401,7 +407,7 @@ class RetailerManager {
     }
   }
 
-  public async stopRetailer() {
+  public async stopRetailerElectron() {
     try {
       this.isStoppingServer = true;
       let status = await this.status();
@@ -436,7 +442,147 @@ class RetailerManager {
           status: "fail",
           payload: {
             status,
-            error: err
+            error: {
+              message: err.message,
+              stack: err.stack
+            }
+          }
+        }
+      ]);
+    }
+  }
+
+  public async runRetailer(): Promise<void> {
+    try {
+      logger.functionStart("runRetailer");
+      this.isStartingServer = true;
+      let status = await this.status();
+      if (this.isRunning) {
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
+          {
+            status: "success",
+            payload: {
+              status
+            }
+          }
+        ]);
+        return;
+      }
+      const RETAILER_PATH = getRetailerPath();
+      logger.debug(`RETAILER_Path: ${RETAILER_PATH}`);
+      // get an available port
+      this.RetailerPort = await this.getAvailablePort();
+      status = await this.status();
+      ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER, [
+        {
+          status: "starting",
+          payload: {
+            status
+          }
+        }
+      ]);
+      const RETAILER_SERVER_PATH = path.join(RETAILER_PATH, 'server.js');
+      clearRequireCacheStartWith(RETAILER_PATH);
+      const { startServer } = require(RETAILER_SERVER_PATH);
+      await startServer({
+        BITSKY_BASE_URL: process.env.BITSKY_BASE_URL,
+        PORT: this.RetailerPort
+      });
+      const success = await this.checkWhetherStartRetailerSuccessful();
+      this.isStartingServer = false;
+      if (success) {
+        this.isRunning = true;
+        status = await this.status();
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
+          {
+            status: "success",
+            payload: {
+              status
+            }
+          }
+        ]);
+      } else {
+        this.isRunning = false;
+        // await this.stopRetailer();
+        status = await this.status();
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
+          {
+            status: "fail",
+            payload: {
+              status
+            }
+          }
+        ]);
+      }
+      logger.functionEnd("runRetailer");
+    } catch (err) {
+      this.isStartingServer = false;
+      this.isRunning = false;
+      // await this.stopRetailer();
+      logger.error("runRetailer error: ", err);
+      let status = await this.status();
+      ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
+        {
+          status: "fail",
+          payload: {
+            status,
+            error: {
+              message: err.message,
+              stack: err.stack
+            }
+          }
+        }
+      ]);
+      throw err;
+    }
+  }
+
+  public async stopRetailer() {
+    try {
+      this.isStoppingServer = true;
+      let status = await this.status();
+      ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER, [
+        {
+          status: "stopping",
+          payload: {
+            status
+          }
+        }
+      ]);
+
+      const RETAILER_PATH = getRetailerPath();
+      const RETAILER_SERVER_PATH = path.join(RETAILER_PATH, 'server.js');
+      clearRequireCacheStartWith(RETAILER_PATH);
+      const { stopServer } = require(RETAILER_SERVER_PATH);
+      if (stopServer) {
+        await stopServer();
+        this.isRunning = false;
+        this.isStoppingServer = false;
+        status = await this.status();
+        console.log('stopRetailer -> status: ', status);
+        ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
+          {
+            status: "success",
+            payload: {
+              status
+            }
+          }
+        ]);
+      }
+    } catch (err) {
+      console.error("stopRetailer -> error message: ", err.message);
+      console.error("stopRetailer -> error stack: ", err.stack);
+      this.isStoppingServer = false;
+      let status = await this.status();
+      ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, [
+        {
+          status: "fail",
+          payload: {
+            status,
+            error: {
+              message: err.message,
+              stack: err.stack
+            }
           }
         }
       ]);
@@ -448,13 +594,15 @@ class RetailerManager {
    */
   public async status() {
     // check whether isn't downloaded
-    await this.getIsDownloaded();
+    // await this.getIsDownloaded(); // Don't require user to download Electorn
     return {
-      isElectronDownloaded: this.isElectronDownloaded,
+      // isElectronDownloaded: this.isElectronDownloaded,
+      isElectronDownloaded: true,  // Don't require user to download Electorn
       // after init, will not change
       RetailerPort: this.RetailerPort,
       // following is in-memory status
-      isDownloading: this.isDownloading,
+      // isDownloading: this.isDownloading,
+      isDownloading: false, // Don't require user to download Electorn
       isRunning: this.isRunning,
       isStartingServer: this.isStartingServer,
       isStoppingServer: this.isStoppingServer

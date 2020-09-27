@@ -14,12 +14,13 @@ import {
   MosaicNode,
   MosaicZeroState
 } from "react-mosaic-component";
+import _ from "lodash";
 
 import Explorer from "../Explorer";
 import TouchBarManager from "../TouchBarManager";
 import Editors from "../Editors";
 import Console from "../Consle";
-import { loadMonaco } from "../../utils";
+import { loadMonaco, errorDialog } from "../../utils";
 import { updateMosaicNodes, addConoleLog, updateRetailerStatus } from "./actions";
 import { initialState } from "./reducer";
 import { ipcRendererManager } from "../../ipc";
@@ -65,7 +66,7 @@ class App extends React.PureComponent<AppProps, AppState> {
       }
     );
     ipcRendererManager.on(IpcEvents.STARTING_RETAILER_SERVER_FAIL, (event, args) => {
-      console.log("IpcEvents.STARTING_RETAILER_SERVER_FAIL");
+      errorDialog('Start Fail', _.get(args, 'payload.error.stack'));
       this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(
@@ -80,7 +81,8 @@ class App extends React.PureComponent<AppProps, AppState> {
       this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, (event, args) => {
-      console.log("IpcEvents.STOPPING_RETAILER_SERVER_FAIL");
+      console.log("IpcEvents.STOPPING_RETAILER_SERVER_FAIL", args.payload);
+      errorDialog('Stop Fail', _.get(args, 'payload.error.stack'));
       this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(IpcEvents.DOWNLOADING_ELECTRON, (event, args) => {

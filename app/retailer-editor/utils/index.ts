@@ -3,6 +3,8 @@
  * We're doing things a bit roundabout to ensure that we're not overloading the
  * mobx state with a gigantic Monaco tree.
  */
+import { Modal } from 'antd';
+
 export const loadMonaco = async () => {
   const { app } = window.Bitsky;
   const loader = require("monaco-loader");
@@ -14,3 +16,10 @@ export const loadMonaco = async () => {
 
   return monaco;
 };
+
+export function errorDialog(title, content) {
+  Modal.error({
+    title,
+    content,
+  });
+}

@@ -29,7 +29,7 @@ class Supplier {
       logger.info("main->main.js->onReady, bitsky-supplier successfully started.");
       const mainWindow = getOrCreateMainWindow();
       mainWindow.loadURL(`http://localhost:${this.supplierPort}`);
-
+      process.env.BITSKY_BASE_URL = `http://localhost:${this.supplierPort}`;
       // Only used for UI Develop
       // mainWindow.loadURL(`http://localhost:8000`);
 

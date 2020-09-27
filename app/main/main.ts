@@ -33,6 +33,11 @@ export async function onReady() {
     if (!isDevMode()) process.env.NODE_ENV = "production";
     try {
       await supplier.startSupplier();
+      process.env.BITSKY_BASE_URL = `http://localhost:${supplier.supplierPort}`;
+      // setup headless producer
+      setupHeadlessProducer();
+      // setup service producer
+      setupServiceProducer();
     } catch (err) {
       logger.error("start supplier file. error: ", err);
     }
@@ -44,11 +49,6 @@ export async function onReady() {
     // } catch (err) {
     //   logger.error("start retailer fail. error: ", err);
     // }
-
-    // setup headless producer
-    setupHeadlessProducer();
-    // setup service producer
-    setupServiceProducer();
     // setup menus for main processes
     setupMenu();
     setupAboutPanel();
