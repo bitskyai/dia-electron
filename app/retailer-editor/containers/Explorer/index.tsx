@@ -1,16 +1,24 @@
 import React, { useEffect, useContext, useState } from "react";
-import { Tree, Skeleton, Icon } from "antd";
+import { Tree, Skeleton, Icon, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
   MosaicWindow,
   MosaicBranch,
   MosaicContext,
-  MosaicNode
+  MosaicNode,
 } from "react-mosaic-component";
 import { RetailerFolderStructure, DirType } from "../../../interfaces";
-import { getRetailerFolderStructue, updateCurrentSelectedFile } from "./actions";
+import {
+  getRetailerFolderStructue,
+  updateCurrentSelectedFile,
+} from "./actions";
+import {
+  showOrHideExplorer
+} from "../App/actions";
 import { responsedToExplorer } from "../App/actions";
 import { initialState } from "../App/reducer";
+import './style.scss';
+
 const { TreeNode, DirectoryTree } = Tree;
 
 export interface ExplorerProps {
@@ -21,13 +29,13 @@ function Explorer(props: ExplorerProps) {
   const dispatch = useDispatch();
   const context = useContext(MosaicContext);
   const isExplorerOpen: boolean = useSelector(
-    state => state.app.isExplorerOpen
+    (state) => state.app.isExplorerOpen
   );
   const waitingExplorerToResponse: boolean = useSelector(
-    state => state.app.waitingExplorerToResponse
+    (state) => state.app.waitingExplorerToResponse
   );
   const mosaicNodes: MosaicNode<number | string> | null = useSelector(
-    state => state.app.mosaicNodes
+    (state) => state.app.mosaicNodes
   );
 
   // whether show all files. This is a feedback from a user that only show necessary files at beginning
@@ -36,7 +44,7 @@ function Explorer(props: ExplorerProps) {
   useEffect(() => {
     // second parameter is [], the effect will only run on first render
     // Get Retailer Folder Structure
-    dispatch(getRetailerFolderStructue());
+    getFoldersStructure();
   }, []);
 
   useEffect(() => {
@@ -48,16 +56,16 @@ function Explorer(props: ExplorerProps) {
               path: [],
               spec: {
                 splitPercentage: {
-                  $set: initialState.mosaicNodes.splitPercentage
+                  $set: initialState.mosaicNodes.splitPercentage,
                 },
                 second: {
                   first: {},
                   splitPercentage: {
-                    $set: mosaicNodes && mosaicNodes.second.splitPercentage
-                  }
-                }
-              }
-            }
+                    $set: mosaicNodes && mosaicNodes.second.splitPercentage,
+                  },
+                },
+              },
+            },
           ]);
         } else {
           // context.mosaicActions.hide(["second", "second"]);
@@ -66,16 +74,16 @@ function Explorer(props: ExplorerProps) {
               path: [],
               spec: {
                 splitPercentage: {
-                  $set: 0
+                  $set: 0,
                 },
                 second: {
                   first: {},
                   splitPercentage: {
-                    $set: mosaicNodes && mosaicNodes.second.splitPercentage
-                  }
-                }
-              }
-            }
+                    $set: mosaicNodes && mosaicNodes.second.splitPercentage,
+                  },
+                },
+              },
+            },
           ]);
         }
         dispatch(responsedToExplorer());
@@ -83,67 +91,69 @@ function Explorer(props: ExplorerProps) {
     }
   });
 
-  const retailerFolderStructure: RetailerFolderStructure = useSelector(state => {
-    return state.explorer.retailerFolderStructure;
-  });
+  const retailerFolderStructure: RetailerFolderStructure = useSelector(
+    (state) => {
+      return state.explorer.retailerFolderStructure;
+    }
+  );
 
-  const generateFolderStructure = folderStructure => {
+  const generateFolderStructure = (folderStructure) => {
     // TODO: use function to filter this tree
     // only show frequently used files
-    let arr = [
+    const arr = [
       {
         type: DirType.file,
         name: "worker.js",
-        path: "worker.js"
-      },
-      {
-        type: "button",
-        name: "Show Hiding Files",
-        path: "show_hiding_files",
-        icon: "down-square"
+        path: "worker.js",
       }
     ];
-    if (showAllFiles) {
-      arr = [].concat(folderStructure).concat([
-        {
-          type: "button",
-          name: "Collapse Hiding Files",
-          path: "collapse_hiding_files",
-          icon: "up-square"
-        }
-      ]);
-    }
-    return arr;
+
+    return showAllFiles ? folderStructure : arr;
   };
 
-  const onSelect = keys => {
+  const getFoldersStructure = () => {
+    dispatch(getRetailerFolderStructue());
+  }
+
+  const clickExplorer = () => {
+    dispatch(showOrHideExplorer());
+  };
+
+  const onSelect = (keys) => {
     let key = keys && keys[0];
     let arr = key.split("::");
     if (arr[0] === DirType.file) {
       // only update when select a file
       dispatch(updateCurrentSelectedFile(arr[1]));
-    }else if(arr[0] === 'button'){
-      setShowAllFiles(!showAllFiles);
     }
   };
 
   const onExpand = () => {};
 
-  const generateTreeNodes = data =>
-    data.map(item => {
+  const generateTreeNodes = (data) =>
+    data.map((item) => {
       if (item.type == DirType.directory) {
         return (
           <TreeNode title={item.name} key={`${item.type}::${item.path}`}>
             {generateTreeNodes(item.children)}
           </TreeNode>
         );
-      }else if(item.type == DirType.file){
+      } else if (item.type == DirType.file) {
         return (
-          <TreeNode title={item.name} key={`${item.type}::${item.path}`} isLeaf />
+          <TreeNode
+            title={item.name}
+            key={`${item.type}::${item.path}`}
+            isLeaf
+          />
         );
-      }else{
+      } else {
         return (
-          <TreeNode icon={()=><Icon type={item.icon}/>} title={item.name} key={`${item.type}::${item.path}`} isLeaf />
+          <TreeNode
+            icon={() => <Icon type={item.icon} />}
+            title={item.name}
+            key={`${item.type}::${item.path}`}
+            isLeaf
+          />
         );
       }
     });
@@ -158,10 +168,35 @@ function Explorer(props: ExplorerProps) {
           title={"Explorer"}
           path={props.path}
           toolbarControls={[]}
+          renderToolbar={() => {
+            return (
+              <>
+                <div className="mosaic-window-title" title="Explorer">
+                  Explorer
+                </div>
+                <div className="mosaic-window-controls">
+                  <Button.Group>
+                    <Button type="link" className="retailer-editor-explorer-action-button" onClick={getFoldersStructure}>
+                      <Icon type="reload" />
+                    </Button>
+                    <Button type="link" className="retailer-editor-explorer-action-button" onClick={()=>{setShowAllFiles(!showAllFiles)}}>
+                      {
+                        showAllFiles ? <Icon type="eye-invisible" />: <Icon type="eye" />
+                      }
+                    </Button>
+                    <Button type="link" className="retailer-editor-explorer-action-button" onClick={clickExplorer}>
+                      <Icon type="close" />
+                    </Button>
+                  </Button.Group>
+                </div>
+              </>
+            );
+          }}
         >
           <div style={{ overflow: "scroll", height: "100%" }}>
             <DirectoryTree
               defaultExpandAll
+              // defaultSelectedKeys={[`${DirType.file}::worker.js`]}
               onSelect={onSelect}
               onExpand={onExpand}
             >

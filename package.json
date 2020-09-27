@@ -92,8 +92,7 @@
     "uuid": "^3.3.2",
     "validator": "^10.11.0",
     "vm2": "3.9.2",
-    "winston": "^3.2.1",
-    "ndb": "1.1.5"
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
@@ -111,6 +110,7 @@
     "@types/node": "^12.11.7",
     "@types/react-dom": "^16.9.4",
     "@types/vfile-message": "^2.0.0",
+    "sass": "1.26.11",
     "asar": "^2.0.1",
     "copyfiles": "^2.1.1",
     "cross-env": "^6.0.3",

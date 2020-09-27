@@ -16,6 +16,9 @@ import {
   showOrHideExplorer,
   updateRetailerStatus,
 } from "../App/actions";
+import {
+  getRetailerFolderStructue
+} from '../Explorer/actions';
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
 import { PUBSUB_TOPICS } from "../../utils/constants";
@@ -53,6 +56,7 @@ function TouchBarManager() {
   const clickConsole = () => {
     dispatch(showOrHideConsole());
   };
+  
   const clickExplorer = () => {
     dispatch(showOrHideExplorer());
   };
@@ -63,6 +67,7 @@ function TouchBarManager() {
       let result = ipcRendererManager.sendSync(
         IpcEvents.SYNC_RETAILER_RESET_TO_DEFAULT
       );
+      dispatch(getRetailerFolderStructue());
       if (result && result.status) {
         message.success(
           "Successfully reset to default Retailer, all your changes was reverted to default"

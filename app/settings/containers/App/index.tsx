@@ -10,7 +10,7 @@ import React from "react";
 import { FormattedMessage, injectIntl } from "react-intl";
 import { Tabs, PageHeader, Button, Typography } from "antd";
 const { TabPane } = Tabs;
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 const packageJSON = require("../../../../package.json");
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";

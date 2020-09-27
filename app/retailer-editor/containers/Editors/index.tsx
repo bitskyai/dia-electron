@@ -87,7 +87,7 @@ function Editors(props: EditorsProps) {
     );
   } else {
     // current only support CRUD one file
-    let pane = panes[0];
+    const pane = panes[0];
     return (
       <MosaicWindow<number>
         draggable={false}
