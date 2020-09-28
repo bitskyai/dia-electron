@@ -242,7 +242,7 @@ export function setUpEventListeners() {
         event.returnValue = {
           status: true,
         };
-        if (arg.filePath.search(/\.js\s*$/)) {
+        if (arg.filePath.search(/\.js\s*$/)!=-1) {
           RetailerManager.needToRestart = true;
           ipcMainManager.sendToRetailerEditor(
             IpcEvents.UPDATE_RETAILER_STATUS,

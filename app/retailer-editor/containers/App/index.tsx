@@ -66,7 +66,7 @@ class App extends React.PureComponent<AppProps, AppState> {
       }
     );
     ipcRendererManager.on(IpcEvents.STARTING_RETAILER_SERVER_FAIL, (event, args) => {
-      errorDialog('Start Fail', _.get(args, 'payload.error.stack'));
+      errorDialog('Start Fail', `<div>${_.get(args, 'payload.error.message')}</div><div>${_.get(args, 'payload.error.stack')}</div>`);
       this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(
@@ -82,7 +82,7 @@ class App extends React.PureComponent<AppProps, AppState> {
     });
     ipcRendererManager.on(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, (event, args) => {
       console.log("IpcEvents.STOPPING_RETAILER_SERVER_FAIL", args.payload);
-      errorDialog('Stop Fail', _.get(args, 'payload.error.stack'));
+      errorDialog('Stop Fail', `<div>${_.get(args, 'payload.error.message')}</div><div>${_.get(args, 'payload.error.stack')}</div>`);
       this.updateRetailerStatus(args.payload.status);
     });
     ipcRendererManager.on(IpcEvents.DOWNLOADING_ELECTRON, (event, args) => {

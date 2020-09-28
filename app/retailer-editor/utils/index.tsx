@@ -3,7 +3,8 @@
  * We're doing things a bit roundabout to ensure that we're not overloading the
  * mobx state with a gigantic Monaco tree.
  */
-import { Modal } from 'antd';
+import React from "react";
+import { Modal } from "antd";
 
 export const loadMonaco = async () => {
   const { app } = window.Bitsky;
@@ -20,6 +21,7 @@ export const loadMonaco = async () => {
 export function errorDialog(title, content) {
   Modal.error({
     title,
-    content,
+    width: 600,
+    content: <div dangerouslySetInnerHTML={{ __html: content||'' }} />,
   });
 }

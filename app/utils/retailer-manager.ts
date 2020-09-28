@@ -3,7 +3,11 @@ import * as fsType from "fs-extra";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
 import { fancyImport } from "./import";
-import { copyDefaultRetailer, getRetailerPath, writeConfigJson } from "./retailer-file-manager";
+import {
+  copyDefaultRetailer,
+  getRetailerPath,
+  writeConfigJson,
+} from "./retailer-file-manager";
 import { BITSKY_HOME_FOLDER } from "./constants";
 import { isFirstRun } from "./check-first-run";
 import logger from "./logger";
@@ -66,9 +70,9 @@ class RetailerManager {
           status: "downloading",
           payload: {
             status,
-            version
-          }
-        }
+            version,
+          },
+        },
       ]);
       return true;
     }
@@ -82,14 +86,16 @@ class RetailerManager {
           status: "success",
           payload: {
             status: { ...status, isDownloading: this.isDownloading },
-            version
-          }
-        }
+            version,
+          },
+        },
       ]);
       return true;
     }
 
-    logger.info(`RetailerManager: Electron ${version} not present, downloading`);
+    logger.info(
+      `RetailerManager: Electron ${version} not present, downloading`
+    );
     // start downloading electron
     this.isDownloading = true;
     // publish message to let Retailer Editor know it is downloading electron
@@ -98,9 +104,9 @@ class RetailerManager {
         status: "downloading",
         payload: {
           status: { ...status, isDownloading: this.isDownloading },
-          version
-        }
-      }
+          version,
+        },
+      },
     ]);
     try {
       const zipPath = await eDownload({ version });
@@ -117,15 +123,18 @@ class RetailerManager {
       status = this.status();
       if (this.isElectronDownloaded) {
         // if isDownloaded is true, then successfully download
-        ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOAD_ELECTRON_SUCCESS, [
-          {
-            status: "success",
-            payload: {
-              status,
-              version
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.DOWNLOAD_ELECTRON_SUCCESS,
+          [
+            {
+              status: "success",
+              payload: {
+                status,
+                version,
+              },
+            },
+          ]
+        );
       } else {
         // otherwise, download fail
         ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOAD_ELECTRON_FAIL, [
@@ -133,9 +142,9 @@ class RetailerManager {
             status: "fail",
             payload: {
               status,
-              version
-            }
-          }
+              version,
+            },
+          },
         ]);
       }
       return true;
@@ -151,10 +160,10 @@ class RetailerManager {
             version,
             error: {
               message: error.message,
-              stack: error.stack
-            }
-          }
-        }
+              stack: error.stack,
+            },
+          },
+        },
       ]);
       return false;
       // TODO: Handle this case
@@ -202,7 +211,7 @@ class RetailerManager {
       process.noAsar = true;
 
       const options = {
-        dir: extractPath
+        dir: extractPath,
       };
 
       extract(zipPath, options, (error: Error) => {
@@ -280,14 +289,16 @@ class RetailerManager {
 
     return {
       timestamp: Date.now(),
-      text: strData.trim()
+      text: strData.trim(),
     };
   }
 
   private async publishLog(data): Promise<void> {
     const logItem: LogItem | null = this.formatOutput(data);
     if (logItem) {
-      ipcMainManager.sendToRetailerEditor(IpcEvents.RETAILER_CONSOLE_LOG, [logItem]);
+      ipcMainManager.sendToRetailerEditor(IpcEvents.RETAILER_CONSOLE_LOG, [
+        logItem,
+      ]);
     }
   }
 
@@ -302,14 +313,17 @@ class RetailerManager {
       this.isStartingServer = true;
       let status = this.status();
       if (this.isRunning) {
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
-          {
-            status: "success",
-            payload: {
-              status
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STARTING_RETAILER_SERVER_SUCCESS,
+          [
+            {
+              status: "success",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
         return;
       }
       const RETAILER_PATH = getRetailerPath();
@@ -324,67 +338,76 @@ class RetailerManager {
         {
           status: "starting",
           payload: {
-            status
-          }
-        }
+            status,
+          },
+        },
       ]);
       const env = { ...process.env };
       env.PORT = this.RetailerPort.toString();
 
       this.retailerProcess = spawn(binaryPath, [RETAILER_PATH, "--inspect"], {
         cwd: RETAILER_PATH,
-        env
+        env,
       });
 
-      this.retailerProcess.stdout!.on("data", data => {
+      this.retailerProcess.stdout!.on("data", (data) => {
         // logger.debug("======stdout: ", data.toString());
         this.publishLog(data);
       });
-      this.retailerProcess.stderr!.on("data", data => {
+      this.retailerProcess.stderr!.on("data", (data) => {
         // logger.debug("******stderr: ", data.toString());
         this.publishLog(data);
       });
-      this.retailerProcess.on("close", async code => {
+      this.retailerProcess.on("close", async (code) => {
         const withCode =
           typeof code === "number" ? ` with code ${code.toString()}.` : `.`;
         logger.debug(withCode);
         this.publishLog(withCode);
         this.retailerProcess = null;
         status = this.status();
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
-          {
-            status: "success",
-            payload: {
-              status
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS,
+          [
+            {
+              status: "success",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
       });
       const success = await this.checkWhetherStartRetailerSuccessful();
       this.isStartingServer = false;
       if (success) {
         this.isRunning = true;
         status = this.status();
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
-          {
-            status: "success",
-            payload: {
-              status
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STARTING_RETAILER_SERVER_SUCCESS,
+          [
+            {
+              status: "success",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
       } else {
         this.isRunning = false;
         await this.stopRetailer();
         status = this.status();
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
-          {
-            status: "fail",
-            payload: {
-              status
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STARTING_RETAILER_SERVER_FAIL,
+          [
+            {
+              status: "fail",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
       }
       logger.functionEnd("runRetailer");
     } catch (err) {
@@ -393,18 +416,21 @@ class RetailerManager {
       await this.stopRetailer();
       logger.error("runRetailer error: ", err);
       let status = this.status();
-      ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
-        {
-          status: "fail",
-          payload: {
-            status,
-            error: {
-              message: err.message,
-              stack: err.stack
-            }
-          }
-        }
-      ]);
+      ipcMainManager.sendToRetailerEditor(
+        IpcEvents.STARTING_RETAILER_SERVER_FAIL,
+        [
+          {
+            status: "fail",
+            payload: {
+              status,
+              error: {
+                message: err.message,
+                stack: err.stack,
+              },
+            },
+          },
+        ]
+      );
       throw err;
     }
   }
@@ -417,9 +443,9 @@ class RetailerManager {
         {
           status: "stopping",
           payload: {
-            status
-          }
-        }
+            status,
+          },
+        },
       ]);
 
       if (this.retailerProcess) {
@@ -427,30 +453,36 @@ class RetailerManager {
         this.isRunning = false;
         this.isStoppingServer = false;
         status = this.status();
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
-          {
-            status: "success",
-            payload: {
-              status
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS,
+          [
+            {
+              status: "success",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
       }
     } catch (err) {
       this.isStoppingServer = false;
       let status = this.status();
-      ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, [
-        {
-          status: "fail",
-          payload: {
-            status,
-            error: {
-              message: err.message,
-              stack: err.stack
-            }
-          }
-        }
-      ]);
+      ipcMainManager.sendToRetailerEditor(
+        IpcEvents.STOPPING_RETAILER_SERVER_FAIL,
+        [
+          {
+            status: "fail",
+            payload: {
+              status,
+              error: {
+                message: err.message,
+                stack: err.stack,
+              },
+            },
+          },
+        ]
+      );
     }
   }
 
@@ -460,14 +492,17 @@ class RetailerManager {
       this.isStartingServer = true;
       let status = this.status();
       if (this.isRunning) {
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
-          {
-            status: "success",
-            payload: {
-              status
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STARTING_RETAILER_SERVER_SUCCESS,
+          [
+            {
+              status: "success",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
         return;
       }
       const RETAILER_PATH = getRetailerPath();
@@ -479,16 +514,16 @@ class RetailerManager {
         {
           status: "starting",
           payload: {
-            status
-          }
-        }
+            status,
+          },
+        },
       ]);
-      const RETAILER_SERVER_PATH = path.join(RETAILER_PATH, 'server.js');
+      const RETAILER_SERVER_PATH = path.join(RETAILER_PATH, "server.js");
       clearRequireCacheStartWith(RETAILER_PATH);
       const { startServer } = require(RETAILER_SERVER_PATH);
       await startServer({
         BITSKY_BASE_URL: process.env.BITSKY_BASE_URL,
-        PORT: this.RetailerPort
+        PORT: this.RetailerPort,
       });
       const success = await this.checkWhetherStartRetailerSuccessful();
       this.isStartingServer = false;
@@ -496,26 +531,32 @@ class RetailerManager {
         this.isRunning = true;
         this.needToRestart = false; // restart/start server successful
         status = this.status();
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
-          {
-            status: "success",
-            payload: {
-              status
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STARTING_RETAILER_SERVER_SUCCESS,
+          [
+            {
+              status: "success",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
       } else {
         this.isRunning = false;
         // await this.stopRetailer();
         status = this.status();
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
-          {
-            status: "fail",
-            payload: {
-              status
-            }
-          }
-        ]);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STARTING_RETAILER_SERVER_FAIL,
+          [
+            {
+              status: "fail",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
       }
       logger.functionEnd("runRetailer");
     } catch (err) {
@@ -523,19 +564,32 @@ class RetailerManager {
       this.isRunning = false;
       // await this.stopRetailer();
       logger.error("runRetailer error: ", err);
-      let status = this.status();
-      ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
-        {
-          status: "fail",
-          payload: {
-            status,
-            error: {
-              message: err.message,
-              stack: err.stack
-            }
-          }
+      const status = this.status();
+      let message = err.message;
+      let stack = err.stack;
+      if (err && err.toJSON) {
+        const errObj = err.toJSON();
+        if (errObj && errObj.status == 404) {
+          message =
+            "<div>Cannot find Retailer Configuration, Please check whither you set <b>settings.GLOBAL_ID</b> in <b>worker.js</b> to correct value.\n</div>";
+          stack = JSON.stringify(errObj.data, null, 2);
         }
-      ]);
+      }
+      ipcMainManager.sendToRetailerEditor(
+        IpcEvents.STARTING_RETAILER_SERVER_FAIL,
+        [
+          {
+            status: "fail",
+            payload: {
+              status,
+              error: {
+                message,
+                stack,
+              },
+            },
+          },
+        ]
+      );
       throw err;
     }
   }
@@ -548,13 +602,13 @@ class RetailerManager {
         {
           status: "stopping",
           payload: {
-            status
-          }
-        }
+            status,
+          },
+        },
       ]);
 
       const RETAILER_PATH = getRetailerPath();
-      const RETAILER_SERVER_PATH = path.join(RETAILER_PATH, 'server.js');
+      const RETAILER_SERVER_PATH = path.join(RETAILER_PATH, "server.js");
       clearRequireCacheStartWith(RETAILER_PATH);
       const { stopServer } = require(RETAILER_SERVER_PATH);
       if (stopServer) {
@@ -562,33 +616,39 @@ class RetailerManager {
         this.isRunning = false;
         this.isStoppingServer = false;
         status = this.status();
-        console.log('stopRetailer -> status: ', status);
-        ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
-          {
-            status: "success",
-            payload: {
-              status
-            }
-          }
-        ]);
+        console.log("stopRetailer -> status: ", status);
+        ipcMainManager.sendToRetailerEditor(
+          IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS,
+          [
+            {
+              status: "success",
+              payload: {
+                status,
+              },
+            },
+          ]
+        );
       }
     } catch (err) {
       console.error("stopRetailer -> error message: ", err.message);
       console.error("stopRetailer -> error stack: ", err.stack);
       this.isStoppingServer = false;
       let status = this.status();
-      ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, [
-        {
-          status: "fail",
-          payload: {
-            status,
-            error: {
-              message: err.message,
-              stack: err.stack
-            }
-          }
-        }
-      ]);
+      ipcMainManager.sendToRetailerEditor(
+        IpcEvents.STOPPING_RETAILER_SERVER_FAIL,
+        [
+          {
+            status: "fail",
+            payload: {
+              status,
+              error: {
+                message: err.message,
+                stack: err.stack,
+              },
+            },
+          },
+        ]
+      );
     }
   }
 
@@ -601,7 +661,7 @@ class RetailerManager {
     return {
       needToRestart: this.needToRestart,
       // isElectronDownloaded: this.isElectronDownloaded,
-      isElectronDownloaded: true,  // Don't require user to download Electorn
+      isElectronDownloaded: true, // Don't require user to download Electorn
       // after init, will not change
       RetailerPort: this.RetailerPort,
       // following is in-memory status
@@ -609,7 +669,7 @@ class RetailerManager {
       isDownloading: false, // Don't require user to download Electorn
       isRunning: this.isRunning,
       isStartingServer: this.isStartingServer,
-      isStoppingServer: this.isStoppingServer
+      isStoppingServer: this.isStoppingServer,
     };
   }
 }

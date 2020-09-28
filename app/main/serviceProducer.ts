@@ -28,7 +28,7 @@ class ServiceProducer {
   getConfig(): BaseProducerPreference {
     try {
       let config = getServiceProducerPreferencesJSON();
-      config.TYPE = 'SERVICE';
+      config.TYPE = 'HTTP';
       config.BITSKY_BASE_URL = `http://localhost:${supplier.supplierPort}`;
       config.PORT = this.port;
       config.RUNNING = this.running;
