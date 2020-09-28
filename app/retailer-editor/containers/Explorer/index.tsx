@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { Tree, Skeleton, Icon, Button } from "antd";
+import { Tree, Skeleton, Icon, Button, Tooltip } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
   MosaicWindow,
@@ -12,12 +12,10 @@ import {
   getRetailerFolderStructue,
   updateCurrentSelectedFile,
 } from "./actions";
-import {
-  showOrHideExplorer
-} from "../App/actions";
+import { showOrHideExplorer } from "../App/actions";
 import { responsedToExplorer } from "../App/actions";
 import { initialState } from "../App/reducer";
-import './style.scss';
+import "./style.scss";
 
 const { TreeNode, DirectoryTree } = Tree;
 
@@ -41,10 +39,17 @@ function Explorer(props: ExplorerProps) {
   // whether show all files. This is a feedback from a user that only show necessary files at beginning
   const [showAllFiles, setShowAllFiles] = useState(false);
 
+  const currentSelectedFilePath: string = useSelector(
+    state => state.explorer.currentSelectedFilePath
+  );
+
   useEffect(() => {
     // second parameter is [], the effect will only run on first render
     // Get Retailer Folder Structure
     getFoldersStructure();
+    if(!currentSelectedFilePath){
+      dispatch(updateCurrentSelectedFile('worker.js'));
+    }
   }, []);
 
   useEffect(() => {
@@ -105,7 +110,7 @@ function Explorer(props: ExplorerProps) {
         type: DirType.file,
         name: "worker.js",
         path: "worker.js",
-      }
+      },
     ];
 
     return showAllFiles ? folderStructure : arr;
@@ -113,11 +118,15 @@ function Explorer(props: ExplorerProps) {
 
   const getFoldersStructure = () => {
     dispatch(getRetailerFolderStructue());
-  }
+  };
 
   const clickExplorer = () => {
     dispatch(showOrHideExplorer());
   };
+
+  const onLoad = (loadedKeys) => {
+    console.log('loadedKeys: ', loadedKeys)
+  }
 
   const onSelect = (keys) => {
     let key = keys && keys[0];
@@ -176,17 +185,49 @@ function Explorer(props: ExplorerProps) {
                 </div>
                 <div className="mosaic-window-controls">
                   <Button.Group>
-                    <Button type="link" className="retailer-editor-explorer-action-button" onClick={getFoldersStructure}>
-                      <Icon type="reload" />
-                    </Button>
-                    <Button type="link" className="retailer-editor-explorer-action-button" onClick={()=>{setShowAllFiles(!showAllFiles)}}>
-                      {
-                        showAllFiles ? <Icon type="eye-invisible" />: <Icon type="eye" />
-                      }
-                    </Button>
-                    <Button type="link" className="retailer-editor-explorer-action-button" onClick={clickExplorer}>
-                      <Icon type="close" />
-                    </Button>
+                    <Tooltip title="Refresh Folder Structure">
+                      <Button
+                        type="link"
+                        className="retailer-editor-explorer-action-button"
+                        onClick={getFoldersStructure}
+                      >
+                        <Icon type="reload" />
+                      </Button>
+                    </Tooltip>
+                    {showAllFiles ? (
+                      <Tooltip title="Only show worker.js">
+                        <Button
+                          type="link"
+                          className="retailer-editor-explorer-action-button"
+                          onClick={() => {
+                            setShowAllFiles(!showAllFiles);
+                          }}
+                        >
+                          <Icon type="eye-invisible" />
+                        </Button>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Show all files">
+                        <Button
+                          type="link"
+                          className="retailer-editor-explorer-action-button"
+                          onClick={() => {
+                            setShowAllFiles(!showAllFiles);
+                          }}
+                        >
+                          <Icon type="eye" />
+                        </Button>
+                      </Tooltip>
+                    )}
+                    <Tooltip title="Close Explorer Pane">
+                      <Button
+                        type="link"
+                        className="retailer-editor-explorer-action-button"
+                        onClick={clickExplorer}
+                      >
+                        <Icon type="close" />
+                      </Button>
+                    </Tooltip>
                   </Button.Group>
                 </div>
               </>
@@ -196,11 +237,14 @@ function Explorer(props: ExplorerProps) {
           <div style={{ overflow: "scroll", height: "100%" }}>
             <DirectoryTree
               defaultExpandAll
-              // defaultSelectedKeys={[`${DirType.file}::worker.js`]}
+              defaultSelectedKeys={[`${DirType.file}::worker.js`]}
               onSelect={onSelect}
               onExpand={onExpand}
+              onLoad={onLoad}
             >
-              {generateTreeNodes(generateFolderStructure(retailerFolderStructure.data))}
+              {generateTreeNodes(
+                generateFolderStructure(retailerFolderStructure.data)
+              )}
             </DirectoryTree>
           </div>
         </MosaicWindow>

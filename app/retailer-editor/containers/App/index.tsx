@@ -100,6 +100,13 @@ class App extends React.PureComponent<AppProps, AppState> {
         this.updateRetailerStatus(args.payload.status);
       }
     );
+    ipcRendererManager.on(
+      IpcEvents.UPDATE_RETAILER_STATUS,
+      (event, args) => {
+        console.log("IpcEvents.UPDATE_RETAILER_STATUS");
+        this.updateRetailerStatus(args.payload.status);
+      }
+    );
   }
 
   private updateRetailerStatus(status?) {

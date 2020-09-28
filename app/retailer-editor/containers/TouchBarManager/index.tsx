@@ -7,6 +7,7 @@ import {
   Tag,
   Typography,
   Tooltip,
+  Alert,
 } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { ipcRenderer } from "electron";
@@ -16,9 +17,7 @@ import {
   showOrHideExplorer,
   updateRetailerStatus,
 } from "../App/actions";
-import {
-  getRetailerFolderStructue
-} from '../Explorer/actions';
+import { getRetailerFolderStructue } from "../Explorer/actions";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
 import { PUBSUB_TOPICS } from "../../utils/constants";
@@ -56,7 +55,7 @@ function TouchBarManager() {
   const clickConsole = () => {
     dispatch(showOrHideConsole());
   };
-  
+
   const clickExplorer = () => {
     dispatch(showOrHideExplorer());
   };
@@ -185,6 +184,11 @@ function TouchBarManager() {
   const retailerURL = `http://localhost:${status.RetailerPort}`;
   const content = (
     <div className="content">
+      {status.needToRestart ? (
+        <Alert message="Your modified files, please Stop and Start to take effect of your modification" type="warning" showIcon />
+      ) : (
+        ""
+      )}
       <Paragraph>
         A code editor to help you start data crawling, already installed
         necessary&nbsp;

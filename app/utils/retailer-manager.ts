@@ -16,6 +16,8 @@ import { RETAILER_CHECK_TIMEOUT } from "./constants";
 class RetailerManager {
   public retailerProcess: ChildProcess | null = null;
   public version: string = "7.1.2";
+  // whether need to restart server, normally, it was caused by change *.js file
+  public needToRestart: boolean = false;
   private isElectronDownloaded: boolean = false;
   // whether electron is downloading
   private isDownloading: boolean = false;
@@ -54,7 +56,7 @@ class RetailerManager {
 
     // make sure electron download folder is created
     await fs.mkdirp(this.getDownloadPath());
-    let status = await this.status();
+    let status = this.status();
     if (this.isDownloading) {
       logger.info(
         `RetailerManager: Electron ${version} already downloading. please wait...`
@@ -112,7 +114,7 @@ class RetailerManager {
       logger.info(`Unzipped ${version}`, electronFiles);
       this.isDownloading = false;
       // update `isElectronDownloaded`
-      status = await this.status();
+      status = this.status();
       if (this.isElectronDownloaded) {
         // if isDownloaded is true, then successfully download
         ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOAD_ELECTRON_SUCCESS, [
@@ -140,7 +142,7 @@ class RetailerManager {
     } catch (error) {
       logger.error(`Failure while unzipping ${version}`, error);
       this.isDownloading = false;
-      let status = await this.status();
+      let status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.DOWNLOAD_ELECTRON_FAIL, [
         {
           status: "fail",
@@ -298,7 +300,7 @@ class RetailerManager {
     try {
       logger.functionStart("runRetailer");
       this.isStartingServer = true;
-      let status = await this.status();
+      let status = this.status();
       if (this.isRunning) {
         ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
           {
@@ -317,7 +319,7 @@ class RetailerManager {
       logger.debug(`RETAILER_Path: ${RETAILER_PATH}`);
       // get an available port
       this.RetailerPort = await this.getAvailablePort();
-      status = await this.status();
+      status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER, [
         {
           status: "starting",
@@ -348,7 +350,7 @@ class RetailerManager {
         logger.debug(withCode);
         this.publishLog(withCode);
         this.retailerProcess = null;
-        status = await this.status();
+        status = this.status();
         ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
           {
             status: "success",
@@ -362,7 +364,7 @@ class RetailerManager {
       this.isStartingServer = false;
       if (success) {
         this.isRunning = true;
-        status = await this.status();
+        status = this.status();
         ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
           {
             status: "success",
@@ -374,7 +376,7 @@ class RetailerManager {
       } else {
         this.isRunning = false;
         await this.stopRetailer();
-        status = await this.status();
+        status = this.status();
         ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
           {
             status: "fail",
@@ -390,7 +392,7 @@ class RetailerManager {
       this.isRunning = false;
       await this.stopRetailer();
       logger.error("runRetailer error: ", err);
-      let status = await this.status();
+      let status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
         {
           status: "fail",
@@ -410,7 +412,7 @@ class RetailerManager {
   public async stopRetailerElectron() {
     try {
       this.isStoppingServer = true;
-      let status = await this.status();
+      let status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER, [
         {
           status: "stopping",
@@ -424,7 +426,7 @@ class RetailerManager {
         this.retailerProcess.kill();
         this.isRunning = false;
         this.isStoppingServer = false;
-        status = await this.status();
+        status = this.status();
         ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
           {
             status: "success",
@@ -436,7 +438,7 @@ class RetailerManager {
       }
     } catch (err) {
       this.isStoppingServer = false;
-      let status = await this.status();
+      let status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, [
         {
           status: "fail",
@@ -456,7 +458,7 @@ class RetailerManager {
     try {
       logger.functionStart("runRetailer");
       this.isStartingServer = true;
-      let status = await this.status();
+      let status = this.status();
       if (this.isRunning) {
         ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
           {
@@ -472,7 +474,7 @@ class RetailerManager {
       logger.debug(`RETAILER_Path: ${RETAILER_PATH}`);
       // get an available port
       this.RetailerPort = await this.getAvailablePort();
-      status = await this.status();
+      status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER, [
         {
           status: "starting",
@@ -492,7 +494,8 @@ class RetailerManager {
       this.isStartingServer = false;
       if (success) {
         this.isRunning = true;
-        status = await this.status();
+        this.needToRestart = false; // restart/start server successful
+        status = this.status();
         ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_SUCCESS, [
           {
             status: "success",
@@ -504,7 +507,7 @@ class RetailerManager {
       } else {
         this.isRunning = false;
         // await this.stopRetailer();
-        status = await this.status();
+        status = this.status();
         ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
           {
             status: "fail",
@@ -520,7 +523,7 @@ class RetailerManager {
       this.isRunning = false;
       // await this.stopRetailer();
       logger.error("runRetailer error: ", err);
-      let status = await this.status();
+      let status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.STARTING_RETAILER_SERVER_FAIL, [
         {
           status: "fail",
@@ -540,7 +543,7 @@ class RetailerManager {
   public async stopRetailer() {
     try {
       this.isStoppingServer = true;
-      let status = await this.status();
+      let status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER, [
         {
           status: "stopping",
@@ -558,7 +561,7 @@ class RetailerManager {
         await stopServer();
         this.isRunning = false;
         this.isStoppingServer = false;
-        status = await this.status();
+        status = this.status();
         console.log('stopRetailer -> status: ', status);
         ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_SUCCESS, [
           {
@@ -573,7 +576,7 @@ class RetailerManager {
       console.error("stopRetailer -> error message: ", err.message);
       console.error("stopRetailer -> error stack: ", err.stack);
       this.isStoppingServer = false;
-      let status = await this.status();
+      let status = this.status();
       ipcMainManager.sendToRetailerEditor(IpcEvents.STOPPING_RETAILER_SERVER_FAIL, [
         {
           status: "fail",
@@ -592,10 +595,11 @@ class RetailerManager {
   /**
    * Get default Retailer status
    */
-  public async status() {
+  public status() {
     // check whether isn't downloaded
     // await this.getIsDownloaded(); // Don't require user to download Electorn
     return {
+      needToRestart: this.needToRestart,
       // isElectronDownloaded: this.isElectronDownloaded,
       isElectronDownloaded: true,  // Don't require user to download Electorn
       // after init, will not change

@@ -26,6 +26,7 @@ export class Editor extends React.Component<EditorProps> {
   public editor: MonacoType.editor.IStandaloneCodeEditor;
   public language: string = "javascript";
   public value: string = "";
+  public monaco: typeof MonacoType | null;
 
   private containerRef = React.createRef<HTMLDivElement>();
 
@@ -53,11 +54,10 @@ export class Editor extends React.Component<EditorProps> {
    * @param {MonacoType.editor.IStandaloneCodeEditor} editor
    */
   public async editorDidMount(editor: MonacoType.editor.IStandaloneCodeEditor) {
-    let { monaco } = this.props;
     // Set the content on the editor
     await this.setContent();
-    if (monaco && editor) {
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+    if (this.monaco && editor) {
+      editor.addCommand(this.monaco.KeyMod.CtrlCmd | this.monaco.KeyCode.KEY_S, () => {
         this.saveFile();
       });
     }
@@ -84,15 +84,16 @@ export class Editor extends React.Component<EditorProps> {
    */
   public async initMonaco() {
     let { monaco, monacoOptions: monacoOptions } = this.props;
+    this.monaco = monaco;
     const ref = this.containerRef.current;
 
-    if (!monaco) {
-      monaco = await loadMonaco();
+    if (!this.monaco) {
+      this.monaco = await loadMonaco();
     }
 
     if (ref) {
-      if (monaco && !this.editor) {
-        this.editor = monaco.editor.create(ref, {
+      if (this.monaco && !this.editor) {
+        this.editor = this.monaco.editor.create(ref, {
           automaticLayout: true,
           language: this.getLanguage(),
           readOnly: this.getReadOnly(),
@@ -191,14 +192,15 @@ export class Editor extends React.Component<EditorProps> {
    */
   private async setContent() {
     let { monaco } = this.props;
+    this.monaco = monaco;
 
-    if (!monaco) {
-      monaco = await loadMonaco();
+    if (!this.monaco) {
+      this.monaco = await loadMonaco();
     }
 
     const value = await this.getContent();
-    if (monaco) {
-      const model = monaco.editor.createModel(value || "", this.getLanguage());
+    if (this.monaco) {
+      const model = this.monaco.editor.createModel(value || "", this.getLanguage());
       model.updateOptions({
         tabSize: 2,
       });

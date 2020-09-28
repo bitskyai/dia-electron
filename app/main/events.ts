@@ -1,7 +1,7 @@
 // Setup Event Listeners
 import { dialog } from "electron";
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import * as fs from "fs-extra";
+import * as path from "path";
 import {
   getPreferencesJSON,
   updatePreferencesJSON,
@@ -62,27 +62,30 @@ export function setUpEventListeners() {
           });
         break;
       case "common/isUserDataDirectory":
-          let isUserDataDir = {
-            validPath: false,
-            userDataDir: false
-          }
+        let isUserDataDir = {
+          validPath: false,
+          userDataDir: false,
+        };
 
-          try{
-            let userDataDir = body.data.directory;
-            const exist = fs.pathExistsSync(userDataDir);
-            if(exist){
-              isUserDataDir.validPath = true;
-              // now check whether it is a user data directory
-              // it should have a default folder if it is a Chrome User Data Directory
-              const defaultFolder = path.join(userDataDir, 'Default');
-              isUserDataDir.userDataDir = fs.pathExistsSync(defaultFolder);
-            }
-          }catch(err){
-            logger.error(`common/isUserDataDirectory failed. Error: ${err.message}`, {error: err, body: body});
+        try {
+          let userDataDir = body.data.directory;
+          const exist = fs.pathExistsSync(userDataDir);
+          if (exist) {
+            isUserDataDir.validPath = true;
+            // now check whether it is a user data directory
+            // it should have a default folder if it is a Chrome User Data Directory
+            const defaultFolder = path.join(userDataDir, "Default");
+            isUserDataDir.userDataDir = fs.pathExistsSync(defaultFolder);
           }
+        } catch (err) {
+          logger.error(
+            `common/isUserDataDirectory failed. Error: ${err.message}`,
+            { error: err, body: body }
+          );
+        }
 
-          event.returnValue = isUserDataDir;
-          break;
+        event.returnValue = isUserDataDir;
+        break;
       case "retailerEditor/open":
         let retailerEditorWindow = getOrCreateRetailerEditorWindow();
         retailerEditorWindow.show();
@@ -231,18 +234,35 @@ export function setUpEventListeners() {
         fileContent
       }
      */
-  ipcMainManager.on(IpcEvents.SYNC_RETAILER_UPDATE_FILE_CONTENT, (event, arg) => {
-    try {
-      updateFileContent(arg.filePath, arg.fileContent);
-      event.returnValue = {
-        status: true,
-      };
-    } catch (err) {
-      event.returnValue = {
-        status: false,
-      };
+  ipcMainManager.on(
+    IpcEvents.SYNC_RETAILER_UPDATE_FILE_CONTENT,
+    (event, arg) => {
+      try {
+        updateFileContent(arg.filePath, arg.fileContent);
+        event.returnValue = {
+          status: true,
+        };
+        if (arg.filePath.search(/\.js\s*$/)) {
+          RetailerManager.needToRestart = true;
+          ipcMainManager.sendToRetailerEditor(
+            IpcEvents.UPDATE_RETAILER_STATUS,
+            [
+              {
+                status: "update",
+                payload: {
+                  status: RetailerManager.status(),
+                },
+              },
+            ]
+          );
+        }
+      } catch (err) {
+        event.returnValue = {
+          status: false,
+        };
+      }
     }
-  });
+  );
 
   // reset Retailer to default
   ipcMainManager.on(IpcEvents.SYNC_RETAILER_STATUS, async (event) => {
@@ -267,6 +287,15 @@ export function setUpEventListeners() {
       event.returnValue = {
         status: true,
       };
+      RetailerManager.needToRestart = true;
+      ipcMainManager.sendToRetailerEditor(IpcEvents.UPDATE_RETAILER_STATUS, [
+        {
+          status: "update",
+          payload: {
+            status: RetailerManager.status(),
+          },
+        },
+      ]);
     } catch (err) {
       event.returnValue = {
         status: false,
