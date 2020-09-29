@@ -12,7 +12,7 @@ import { getOrCreateMainWindow } from "./windows";
 import logger from "../utils/logger";
 import supplier from "../utils/supplier";
 import { setupHeadlessProducer } from "./headlessProducer";
-import { setupServiceProducer } from "./serviceProducer";
+import { setupHTTPProducer } from "./httpProducer";
 import RetailerManager from "../utils/retailer-manager";
 
 /**
@@ -37,7 +37,7 @@ export async function onReady() {
       // setup headless producer
       setupHeadlessProducer();
       // setup service producer
-      setupServiceProducer();
+      setupHTTPProducer();
     } catch (err) {
       logger.error("start supplier file. error: ", err);
     }

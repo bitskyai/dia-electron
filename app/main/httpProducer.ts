@@ -1,20 +1,20 @@
 import * as path from "path";
 import * as _ from "lodash";
-import { startServer, stopServer } from "../service-producer/server.js";
+import { startServer, stopServer } from "../http-producer/server.js";
 import logger from "../utils/logger";
 import { getAvailablePort } from "../utils/index";
 import { IpcEvents, BROWSER_WINDOW_EVENTS } from "../ipc-events";
 import { ipcMainManager } from "./ipc";
 import supplier from '../utils/supplier';
 import {
-  getServiceProducerPreferencesJSON,
-  updateServiceProducerPreferencesJSON,
+  getHTTPProducerPreferencesJSON,
+  updateHTTPProducerPreferencesJSON,
 } from "./preferences";
 import { BaseProducerPreference } from "../interfaces";
 
-let _serviceProducer: ServiceProducer;
+let _httpProducer: HTTPProducer;
 
-class ServiceProducer {
+class HTTPProducer {
   public port: number = 8091;
   // in the middle of start producer
   public starting: boolean = false;
@@ -27,7 +27,7 @@ class ServiceProducer {
 
   getConfig(): BaseProducerPreference {
     try {
-      let config = getServiceProducerPreferencesJSON();
+      let config = getHTTPProducerPreferencesJSON();
       config.TYPE = 'HTTP';
       config.BITSKY_BASE_URL = `http://localhost:${supplier.supplierPort}`;
       config.PORT = this.port;
@@ -36,14 +36,14 @@ class ServiceProducer {
       config.STOPPING = this.stopping;
       return config;
     } catch (err) {
-      logger.error("ServiceProducer -> getConfig fail. ", err);
+      logger.error("HTTPProducer -> getConfig fail. ", err);
       throw err;
     }
   }
 
   setConfig(producerConfig: BaseProducerPreference) {
     try {
-      return updateServiceProducerPreferencesJSON(producerConfig);
+      return updateHTTPProducerPreferencesJSON(producerConfig);
     } catch (err) {
       logger.error("setConfig -> getConfig fail. ", err);
       throw err;
@@ -61,12 +61,13 @@ class ServiceProducer {
       // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
-          subject: BROWSER_WINDOW_EVENTS.STARTING_SERVICE,
+          subject: BROWSER_WINDOW_EVENTS.STARTING_HTTP,
           data: this.getConfig(),
         },
       ]);
 
       const serviceConfig = this.getConfig();
+      console.log(`serviceConfig: `, serviceConfig);
       this.port = await getAvailablePort(this.port);
       const serviceHome = serviceConfig.PRODUCER_HOME;
       const logPath = path.join(serviceHome, "log");
@@ -76,7 +77,7 @@ class ServiceProducer {
         {
           PORT: this.port,
           LOG_FILES_PATH: logPath,
-          SERVICE_NAME: "service-producer",
+          SERVICE_NAME: "http-producer",
         },
         serviceConfig
       );
@@ -104,7 +105,7 @@ class ServiceProducer {
       // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
-          subject: BROWSER_WINDOW_EVENTS.STARTED_SERVICE,
+          subject: BROWSER_WINDOW_EVENTS.STARTED_HTTP,
           status: true,
           data: this.getConfig(),
           error: null,
@@ -120,7 +121,7 @@ class ServiceProducer {
       // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
-          subject: BROWSER_WINDOW_EVENTS.STARTED_SERVICE,
+          subject: BROWSER_WINDOW_EVENTS.STARTED_HTTP,
           status: false,
           data: this.getConfig(),
           error: err,
@@ -150,7 +151,7 @@ class ServiceProducer {
       // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
-          subject: BROWSER_WINDOW_EVENTS.STOPPING_SERVICE,
+          subject: BROWSER_WINDOW_EVENTS.STOPPING_HTTP,
           data: this.getConfig(),
         },
       ]);
@@ -172,7 +173,7 @@ class ServiceProducer {
       // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
-          subject: BROWSER_WINDOW_EVENTS.STOPPED_SERVICE,
+          subject: BROWSER_WINDOW_EVENTS.STOPPED_HTTP,
           status: true,
           data: this.getConfig(),
           error: null,
@@ -187,7 +188,7 @@ class ServiceProducer {
       // notify web-app
       ipcMainManager.send(IpcEvents.MESSAGE_TO_SUPPLIER_UI, [
         {
-          subject: BROWSER_WINDOW_EVENTS.STOPPED_SERVICE,
+          subject: BROWSER_WINDOW_EVENTS.STOPPED_HTTP,
           status: false,
           data: this.getConfig(),
           error: err,
@@ -199,41 +200,44 @@ class ServiceProducer {
   }
 }
 
-export function setupServiceProducer():ServiceProducer {
+export function setupHTTPProducer():HTTPProducer {
   try {
-    if (_serviceProducer) {
-      return _serviceProducer;
+    if (_httpProducer) {
+      return _httpProducer;
     }
 
-    _serviceProducer = new ServiceProducer();
-    _serviceProducer.start();
+    _httpProducer = new HTTPProducer();
+    _httpProducer.start();
 
     // setup message listener
     ipcMainManager.on(IpcEvents.SYNC_SUPPLIER_UI_TO_MAIN, async (event, body) => {
       const subject = body && body.subject;
       console.log("subject: ", subject);
       switch (subject) {
-          case "service/getConfig":
+          case "http/getConfig":
             event.returnValue = {
               status: true,
-              data: _serviceProducer.getConfig(),
+              data: _httpProducer.getConfig(),
             };
+
+            console.log(`_httpProducer.getConfig(): `, _httpProducer.getConfig());
+
             break;
-          case "service/updateConfig":
-            console.log('service/updateConfig -> body: ', body);
+          case "http/updateConfig":
+            console.log('http/updateConfig -> body: ', body);
             event.returnValue = {
               status: true,
-              data: _serviceProducer.setConfig(body.data),
+              data: _httpProducer.setConfig(body.data),
             };
-            _serviceProducer.restart();
+            _httpProducer.restart();
             break;
-          case "service/start":
+          case "http/start":
             let startValue = {
               status: false,
               error: null,
             };
             try {
-              _serviceProducer.start();
+              _httpProducer.start();
               startValue.status = true;
             } catch (err) {
               startValue.status = false;
@@ -241,16 +245,16 @@ export function setupServiceProducer():ServiceProducer {
             }
   
             event.returnValue = startValue;
-            console.log("service/start -> returnValue: ", startValue);
+            console.log("http/start -> returnValue: ", startValue);
             break;
-          case "service/stop":
+          case "http/stop":
             let stopValue = {
               status: false,
               data: {},
               error: null,
             };
             try {
-              _serviceProducer.stop();
+              _httpProducer.stop();
               stopValue.status = true;
             } catch (err) {
               stopValue.status = false;
@@ -258,7 +262,7 @@ export function setupServiceProducer():ServiceProducer {
             }
   
             event.returnValue = stopValue;
-            console.log("service/stop -> returnValue: ", stopValue);
+            console.log("http/stop -> returnValue: ", stopValue);
             break;
         // default:
         //   event.returnValue = {
@@ -271,9 +275,9 @@ export function setupServiceProducer():ServiceProducer {
       }
     });
 
-    return _serviceProducer;
+    return _httpProducer;
   } catch (err) {
-    logger.error("setupServiceProducer fail.", err);
+    logger.error("setupHTTPProducer fail.", err);
     throw err;
   }
 }

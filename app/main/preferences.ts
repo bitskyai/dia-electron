@@ -88,25 +88,26 @@ export function updateHeadlessProducerPreferencesJSON(
   }
 }
 
-export function getServiceProducerPreferencesJSON(): BaseProducerPreference {
+export function getHTTPProducerPreferencesJSON(): BaseProducerPreference {
   try {
     let preferencesJSON = getPreferencesJSON();
-    return _.get(preferencesJSON, "SERVICE_PRODUCER");
+    console.log(`getHTTPProducerPreferencesJSON: `, preferencesJSON);
+    return _.get(preferencesJSON, "HTTP_PRODUCER");
   } catch (err) {
-    logger.error("getServiceProducerPreferencesJSON fail, error: ", err);
+    logger.error("getHTTPProducerPreferencesJSON fail, error: ", err);
     throw err;
   }
 }
 
-export function updateServiceProducerPreferencesJSON(
+export function updateHTTPProducerPreferencesJSON(
   serviceJSON: BaseProducerPreference
 ): Object {
   try {
     return updatePreferencesJSON({
-      SERVICE_PRODUCER: serviceJSON,
+      HTTP_PRODUCER: serviceJSON,
     });
   } catch (err) {
-    logger.error("updateServiceProducerPreferencesJSON fail, error: ", err);
+    logger.error("updateHTTPProducerPreferencesJSON fail, error: ", err);
     throw err;
   }
 }
@@ -176,7 +177,7 @@ export function getDefaultPreferences(): Preferences {
     LOG_FILES_PATH,
     version: "1.0.0",
     HEADLESS_PRODUCER: getDefaultHeadlessProducer(),
-    SERVICE_PRODUCER: getDefaultServiceProducer(),
+    HTTP_PRODUCER: getDefaultHTTPProducer(),
   };
 }
 
@@ -207,12 +208,12 @@ export function getDefaultHeadlessProducer(): HeadlessProducerPreference {
  * Get default configuration for service producer
  * @returns {BaseProducerPreference}
  */
-export function getDefaultServiceProducer(): BaseProducerPreference {
+export function getDefaultHTTPProducer(): BaseProducerPreference {
   const baseProducerPreferenceJSON = getDefaultBaseProducer();
-  const serviceProducer = _.merge({}, baseProducerPreferenceJSON, {
-    PRODUCER_HOME: path.join(BITSKY_HOME_FOLDER, "service"),
+  const httpProducer = _.merge({}, baseProducerPreferenceJSON, {
+    PRODUCER_HOME: path.join(BITSKY_HOME_FOLDER, "http"),
   });
-  return serviceProducer;
+  return httpProducer;
 }
 
 /**

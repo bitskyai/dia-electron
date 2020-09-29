@@ -90,5 +90,5 @@ export interface Preferences {
   TYPEORM_DATABASE?: string;
   TYPEORM_URL?: string;
   HEADLESS_PRODUCER: HeadlessProducerPreference;
-  SERVICE_PRODUCER: BaseProducerPreference;
+  HTTP_PRODUCER: BaseProducerPreference;
 }

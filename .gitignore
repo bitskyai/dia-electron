@@ -68,7 +68,7 @@ hello-retailer
 release
 out
 headless-producer
-service-producer
+http-producer
 web-app
 
 *.sql
