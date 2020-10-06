@@ -91,7 +91,7 @@ export function updateHeadlessProducerPreferencesJSON(
 export function getHTTPProducerPreferencesJSON(): BaseProducerPreference {
   try {
     let preferencesJSON = getPreferencesJSON();
-    console.log(`getHTTPProducerPreferencesJSON: `, preferencesJSON);
+    // console.log(`getHTTPProducerPreferencesJSON: `, preferencesJSON);
     return _.get(preferencesJSON, "HTTP_PRODUCER");
   } catch (err) {
     logger.error("getHTTPProducerPreferencesJSON fail, error: ", err);
