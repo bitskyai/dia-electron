@@ -70,13 +70,13 @@ class HTTPProducer {
       console.log(`serviceConfig: `, serviceConfig);
       this.port = await getAvailablePort(this.port);
       const serviceHome = serviceConfig.PRODUCER_HOME;
-      const logPath = path.join(serviceHome, "log");
+      // const logPath = path.join(serviceHome, "log");
       logger.info(`service producer port: ${this.port} `);
       const configs = _.merge(
         {},
         {
           PORT: this.port,
-          LOG_FILES_PATH: logPath,
+          // LOG_FILES_PATH: logPath,
           SERVICE_NAME: "http-producer",
         },
         serviceConfig

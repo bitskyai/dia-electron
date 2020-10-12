@@ -60,6 +60,13 @@ export class Editor extends React.Component<EditorProps> {
       editor.addCommand(this.monaco.KeyMod.CtrlCmd | this.monaco.KeyCode.KEY_S, () => {
         this.saveFile();
       });
+      let saveHandler = null;
+      editor.onDidChangeModelContent(()=>{
+        clearTimeout(saveHandler);
+        saveHandler = setTimeout(()=>{
+          this.saveFile();
+        }, 1000);
+      });
     }
   }
 

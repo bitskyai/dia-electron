@@ -78,13 +78,13 @@ class HeadlessProducer {
       const headlessConfig = this.getConfig();
       this.port = await getAvailablePort(this.port);
       const headlessHome = headlessConfig.PRODUCER_HOME;
-      const logPath = path.join(headlessHome, "log");
+      // const logPath = path.join(headlessHome, "log");
       logger.info(`headless producer port: ${this.port} `);
       const configs = _.merge(
         {},
         {
           PORT: this.port,
-          LOG_FILES_PATH: logPath,
+          // LOG_FILES_PATH: logPath,
           SERVICE_NAME: "headless-producer",
         },
         headlessConfig
