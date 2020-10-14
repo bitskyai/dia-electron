@@ -7,8 +7,8 @@ import * as nodeUrl from 'url';
 import { isDevMode } from '../utils/devmode';
 // import { ipcMainManager } from './ipc';
 
-const PROTOCOL = 'munew';
-const squirrelPath = path.resolve(path.dirname(process.execPath), '..', 'munew-dia.exe');
+const PROTOCOL = 'bitsky';
+const squirrelPath = path.resolve(path.dirname(process.execPath), '..', 'bitsky.exe');
 
 const handlePotentialProtocolLaunch = (url: string) => {
   if (!app.isReady()) {

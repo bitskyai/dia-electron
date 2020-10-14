@@ -10,7 +10,7 @@ function getReleases() {
       host: 'registry.npmjs.org',
       path: '/electron',
       headers: {
-        'User-Agent': 'Munew'
+        'User-Agent': 'BitSky'
       }
     }, res => {
       res.setEncoding('utf8')

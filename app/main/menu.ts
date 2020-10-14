@@ -3,11 +3,13 @@ import {
   shell,
   MenuItemConstructorOptions,
   app,
-  BrowserView
+  BrowserView,
 } from "electron";
+import { IpcEvents } from "../ipc-events";
+import { ipcMainManager } from "./ipc";
 import * as path from "path";
 // import logger from "../utils/logger";
-import { getOrCreateMainWindow } from "../main/windows";
+import { getOrCreateMainWindow } from "./windows";
 // const isMac = process.platform === "darwin";
 
 /**
@@ -36,23 +38,23 @@ function getHelpItems(): Array<MenuItemConstructorOptions> {
   preferencesMenu.shift();
   return preferencesMenu.concat([
     {
-      label: "Open Munew Repository...",
+      label: "Open BitSky Repository...",
       click() {
-        shell.openExternal("https://github.com/munew");
-      }
+        shell.openExternal("https://github.com/bitskyai");
+      },
     },
     {
       label: "Documents",
       click() {
-        shell.openExternal("https://docs.munew.io");
-      }
+        shell.openExternal("https://docs.bitsky.ai");
+      },
     },
     {
-      label: "Open Munew Issue Tracker...",
+      label: "Open BitSky Issue Tracker...",
       click() {
-        shell.openExternal("https://github.com/munew/dia/issues");
-      }
-    }
+        shell.openExternal("https://github.com/bitskyai/bitsky/issues");
+      },
+    },
   ]);
 }
 
@@ -65,7 +67,7 @@ function getHelpItems(): Array<MenuItemConstructorOptions> {
 function getPreferencesItems(): Array<MenuItemConstructorOptions> {
   return [
     {
-      type: "separator"
+      type: "separator",
     },
     {
       label: "Preferences",
@@ -74,11 +76,11 @@ function getPreferencesItems(): Array<MenuItemConstructorOptions> {
         // console.log('send message: ', IpcEvents.OPEN_SETTINGS);
         // ipcMainManager.send(IpcEvents.OPEN_SETTINGS);
         showSettings();
-      }
+      },
     },
     {
-      type: "separator"
-    }
+      type: "separator",
+    },
   ];
 }
 
@@ -88,8 +90,8 @@ export function showSettings() {
     webPreferences: {
       preload: path.join(__dirname, "../render/preload.js"),
       webviewTag: false,
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   });
 
   let currentWinBounds = win.getBounds();
@@ -99,18 +101,18 @@ export function showSettings() {
     x: 0,
     y: 0,
     width: currentWinBounds.width,
-    height: currentWinBounds.height
+    height: currentWinBounds.height,
   });
   view.setAutoResize({
     width: true,
-    height: true
+    height: true,
   });
   const modalPath = path.join("./build/settings.html");
   view.webContents.loadFile(modalPath);
   // view.webContents.openDevTools();
 }
 
-export function hideSettings(){
+export function hideSettings() {
   let win = getOrCreateMainWindow();
   win.setBrowserView(null);
 }
@@ -128,7 +130,7 @@ export function setupMenu() {
     // Append the "Settings" item
     if (
       process.platform === "darwin" &&
-      label === app.getName() &&
+      label === app.name &&
       isSubmenu(menu.submenu)
     ) {
       menu.submenu.splice(2, 0, ...getPreferencesItems());
@@ -139,11 +141,17 @@ export function setupMenu() {
       menu.submenu = getHelpItems();
     }
 
-    if (label !== "Edit") {
-      menus.push(menu);
-    }
+    menus.push(menu);
+
+    // if (label !== "Edit") {
+    //   menus.push(menu);
+    // }
   });
   // menus.splice(process.platform === "darwin" ? 1 : 0, 0, getFileMenu());
   // logger.debug("setupMenu->menu: ", JSON.stringify(menus, null, 2));
   Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
+
+  ipcMainManager.on(IpcEvents.OPEN_SETTINGS, (_event, args) => {
+    showSettings();
+  });
 }

@@ -1,2 +1,1 @@
-# dia-electron
-DIA Electron
+# bitsky-desktop-app

@@ -2,7 +2,6 @@ import { app } from "electron";
 import { isDevMode } from "../utils/devmode";
 import { setupAboutPanel } from "../utils/set-about-panel";
 import { setupDevTools } from "./devtools";
-import { setupDialogs } from "./dialogs";
 import { setUpEventListeners } from "./events";
 import { onFirstRunMaybe } from "./first-run";
 import { setupMenu } from "./menu";
@@ -11,8 +10,10 @@ import { shouldQuit } from "./squirrel";
 // import { setupUpdates } from "./update";
 import { getOrCreateMainWindow } from "./windows";
 import logger from "../utils/logger";
-import engine from "../utils/engine";
-import SOIManager from "../utils/soi-manager";
+import supplier from "../utils/supplier";
+import { setupHeadlessProducer } from "./headlessProducer";
+import { setupHTTPProducer } from "./httpProducer";
+import RetailerManager from "../utils/retailer-manager";
 
 /**
  * Handle the app's "ready" event. This is essentially
@@ -24,26 +25,30 @@ export async function onReady() {
 
     // intial global variables
     global.browserWindows = {
-      soiEditor: null,
-      main: null
+      retailerEditor: null,
+      main: null,
     };
 
     await onFirstRunMaybe();
     if (!isDevMode()) process.env.NODE_ENV = "production";
     try {
-      await engine.startEngine();
+      await supplier.startSupplier();
+      process.env.BITSKY_BASE_URL = `http://localhost:${supplier.supplierPort}`;
+      // setup headless producer
+      setupHeadlessProducer();
+      // setup service producer
+      setupHTTPProducer();
     } catch (err) {
-      logger.error("start engine file. error: ", err);
+      logger.error("start supplier file. error: ", err);
     }
 
-    // Temp comment to fix https://github.com/munew/dia/issues/41
+    // Temp comment to fix https://github.com/bitskyai/bitsky-builder/issues/41
     // if run this, then cannot load browser, seems it was caused by single thread
     // try {
-    //   SOIManager.runSOI();
+    //   RetailerManager.runRetailer();
     // } catch (err) {
-    //   logger.error("start soi fail. error: ", err);
+    //   logger.error("start retailer fail. error: ", err);
     // }
-
     // setup menus for main processes
     setupMenu();
     setupAboutPanel();
@@ -52,7 +57,6 @@ export async function onReady() {
     // since currently don't have apple developer account, and auto update require developer account
     // so disable it for now
     // setupUpdates();
-    setupDialogs();
     setupDevTools();
     setUpEventListeners();
   } catch (err) {
@@ -67,7 +71,7 @@ export async function onReady() {
  */
 export function onBeforeQuit() {
   (global as any).isQuitting = true;
-  SOIManager.stopSOI();
+  RetailerManager.stopRetailer();
 }
 
 // In this file you can include the rest of your app"s specific main process
@@ -83,7 +87,7 @@ export function main() {
   }
 
   // Set the app's name
-  app.name = "Munew DIA";
+  app.name = "BitSky";
 
   // Ensure that there's only ever one Fiddle running
   listenForProtocolHandler();

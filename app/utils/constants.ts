@@ -9,23 +9,24 @@ const getHomeFolder = () => {
     return path.join(remote.app.getPath("home"));
   }
 };
-export const MUNEW_HOME_FOLDER = path.join(getHomeFolder(), ".munew");
-export const DEFAULT_ANALYST_SERVICE_FOLDER = 'analystservice';
+export const BITSKY_HOME_FOLDER = path.join(getHomeFolder(), ".bitsky");
+export const DEFAULT_RETAILER_SERVICE_FOLDER = 'hello-retailer';
 // default sqlite db configuration
 export const DEFAULT_SQLITE_DB_CONFIG = {
   TYPEORM_CONNECTION: TypeormConnection.sqlite,
-  TYPEORM_DATABASE: path.join(MUNEW_HOME_FOLDER, "munew_dia.sql")
+  TYPEORM_DATABASE: path.join(BITSKY_HOME_FOLDER, "bitsky.sql")
 };
 
 // default mongodb configuration
 export const DEFAULT_MONGODB_CONFIG = {
   TYPEORM_CONNECTION: TypeormConnection.mongodb,
-  TYPEORM_URL: `mongodb://localhost:27017/munew_dia`
+  TYPEORM_URL: `mongodb://localhost:27017/bitsky`
 };
 
-export const LOG_FILES_PATH = path.join(MUNEW_HOME_FOLDER, "./log");
+// log files path for supplier
+export const LOG_FILES_PATH = path.join(BITSKY_HOME_FOLDER, "./supplier/log");
 
-export const PREFERENCES_JSON_PATH = path.join(MUNEW_HOME_FOLDER, 'preferences.json');
+export const PREFERENCES_JSON_PATH = path.join(BITSKY_HOME_FOLDER, 'preferences.json');
 
-// Timeout value for check whether a SOI start successfully
-export const SOI_CHECK_TIMEOUT = 15*1000;
+// Timeout value for check whether a Retailer start successfully
+export const RETAILER_CHECK_TIMEOUT = 15*1000;

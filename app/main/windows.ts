@@ -25,6 +25,7 @@ export function getMainWindowOptions(): Electron.BrowserWindowConstructorOptions
     acceptFirstMouse: true,
     backgroundColor: "#1d2427",
     webPreferences: {
+      devTools:true,
       preload: path.join(__dirname, "preload.js"),
       webviewTag: false,
       nodeIntegration: true
@@ -66,6 +67,7 @@ export function createMainWindow(): Electron.BrowserWindow {
     shell.openExternal(url);
   });
 
+  // browserWindow.webContents.toggleDevTools();
   // browserWindows.push(browserWindow);
   browserWindows.main = browserWindow;
   global.browserWindows.main = browserWindow;

@@ -64,10 +64,11 @@ typings/
 
 dist
 build
-analystservice
+hello-retailer
 release
 out
-
-app/engine-ui
+headless-producer
+http-producer
+web-app
 
 *.sql

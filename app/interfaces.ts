@@ -6,7 +6,7 @@ export interface NpmVersion {
 
 export const enum DirType {
   "file" = "file",
-  "directory" = "directory"
+  "directory" = "directory",
 }
 
 export interface DirStructure {
@@ -16,7 +16,7 @@ export interface DirStructure {
   children?: Array<DirStructure>;
 }
 
-export interface SOIFolderStructure {
+export interface RetailerFolderStructure {
   data: Array<DirStructure> | null;
   lastGetTime: number;
   fail: Error | null;
@@ -46,15 +46,49 @@ export interface LogItem {
 }
 export type mosaicId = "exporer" | "fileEditor" | "console";
 
-export const enum TypeormConnection{
+export const enum TypeormConnection {
   "sqlite" = "sqlite",
-  "mongodb" = "mongodb"
+  "mongodb" = "mongodb",
 }
 
-export interface Preferences{
-  version: string,
-  LOG_FILES_PATH: string,
-  TYPEORM_CONNECTION: TypeormConnection,
-  TYPEORM_DATABASE?: string,
-  TYPEORM_URL?: string
+export const enum LogLevel {
+  "error" = "error",
+  "warn" = "warn",
+  "info" = "info",
+  "debug" = "debug",
+}
+
+export interface BaseProducerPreference {
+  TYPE?: string;
+  PORT: number;
+  BITSKY_BASE_URL?: string; // format is URL
+  GLOBAL_ID?: string; // format is uuid
+  BITSKY_SECURITY_KEY?: string;
+  PRODUCER_HOME: string; // format is path string
+  LOG_LEVEL: LogLevel; // enum
+  PRODUCER_SERIAL_ID: string; 
+  //-------------------------------
+  // Runtime relative config. 
+  // Blow is system config, user cannot direct change
+  // following values normally changed because of user's action.
+  // Like: start producer, stop producer...
+  RUNNING?: boolean;
+  STARTING?: boolean;
+  STOPPING?: boolean;
+}
+
+export interface HeadlessProducerPreference extends BaseProducerPreference {
+  CUSTOM_FUNCTION_TIMEOUT: number; // unit: ms
+  HEADLESS: boolean; // whether headless or not
+  SCREENSHOT: boolean; // whether take screenshot
+}
+
+export interface Preferences {
+  version: string;
+  LOG_FILES_PATH: string;
+  TYPEORM_CONNECTION: TypeormConnection;
+  TYPEORM_DATABASE?: string;
+  TYPEORM_URL?: string;
+  HEADLESS_PRODUCER: HeadlessProducerPreference;
+  HTTP_PRODUCER: BaseProducerPreference;
 }

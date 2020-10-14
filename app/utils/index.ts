@@ -72,7 +72,7 @@ export function copyFolderRecursiveSync(
         }
       }
       files = fs.readdirSync(source);
-      files.forEach(function(file) {
+      files.forEach(function (file) {
         var curSource = path.join(source, file);
         if (fs.lstatSync(curSource).isDirectory()) {
           copyFolderRecursiveSync(curSource, targetFolder);
@@ -139,7 +139,7 @@ export function readFolderRecursiveSync(
             children: readFolderRecursiveSync(
               path.join(source, item),
               path.join(currentPath, item)
-            )
+            ),
           };
 
           folderData.push(dirInfo);
@@ -147,7 +147,7 @@ export function readFolderRecursiveSync(
           let fileInfo: DirStructure = {
             type: DirType.file,
             name: item,
-            path: path.join(currentPath, item)
+            path: path.join(currentPath, item),
           };
           folderData.push(fileInfo);
         } else {
@@ -169,7 +169,7 @@ export function readFolderRecursiveSync(
  * @param port - specific port want to check whether it is available
  */
 export async function getAvailablePort(port?: number): Promise<number> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     if (!port) {
       port = 9090;
     }
@@ -196,7 +196,7 @@ export function openLinkExternal() {
       return {
         tagName,
         href,
-        target
+        target,
       };
     } else {
       if (node.parentNode) {
@@ -209,7 +209,7 @@ export function openLinkExternal() {
 
   let body = document.querySelector("body");
   if (body) {
-    body.addEventListener("click", event => {
+    body.addEventListener("click", (event) => {
       let aTag = hasATag(event && event.target);
       if (aTag.target === "_blank") {
         event.preventDefault();
@@ -218,3 +218,19 @@ export function openLinkExternal() {
     });
   }
 }
+
+export function clear(moduleId){
+	if (typeof moduleId !== 'string') {
+		throw new TypeError(`Expected a \`string\`, got \`${typeof moduleId}\``);
+	}
+  delete require.cache[require.resolve(moduleId)];
+};
+
+export function clearRequireCacheStartWith(pathPrefix) {
+	for (const moduleId of Object.keys(require.cache)) {
+		if (moduleId.search(pathPrefix) != -1) {
+      console.log('Need to clear: ', moduleId);
+			clear(moduleId);
+		}
+	}
+};

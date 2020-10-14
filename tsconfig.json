@@ -25,8 +25,14 @@
     "typeRoots": ["./node_modules/@types"],
     "baseUrl": "."
   },
+  "files": ["app/ambient.d.ts", "app/ambient-modules.d.ts"],
   "include": ["app/**/*"],
-  "exclude": ["node_modules", "app/analystservice", "app/engine-ui", "app/soi-editor"],
+  "exclude": [
+    "node_modules",
+    "app/hello-retailer",
+    "app/web-app",
+    "app/retailer-editor"
+  ],
   "formatCodeOptions": {
     "indentSize": 2,
     "tabSize": 2

@@ -9,13 +9,15 @@ const iconDir = path.resolve(__dirname, "assets", "icons");
 
 const config = {
   hooks: {
-    generateAssets: require("./tools/generateAssets")
+    generateAssets: require("./tools/generateAssets"),
   },
   packagerConfig: {
-    name: "Munew",
-    executableName: "Munew",
-    asar: true,
-    icon: path.resolve(__dirname, 'assets', 'icons', 'munew'),
+    name: "bitsky",
+    executableName: "bitsky",
+    asar: {
+      unpackDir: "node_modules/puppeteer/.local-chromium",
+    },
+    icon: path.resolve(__dirname, "assets", "icons", "bitsky"),
     ignore: [
       /^\/\.vscode/,
       /^\/tools/,
@@ -30,29 +32,29 @@ const config = {
       /^\/README\.md/,
       /^\/yarn\.lock/,
       /^\/package-lock\.json/,
-      /^\/LICENSE/
+      /^\/LICENSE/,
     ],
-    appBundleId: "com.munew",
+    appBundleId: "com.bitsky",
     appCategoryType: "public.app-category.developer-tools",
     protocols: [
       {
-        name: "Munew Launch Protocol",
-        schemes: ["munew"]
-      }
+        name: "BitSky Launch Protocol",
+        schemes: ["bitsky"],
+      },
     ],
     win32metadata: {
-      CompanyName: "Munew",
-      OriginalFilename: "Munew"
-    }
+      CompanyName: "BitSky",
+      OriginalFilename: "BitSky",
+    },
     // osxSign: {
-    //   identity: 'Developer ID Application: Munew (LT94ZKYDCJ)'
+    //   identity: 'Developer ID Application: BitSky (LT94ZKYDCJ)'
     // }
   },
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
       platforms: ["win32"],
-      config: arch => {
+      config: (arch) => {
         const certificateFile = process.env.CI
           ? path.join(__dirname, "cert.p12")
           : process.env.WINDOWS_CERTIFICATE_FILE;
@@ -64,51 +66,51 @@ const config = {
         }
 
         return {
-          name: "Munew",
-          authors: "Munew",
-          exe: "Munew.exe",
+          name: "BitSky",
+          authors: "BitSky",
+          exe: "BitSky.exe",
           // iconUrl: 'https://raw.githubusercontent.com/electron/fiddle/0119f0ce697f5ff7dec4fe51f17620c78cfd488b/assets/icons/fiddle.ico',
           // loadingGif: './assets/loading.gif',
           noMsi: true,
           remoteReleases: "",
-          setupExe: `Munew-${version}-${arch}-setup.exe`,
-          setupIcon: path.resolve(iconDir, "munew.ico"),
+          setupExe: `BitSky-${version}-${arch}-setup.exe`,
+          setupIcon: path.resolve(iconDir, "bitsky.ico"),
           certificatePassword: process.env.WINDOWS_CERTIFICATE_PASSWORD,
-          certificateFile
+          certificateFile,
         };
-      }
+      },
     },
     {
       name: "@electron-forge/maker-zip",
-      platforms: ["darwin"]
+      platforms: ["darwin"],
     },
     {
       name: "@electron-forge/maker-deb",
       platforms: ["linux"],
       config: {
         icon: {
-          scalable: path.resolve(iconDir, "munew.svg")
-        }
-      }
+          scalable: path.resolve(iconDir, "bitsky.svg"),
+        },
+      },
     },
-    {
-      name: "@electron-forge/maker-rpm",
-      platforms: ["linux"]
-    }
+    // {
+    //   name: "@electron-forge/maker-rpm",
+    //   platforms: ["linux"]
+    // }
   ],
   publishers: [
     {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "munew",
-          name: "dia"
+          owner: "bitskyai",
+          name: "bitsky",
         },
         draft: true,
-        prerelease: false
-      }
-    }
-  ]
+        prerelease: false,
+      },
+    },
+  ],
 };
 
 function notarizeMaybe() {
@@ -132,7 +134,7 @@ function notarizeMaybe() {
     appBundleId: "com.electron.fiddle",
     appleId: process.env.APPLE_ID,
     appleIdPassword: process.env.APPLE_ID_PASSWORD,
-    ascProvider: "LT94ZKYDCJ"
+    ascProvider: "LT94ZKYDCJ",
   };
 }
 

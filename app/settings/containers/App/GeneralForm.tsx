@@ -14,9 +14,8 @@ import {
 } from "../../notification";
 import { ipcRendererManager } from "../../ipc";
 import { IpcEvents } from "../../../ipc-events";
-import { clear } from "winston";
 
-const DEAULT_SQLITE_DATABASE = "munew_dia.sql";
+const DEAULT_SQLITE_DATABASE = "bitsky.sql";
 
 class GeneralForm extends React.Component {
   constructor(props: any) {
@@ -96,9 +95,9 @@ class GeneralForm extends React.Component {
       if (!result.status) {
         // get preferences failed
         showErrorNotification(
-          formatMessage({ id: "munew.settings.error.getPreferencesTitle" }),
+          formatMessage({ id: "bitsky.settings.error.getPreferencesTitle" }),
           formatHTMLMessage({
-            id: "munew.settings.error.getPreferencesDescription"
+            id: "bitsky.settings.error.getPreferencesDescription"
           })
         );
         throw result.error;
@@ -115,9 +114,9 @@ class GeneralForm extends React.Component {
       }
     } catch (err) {
       showErrorNotification(
-        formatMessage({ id: "munew.settings.error.getPreferencesTitle" }),
+        formatMessage({ id: "bitsky.settings.error.getPreferencesTitle" }),
         formatHTMLMessage({
-          id: "munew.settings.error.getPreferencesDescription"
+          id: "bitsky.settings.error.getPreferencesDescription"
         })
       );
       throw err;
@@ -169,17 +168,17 @@ class GeneralForm extends React.Component {
         this.setOriginalPreferences(this.state.preferences);
         showSuccessNotification(
           formatMessage({
-            id: "munew.settings.savePreferencesSuccessful"
+            id: "bitsky.settings.savePreferencesSuccessful"
           })
         );
       } else {
         showErrorNotification(
-          formatMessage({ id: "munew.settings.error.savePreferencesFailed" })
+          formatMessage({ id: "bitsky.settings.error.savePreferencesFailed" })
         );
       }
     } else {
       showErrorNotification(
-        formatMessage({ id: "munew.settings.error.testDBNFailWhenSave" })
+        formatMessage({ id: "bitsky.settings.error.testDBNFailWhenSave" })
       );
     }
     this.setState({
@@ -203,12 +202,12 @@ class GeneralForm extends React.Component {
     if (result && result.payload && result.payload.connected) {
       showSuccessNotification(
         formatMessage({
-          id: "munew.settings.error.testDBConnectionSuccessTitle"
+          id: "bitsky.settings.error.testDBConnectionSuccessTitle"
         })
       );
     } else {
       showErrorNotification(
-        formatMessage({ id: "munew.settings.error.testDBConnectionFailTitle" })
+        formatMessage({ id: "bitsky.settings.error.testDBConnectionFailTitle" })
       );
     }
     this.setState({
@@ -268,15 +267,15 @@ class GeneralForm extends React.Component {
     return (
       <div className="tab-panel-content general-form">
         <Title level={4}>
-          <FormattedHTMLMessage id="munew.settings.dbTitle" />
+          <FormattedHTMLMessage id="bitsky.settings.dbTitle" />
         </Title>
         <p>
-          <FormattedHTMLMessage id="munew.settings.dbDescription" />
+          <FormattedHTMLMessage id="bitsky.settings.dbDescription" />
         </p>
         <Form layout="vertical">
           <div className="form-item-container">
             <Form.Item
-              label={formatMessage({ id: "munew.settings.dbNameTitle" })}
+              label={formatMessage({ id: "bitsky.settings.dbNameTitle" })}
               style={formItemStyle}
               hasFeedback={false}
             >
@@ -286,7 +285,7 @@ class GeneralForm extends React.Component {
                   {
                     required: true,
                     message: formatMessage({
-                      id: "munew.settings.dbNameRequired"
+                      id: "bitsky.settings.dbNameRequired"
                     })
                   }
                 ]
@@ -301,13 +300,13 @@ class GeneralForm extends React.Component {
               )}
             </Form.Item>
             <div className="form-item-description">
-              <FormattedHTMLMessage id="munew.settings.dbNameDescription" />
+              <FormattedHTMLMessage id="bitsky.settings.dbNameDescription" />
             </div>
           </div>
           {preferences.TYPEORM_CONNECTION == "sqlite" ? (
             <div className="form-item-container">
               <Form.Item
-                label={formatMessage({ id: "munew.settings.dbPathTitle" })}
+                label={formatMessage({ id: "bitsky.settings.dbPathTitle" })}
                 style={formItemStyle}
                 hasFeedback={false}
               >
@@ -317,7 +316,7 @@ class GeneralForm extends React.Component {
                     {
                       required: true,
                       message: formatMessage({
-                        id: "munew.settings.dbPathRequired"
+                        id: "bitsky.settings.dbPathRequired"
                       })
                     }
                   ]
@@ -328,17 +327,17 @@ class GeneralForm extends React.Component {
                       size="small"
                       onClick={this.openDirectoryPicker.bind(this)}
                       title={formatMessage({
-                        id: "munew.settings.selectFolderTooltip"
+                        id: "bitsky.settings.selectFolderTooltip"
                       })}
                     >
                       <Icon type="folder-open" />
-                      {/* <FormattedMessage id="munew.settings.selectFolder" /> */}
+                      {/* <FormattedMessage id="bitsky.settings.selectFolder" /> */}
                     </Button>
                   </div>
                 )}
               </Form.Item>
               <div className="form-item-description">
-                <FormattedHTMLMessage id="munew.settings.dbPathDescription" />
+                <FormattedHTMLMessage id="bitsky.settings.dbPathDescription" />
               </div>
             </div>
           ) : (
@@ -347,7 +346,7 @@ class GeneralForm extends React.Component {
           {preferences.TYPEORM_CONNECTION != "sqlite" ? (
             <div className="form-item-container">
               <Form.Item
-                label={formatMessage({ id: "munew.settings.dbURLTitle" })}
+                label={formatMessage({ id: "bitsky.settings.dbURLTitle" })}
                 style={formItemStyle}
                 hasFeedback={false}
               >
@@ -357,14 +356,14 @@ class GeneralForm extends React.Component {
                     {
                       required: true,
                       message: formatMessage({
-                        id: "munew.settings.dbURLRequired"
+                        id: "bitsky.settings.dbURLRequired"
                       })
                     }
                   ]
                 })(<Input onKeyDown={this.onFormChange.bind(this)} />)}
               </Form.Item>
               <div className="form-item-description">
-                <FormattedHTMLMessage id="munew.settings.dbURLDescription" />
+                <FormattedHTMLMessage id="bitsky.settings.dbURLDescription" />
               </div>
             </div>
           ) : (
@@ -376,11 +375,11 @@ class GeneralForm extends React.Component {
             className="action-btn"
             loading={testingDBConnection}
             disabled={!isValid}
-            title={formatHTMLMessage({ id: "munew.settings.testDescription" })}
+            title={formatHTMLMessage({ id: "bitsky.settings.testDescription" })}
             onClick={this.testDBConnection.bind(this)}
           >
             <Icon type="api" />
-            <FormattedMessage id="munew.settings.test" />
+            <FormattedMessage id="bitsky.settings.test" />
           </Button>
 
           <Button
@@ -389,20 +388,20 @@ class GeneralForm extends React.Component {
             disabled={!isValid || disableSaveBtn}
             loading={savingPreferences}
             title={formatHTMLMessage({
-              id: "munew.settings.testAndSaveDescription"
+              id: "bitsky.settings.testAndSaveDescription"
             })}
             onClick={this.onSavePreferences.bind(this)}
           >
             <Icon type="save" />
-            <FormattedMessage id="munew.settings.testAndSave" />
+            <FormattedMessage id="bitsky.settings.testAndSave" />
           </Button>
 
           {/* <Button
             className="action-btn"
-            title={formatHTMLMessage({ id: "munew.settings.resetDescription" })}
+            title={formatHTMLMessage({ id: "bitsky.settings.resetDescription" })}
           >
             <Icon type="hourglass" />
-            <FormattedMessage id="munew.settings.reset" />
+            <FormattedMessage id="bitsky.settings.reset" />
           </Button> */}
         </div>
       </div>
