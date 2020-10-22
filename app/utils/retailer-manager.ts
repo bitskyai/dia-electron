@@ -522,6 +522,7 @@ class RetailerManager {
       clearRequireCacheStartWith(RETAILER_PATH);
       const { startServer } = require(RETAILER_SERVER_PATH);
       await startServer({
+        RETAILER_HOME: path.join(RETAILER_PATH, 'public'),
         BITSKY_BASE_URL: process.env.BITSKY_BASE_URL,
         PORT: this.RetailerPort,
       });

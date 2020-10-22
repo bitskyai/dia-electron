@@ -67,7 +67,7 @@ class HTTPProducer {
       ]);
 
       const serviceConfig = this.getConfig();
-      console.log(`serviceConfig: `, serviceConfig);
+      // console.log(`serviceConfig: `, serviceConfig);
       this.port = await getAvailablePort(this.port);
       const serviceHome = serviceConfig.PRODUCER_HOME;
       // const logPath = path.join(serviceHome, "log");
