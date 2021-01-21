@@ -55,7 +55,7 @@
     "fs-extra": "9.0.1",
     "history": "^4.9.0",
     "http-errors": "^1.6.3",
-    "immer": "^5.0.0",
+    "immer": "^8.0.1",
     "intl": "^1.2.5",
     "invariant": "^2.2.4",
     "jade": "~1.11.0",
