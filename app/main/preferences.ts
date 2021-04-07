@@ -199,6 +199,7 @@ export function getDefaultHeadlessProducer(): HeadlessProducerPreference {
     HEADLESS: true,
     SCREENSHOT: false,
     PRODUCER_HOME: path.join(BITSKY_HOME_FOLDER, "headless"),
+    ABORT_RESOURCE_TYPES: undefined
   });
 
   return headlessProducer;
